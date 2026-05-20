@@ -1,0 +1,1094 @@
+[
+  {
+    "index": 20000,
+    "section": "选择QA",
+    "question": "根据史料，殷墟商代晚期墓葬中牺牲的主要部位是什么？A.头部 B.全牲 C.腿部 D.内脏",
+    "image_url": "",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20001,
+    "section": "选择VQA",
+    "question": "如图所示，这件出土于望京楼的陶鬲具有“口袋形”足，其形态与郑州南关外中层及二里冈下层所出器物相似，据此判断它属于商代前期的哪个阶段？A. 第一期 B. 第二期 C. 第三期 D. 第四期",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1957484916260823040.jpg",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20002,
+    "section": "判断QA",
+    "question": "殷墟商代晚期墓葬中的牺牲以牛、羊为主，且大部分腿骨位于二层台上。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20003,
+    "section": "判断VQA",
+    "question": "如图所示，该陶鬲出土于望京楼，属于商代前期第二期。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1957484916260823040.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20004,
+    "section": "简答QA",
+    "question": "殷墟商代晚期墓葬中大部分腿骨位于何处？",
+    "image_url": "",
+    "expected_answer": "二层台"
+  },
+  {
+    "index": 20005,
+    "section": "简答VQA",
+    "question": "如图所示，这件三足陶鬲属于哪个历史时期的典型器物？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1957484916260823040.jpg",
+    "expected_answer": "商代"
+  },
+  {
+    "index": 20006,
+    "section": "选择QA",
+    "question": "根据史料，殷墟商代晚期墓葬中牺牲的主要部位是什么？A.头部 B.全牲 C.腿部 D.内脏",
+    "image_url": "",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20007,
+    "section": "选择QA",
+    "question": "根据史料，辛店文化的年代约为？A.夏代晚期至商代早期 B.商代中期至西周中期 C.商代晚期至西周早期 D.西周晚期至春秋早期",
+    "image_url": "",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20008,
+    "section": "选择QA",
+    "question": "根据史料，研究人员为减少铜器样品成分偏析和锈蚀对分析结果的影响，采取了哪种数据处理方式？A.直接选取锈蚀最严重部位的数据 B.仅对单一部位进行一次扫描分析 C.选取多个不同部位扫描后取平均值 D.忽略所有含有夹杂物的区域",
+    "image_url": "",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20009,
+    "section": "选择QA",
+    "question": "根据史料记载，汉代“三月祓灞上”仪式的主要目的是什么？A.祈求农业丰收 B.驱除邪恶不祥 C.祭祀祖先神灵 D.庆祝新春佳节",
+    "image_url": "",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20010,
+    "section": "选择QA",
+    "question": "根据史料记载，商人对黄河不同方位的称呼及活动描述正确的是？A.称黄河东岸为“河西兆”B.称黄河南岸为“河北兆”C.卜辞中多见“涉河狩”表明商人常在黄河两岸田猎 D.晚商时期黄河在王畿地区最终向东南流入大海",
+    "image_url": "",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20011,
+    "section": "选择QA",
+    "question": "根据史料，关于战国晚期燕国自名为“鈠（殳）”的兵器，下列哪项描述符合文意？A.其形制与曾侯乙墓出土的三棱状“殳”完全相同 B.它是传世文献中记载的无刃杖形长兵 C.其命名可能自有源流，需具体问题具体分析 D.它属于器物代称现象，并非独立兵种",
+    "image_url": "",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20012,
+    "section": "选择QA",
+    "question": "根据史料，西周时期“叔男父”为同姓的“霍姬”制作媵器，这一现象主要反映了当时怎样的婚嫁礼俗？A.同姓不婚原则已被彻底废除 B.异姓贵族之间普遍实行媵制 C.同姓贵族之间存在“同姓相媵”的惯例 D.只有王室成员才能制作媵器",
+    "image_url": "",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20013,
+    "section": "选择QA",
+    "question": "根据史料，史杰鹏先生指出《彭祖》中该字从押韵情况来看应属于哪一部？A.阴部 B.阳部 C.东部 D.耕部",
+    "image_url": "",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20014,
+    "section": "选择QA",
+    "question": "根据史料，古人选择朱郎埠作为墓地的主要地形优势是什么？A.地处高海拔山区 B.位于低平海滩上稍稍隆起的小丘 C.紧邻汉武帝祭海神庙遗址 D.处于胶东半岛河流交汇处",
+    "image_url": "",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20015,
+    "section": "选择QA",
+    "question": "根据史料中佐藤武敏的观点，汉代户口调查时期在何时固定下来？A.西汉初年固定在三月 B.西汉时期始终不固定 C.东汉时期固定在八月 D.战国后期已固定在十月",
+    "image_url": "",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20016,
+    "section": "选择QA",
+    "question": "根据史料，龙山时代的“古国”性质是什么？A.真正的国家 B.由不同血缘组成的社会组织 C.单纯的氏族组织（酋邦）D.中央集权的帝国",
+    "image_url": "",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20017,
+    "section": "选择QA",
+    "question": "根据史料，西汉初年“律”与“令”的主要区别是什么？A.律针对特殊情形，令针对一般情形 B.律由皇帝制定，令由大臣制定 C.律针对一般情形，令是对律的补充且针对特殊情形 D.律主要规定刑罚，令主要规定行政",
+    "image_url": "",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20018,
+    "section": "选择QA",
+    "question": "根据史料，北朝后期“全域性图记”出现的根本背景是什么？A.地方长官联合大姓豪右治理模式的强化 B.中央政府将区域社会治理纳入官僚行政体系 C.汉晋以来州郡地记修撰传统的彻底中断 D.地方官府不再需要向中央呈报地理信息",
+    "image_url": "",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20019,
+    "section": "选择QA",
+    "question": "根据史料，关于商代司法制度的描述正确的是？A.地方司法官为“正”与“史”，重大案件须报请司寇复审 B.商代没有设立任何专职司法官员 C.郑玄认为商代不存在“司寇”一职 D.商代地方官可擅自决断所有案件",
+    "image_url": "",
+    "expected_answer": "A"
+  },
+  {
+    "index": 20020,
+    "section": "选择QA",
+    "question": "根据史料，王振铎在《东汉车制复原研究》中指出近代民间使用的车辆车型及工艺主要保存了哪个朝代的遗制？A.西汉 B.东汉 C.唐代 D.元代",
+    "image_url": "",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20021,
+    "section": "选择QA",
+    "question": "根据史料，在庙底沟类型阶段，河南中西部及伊洛流域等地区仍然流行的葬式是什么？A.单人土坑墓 B.多人瓮棺合葬 C.二次多人合葬 D.火葬",
+    "image_url": "",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20022,
+    "section": "选择QA",
+    "question": "河南贾湖遗址出土的炭化稻米表明该地区早期人类已掌握什么技术？A.青铜冶炼 B.水稻种植 C.丝绸纺织 D.铁器铸造 答案：B",
+    "image_url": "",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20023,
+    "section": "选择QA",
+    "question": "根据史料，朱开沟遗址出土陶器的主要质地是什么？A.夹砂红陶 B.泥质红陶 C.砂质灰陶 D.泥质灰陶",
+    "image_url": "",
+    "expected_answer": "D"
+  },
+  {
+    "index": 20024,
+    "section": "选择QA",
+    "question": "根据史料，关于长江流域铜铙的演变特征，下列哪项描述是正确的？A.兽面纹铙是由云纹铙直接发展而来的 B.长江流域铜铙是在中心区铜铙基础上发展而来的 C.云纹铙最早分布于赣江流域，随后向周边传布 D.湖南湘江流域所见兽面铜铙的年代早于晚商二段",
+    "image_url": "",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20025,
+    "section": "选择QA",
+    "question": "根据史料，关于屈家岭文化与大溪文化的关系，下列哪项描述正确？A.大溪文化叠压在屈家岭文化之上 B.屈家岭文化是独立发展未受大溪文化影响 C.屈家岭文化叠压在大溪文化之上且被认为继承其发展而来 D.两者地层关系明确且分期界限已无分歧",
+    "image_url": "",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20026,
+    "section": "选择QA",
+    "question": "周代铭文中记载的刑典主要反映了当时哪方面的社会状况？A. 农业技术发展 B. 法律制度实施 C. 宗教信仰演变 D. 对外贸易往来",
+    "image_url": "",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20027,
+    "section": "选择QA",
+    "question": "根据史料，出土于墓号 D6T52②M18 的陶鼎属于哪个期别和型式？A.中期 A 型Ⅱ式 B.晚期 C 型 C.早期 B 型 I 式 D.中期 B 型Ⅱ式",
+    "image_url": "",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20028,
+    "section": "选择QA",
+    "question": "根据史料，徂徕认为子思创作《中庸》的主要动机是什么？A.为了构建高度抽象的本体论体系 B.为了反老子之学而正邹鲁之传 C.为了阐发宋儒的性命之说 D.为了记录先王的礼乐制度",
+    "image_url": "",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20029,
+    "section": "选择QA",
+    "question": "河南辉县市古共城南城墙发掘简报主要涉及哪个地点的考古工作？A. 河北邯郸市 B. 河南辉县市 C. 陕西西安市 D. 山东济南市",
+    "image_url": "",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20030,
+    "section": "选择QA",
+    "question": "根据史料，朱家台遗址出土的“龙山”文化陶器中，属于值得注意的新内容的是？A.与季家湖遗址基本近似 B.出现鸭咀形鼎足 C.属于鄂西类型 D.与石板巷子遗址完全相同",
+    "image_url": "",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20031,
+    "section": "选择VQA",
+    "question": "如图所示，这件陶鬲出土于望京楼，其“口袋形”足的特征与郑州二里冈下层所出残鬲相似，据此判断它属于哪个时期的文化遗存？A.夏代早期 B.商代前期第二期 C.西周晚期 D.春秋战国",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1957484916260823040.jpg",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20032,
+    "section": "选择VQA",
+    "question": "如图所示，清华简背面的斜线划痕主要作用是？A.装饰美化 B.标记竹材产地 C.辅助编连排序 D.记录书写者姓名",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860407538114561.jpg",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20033,
+    "section": "选择VQA",
+    "question": "如图所示，该图案最可能属于下列哪一考古学文化？A.红山文化 B.良渚文化 C.二里头文化 D.三星堆文化",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958855646894448641.jpg",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20034,
+    "section": "选择VQA",
+    "question": "如图所示，这件出土于湖北随州文峰塔墓地M33的青铜器是？A.铜鼎 B.铜豆 C.铜簋 D.铜鉴",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860368619167744.jpg",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20035,
+    "section": "选择VQA",
+    "question": "如图所示，这件青铜器为双耳簋，其腹部饰有竖条纹（瓦纹），口沿下及圈足饰有兽面纹与乳钉纹，结合史料中湖北随州叶家山M111墓出土的西周早期青铜器特征，该器物最可能属于哪个历史时期？A.商代晚期 B.西周早期 C.春秋中期 D.战国晚期",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1957484918035013632.jpg",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20036,
+    "section": "选择VQA",
+    "question": "如图所示，这件青铜器为作册般甗，其铭文记载“王宜，人（夷）方舞敄……王商（赏）乍（作）册般贝”，反映了商王朝与哪一族群的关系？A.羌族 B.戎族 C.夷族 D.狄族",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958867431823335424.jpg",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20037,
+    "section": "选择VQA",
+    "question": "如图所示，该图展示了上博简《举治王天下》中一个残字的修复过程。根据史料描述，最终修复后的残字被识别为哪个字？A. 舜 B. 穡 C. 啬 D. 童",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860434826256384.jpg",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20038,
+    "section": "选择VQA",
+    "question": "如图所示，该瓦当出土于西安门遗址，其铭文应释读为？A.光■凷宇 B.长生无极 C.延寿王瓦 D.都司空瓦",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860435887415296.jpg",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20039,
+    "section": "选择VQA",
+    "question": "如图所示，这件青铜器最可能属于哪个历史时期？A.夏代 B.商代 C.西周晚期至春秋中期 D.战国",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860408586690560.jpg",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20040,
+    "section": "选择VQA",
+    "question": "如图所示，该世系图展示了从成汤至帝辛的商朝君主传承关系。根据史料记载，图中数字代表“主干世系”中的世数，且显示成汤至帝辛共有17世。请问下列哪位君主在图中的编号为23？A.盘庚 B.武丁 C.祖甲 D.小乙",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958855613834944512.jpg",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20041,
+    "section": "选择VQA",
+    "question": "如图所示，根据作册般甗铭文记载，商王赏赐的对象是谁？A.舞敄 B.父己 C.作册般 D.夷方",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958867426827919360.jpg",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20042,
+    "section": "选择VQA",
+    "question": "如图所示，该图展示的是哪一年份的天象模拟结果？A.秦二世三年七月 B.汉元年七月 C.汉二年四月至五月 D.汉六年全年",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958867032739504128.jpg",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20043,
+    "section": "选择VQA",
+    "question": "如图所示，该玉器图案中鹰的胸部饰有八角星纹，结合史料记载，这一形象最可能代表了哪位史前太阳神？A.炎帝 B.黄帝 C.少昊 D.颛顼",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958855658894352384.jpg",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20044,
+    "section": "选择VQA",
+    "question": "如图所示，根据史料记载和地图信息，武王伐纣的决战地“牧野”位于图中哪个城市附近？A.新乡市 B.辉县市 C.卫辉市 D.获嘉县",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958867034614358016.jpg",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20045,
+    "section": "选择VQA",
+    "question": "如图所示，这件青铜器是作册般甗。根据史料记载，其铭文内容“王宜，人（夷）方舞敄……”主要反映了商王朝与哪一族群的关系？A.周族 B.羌族 C.夷族 D.戎族",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958867431823335424.jpg",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20046,
+    "section": "选择VQA",
+    "question": "如图所示，两件“即墨太守”封泥的年代及历史意义是？A.西汉齐悼惠王时期，证明汉代设即墨郡 B.秦代，证明秦曾设即墨郡 C.战国齐国，反映诸侯国官制 D.东汉时期，体现地方行政变革",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860454954721280.jpg",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20047,
+    "section": "选择VQA",
+    "question": "如图所示，该图展示的是殷墟卜用龟腹甲的哪一部分？A.首甲 B.前甲 C.中甲 D.后甲",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860372108828672.jpg",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20048,
+    "section": "选择VQA",
+    "question": "如图所示，该铭文拓片出自随州义地岗曾国铜器，其内容“曾公子去疾之御斗”中，“御”字经学者考证应释为何字？A. 御 B. 让 C. 沐 D. 赐",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985661425790083072.jpg",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20049,
+    "section": "选择VQA",
+    "question": "如图所示，该拓片所示铭文出自商代寝孳方鼎，铭文中“王赐寝孿赏”反映了商代何种制度特征？A. 分封制 B. 职官与族名结合的称名习俗 C. 郡县制 D. 科举选官",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985661426184347648.jpg",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20050,
+    "section": "选择VQA",
+    "question": "如图所示，该文物为汉代瓦当，其纹饰包含双兽、树木及文字，这种“甲天下”铭文瓦当最可能出土于以下哪处遗址？A.秦始皇陵 B.汉长安城 C.殷墟 D.良渚古城",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985661472619487232.jpg",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20051,
+    "section": "选择VQA",
+    "question": "如图所示，这件半圆形双孔石器最可能属于哪种类型的古代工具？A.玉钺 B.石斧 C.半月形有孔石刀 D.石镞",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985637886374567936.jpg",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20052,
+    "section": "选择VQA",
+    "question": "如图所示，该铜镜的纹饰主题最可能是？A.鸾鸟葵花 B.瑞兽缠枝 C.双犀戏莲 D.四神规矩",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985637883279171584.jpg",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20053,
+    "section": "选择VQA",
+    "question": "如图所示，这件青铜器上的猴形装饰最可能出自以下哪个考古遗址？A.石家河文化 B.云南晋宁石寨山 C.殷墟 D.三星堆",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985637868246786048.jpg",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20054,
+    "section": "选择VQA",
+    "question": "如图所示，该铭文拓片出自《集成》5417.2，其内容与商代役民制度和军事策略相关，现藏于日本神户白鹤美术馆。请问这件青铜器的器型是什么？A.鼎 B.尊 C.卣 D.簋",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985661428218585088.jpg",
+    "expected_answer": "C"
+  },
+  {
+    "index": 20055,
+    "section": "选择VQA",
+    "question": "如图所示，这件玉圆牌（M58:11）具有椭圆形、表面风化斑驳的特征，它最可能属于下列哪一文化遗存？A.良渚文化 B.商代刘家庄遗址 C.西周墓葬 D.汉代贵族墓",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1957484903484973056.jpg",
+    "expected_answer": "B"
+  },
+  {
+    "index": 20056,
+    "section": "判断QA",
+    "question": "殷墟商代晚期墓葬中的牺牲以牛、羊为主，且大部分腿骨位于二层台上。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20057,
+    "section": "判断QA",
+    "question": "辛店文化的墓葬中曾出土过金耳环和金贝。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20058,
+    "section": "判断QA",
+    "question": "表二所列结果为 50 件铜器样品的扫描电镜能谱分析结果。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20059,
+    "section": "判断QA",
+    "question": "西汉时期曾在霸水举行祓除礼以除恶不祥。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20060,
+    "section": "判断QA",
+    "question": "商代甲骨卜辞中记载了“涉河狩”和“狩河东兆”，表明商人常在黄河两岸区域进行田猎活动。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20061,
+    "section": "判断QA",
+    "question": "根据传世文献记载，“殳”是一种没有锋刃的杖形长兵。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20062,
+    "section": "判断QA",
+    "question": "西周时期同姓贵族之间可以互为婚媵。",
+    "image_url": "",
+    "expected_answer": "错误"
+  },
+  {
+    "index": 20063,
+    "section": "判断QA",
+    "question": "史杰鹏先生指出《上博三·彭祖》8 号简中的隆字从押韵情况来看应该是阳部字。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20064,
+    "section": "判断QA",
+    "question": "朱郎埠墓群地处广阔的海滩平原，是古人选择墓地的理想地形。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20065,
+    "section": "判断QA",
+    "question": "根据佐藤武敏的观点，西汉户口调查的时期尚未固定，有时在八月，有时在三月。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20066,
+    "section": "判断QA",
+    "question": "龙山时代的“古国”性质是真正的国家，由不同血缘关系的人群组成。",
+    "image_url": "",
+    "expected_answer": "错误"
+  },
+  {
+    "index": 20067,
+    "section": "判断QA",
+    "question": "在汉初法律体系中，令文针对特殊情况，对律条起着补充和完善的作用。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20068,
+    "section": "判断QA",
+    "question": "北朝后期，地方长官联合当地大姓豪右治理区域社会的模式趋于式微。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20069,
+    "section": "判断QA",
+    "question": "有学者认为商代已有“司寇”一职，且地方遇重大案件须报请其复审。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20070,
+    "section": "判断QA",
+    "question": "王振铎认为近代民间使用的车辆车型及其工艺多是保存了东汉的遗制和传统的做法。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20071,
+    "section": "判断QA",
+    "question": "到庙底沟类型时期，关中地区流行的二次多人合葬墓几乎见不到了。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20072,
+    "section": "判断QA",
+    "question": "河南贾湖遗址出土了炭化稻米。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20073,
+    "section": "判断QA",
+    "question": "朱开沟遗址出土的陶器中，泥质灰陶约占陶器总数的 90%。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20074,
+    "section": "判断QA",
+    "question": "长江流域所见铜铙有着自身的演变特征并自成体系，其功能与形制等多方面与中心区铜铙相差较大。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20075,
+    "section": "判断QA",
+    "question": "屈家岭文化的制陶已使用轮制技术，且部分薄胎器物可与蛋壳陶媲美。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20076,
+    "section": "判断QA",
+    "question": "周代已有将刑典内容铸刻于铭文的做法。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20077,
+    "section": "判断QA",
+    "question": "根据史料记载，出土的陶鼎中包含早期、中期和晚期三个时期的器物。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20078,
+    "section": "判断QA",
+    "question": "徂徕认为《中庸》的主旨是高远精微的宏大叙事。",
+    "image_url": "",
+    "expected_answer": "错误"
+  },
+  {
+    "index": 20079,
+    "section": "判断QA",
+    "question": "河南辉县市古共城南城墙发掘简报记录了该遗址的考古发现。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20080,
+    "section": "判断QA",
+    "question": "朱家台遗址出土的“龙山”文化陶器中出现了鸭咀形鼎足和大型陶锅等新内容。",
+    "image_url": "",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20081,
+    "section": "判断VQA",
+    "question": "如图所示，该陶鬲出土于望京楼，属于商代前期第二期。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1957484916260823040.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20082,
+    "section": "判断VQA",
+    "question": "如图所示，竹简背面的斜线划痕是用于确定竹简原始编连顺序的重要标记。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860407538114561.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20083,
+    "section": "判断VQA",
+    "question": "如图所示，该图案为良渚文化玉冠状饰上的神徽，体现了太阳崇拜与鸟图腾的结合。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958855646894448641.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20084,
+    "section": "判断VQA",
+    "question": "如图所示，该器物是湖北随州文峰塔墓地M33出土的铜鼎。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860368619167744.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20085,
+    "section": "判断VQA",
+    "question": "如图所示，该器物是出土于湖北随州叶家山M111墓地的西周早期青铜簋。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1957484918035013632.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20086,
+    "section": "判断VQA",
+    "question": "如图所示，该器物是商代青铜器作册般甗。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958867431823335424.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20087,
+    "section": "判断VQA",
+    "question": "如图所示，该图展示了上博简《举治王天下》中残字“啬”的修复过程。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860434826256384.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20088,
+    "section": "判断VQA",
+    "question": "如图所示，该瓦当铭文为“光■凷宇”，表达与光明、水或河流相关的主题。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860435887415296.jpg",
+    "expected_answer": "错误"
+  },
+  {
+    "index": 20089,
+    "section": "判断VQA",
+    "question": "如图所示，该器物是西周晚期至春秋中期的五祀卫鼎。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860408586690560.jpg",
+    "expected_answer": "错误"
+  },
+  {
+    "index": 20090,
+    "section": "判断VQA",
+    "question": "如图所示，该图表展示了从成汤至帝辛的商朝世系。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958855613834944512.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20091,
+    "section": "判断VQA",
+    "question": "如图所示，该铭文记载了商王赏赐作册般贝并令其制作父己尊彝的史实。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958867426827919360.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20092,
+    "section": "判断VQA",
+    "question": "如图所示，该图展示了汉二年四月至五月“五星聚东井”天象模拟结果。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958867032739504128.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20093,
+    "section": "判断VQA",
+    "question": "如图所示，该图案描绘了一只展翅飞翔的鹰，其胸部饰有八角星纹，可能代表了作为太阳神的少昊的神形。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958855658894352384.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20094,
+    "section": "判断VQA",
+    "question": "如图所示，牧野位于卫辉市北的汲水镇比干庙一带。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958867034614358016.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20095,
+    "section": "判断VQA",
+    "question": "如图所示，该器物为作册般甗，其鬲部饰有高浮雕牛首纹。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958867431823335424.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20096,
+    "section": "判断VQA",
+    "question": "如图所示，这两件封泥是研究秦代设立即墨郡的关键实物证据。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860454954721280.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20097,
+    "section": "判断VQA",
+    "question": "如图所示，该图为殷墟卜用龟腹甲中甲齿缝片的形态特征示意图。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860372108828672.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20098,
+    "section": "判断VQA",
+    "question": "如图所示，该铭文拓片出自随州义地岗曾国铜器，内容为“曾公子去疾之让(沐)斗”。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985661425790083072.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20099,
+    "section": "判断VQA",
+    "question": "如图所示，该拓片为商代寝孳方鼎铭文。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985661426184347648.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20100,
+    "section": "判断VQA",
+    "question": "如图所示，该器物是庙底沟二期文化中期圜底罐形陶鼎。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985661472619487232.jpg",
+    "expected_answer": "错误"
+  },
+  {
+    "index": 20101,
+    "section": "判断VQA",
+    "question": "如图所示，该器物是北阴阳营遗址出土的半月形有孔石刀。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985637886374567936.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20102,
+    "section": "判断VQA",
+    "question": "如图所示，该铜镜为宋代鸾鸟葵花镜。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985637883279171584.jpg",
+    "expected_answer": "错误"
+  },
+  {
+    "index": 20103,
+    "section": "判断VQA",
+    "question": "如图所示，该文物为云南晋宁石寨山M71墓葬出土的圆形猴边铜扣饰。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985637868246786048.jpg",
+    "expected_answer": "错误"
+  },
+  {
+    "index": 20104,
+    "section": "判断VQA",
+    "question": "如图所示，该铭文拓片出自商代晚期青铜器卣，现藏于日本神户白鹤美术馆。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985661428218585088.jpg",
+    "expected_answer": "正确"
+  },
+  {
+    "index": 20105,
+    "section": "判断VQA",
+    "question": "如图所示，该玉器为良渚文化时期的冠状玉器。",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1957484903484973056.jpg",
+    "expected_answer": "错误"
+  },
+  {
+    "index": 20106,
+    "section": "简答QA",
+    "question": "殷墟商代晚期墓葬中大部分腿骨位于何处？",
+    "image_url": "",
+    "expected_answer": "二层台"
+  },
+  {
+    "index": 20107,
+    "section": "简答QA",
+    "question": "辛店文化的年代约为商代晚期至哪个时期？",
+    "image_url": "",
+    "expected_answer": "西周早期"
+  },
+  {
+    "index": 20108,
+    "section": "简答QA",
+    "question": "表二所列扫描电镜能谱分析结果涉及多少件样品？",
+    "image_url": "",
+    "expected_answer": "50 件"
+  },
+  {
+    "index": 20109,
+    "section": "简答QA",
+    "question": "史料记载吕后八年三月行祓礼的河流名称是什么？",
+    "image_url": "",
+    "expected_answer": "霸水"
+  },
+  {
+    "index": 20110,
+    "section": "简答QA",
+    "question": "商人称黄河东岸为什么？",
+    "image_url": "",
+    "expected_answer": "河东兆"
+  },
+  {
+    "index": 20111,
+    "section": "简答QA",
+    "question": "曾侯乙墓出土的自名为“殳”的兵器属于哪位诸侯？",
+    "image_url": "",
+    "expected_answer": "曾侯"
+  },
+  {
+    "index": 20112,
+    "section": "简答QA",
+    "question": "史料中提到的叔男父所属的家族标识是什么？",
+    "image_url": "",
+    "expected_answer": "井"
+  },
+  {
+    "index": 20113,
+    "section": "简答QA",
+    "question": "史杰鹏指出《彭祖》该字从押韵看应属何部？",
+    "image_url": "",
+    "expected_answer": "阳部"
+  },
+  {
+    "index": 20114,
+    "section": "简答QA",
+    "question": "朱郎埠所在的海滩平原俗称什么？",
+    "image_url": "",
+    "expected_answer": "万里沙"
+  },
+  {
+    "index": 20115,
+    "section": "简答QA",
+    "question": "汉代制度中明确记载的案比造籍月份是几月？",
+    "image_url": "",
+    "expected_answer": "八月"
+  },
+  {
+    "index": 20116,
+    "section": "简答QA",
+    "question": "文中指出龙山时代的“邦”即酋邦，也被部分考古学者称为什么？",
+    "image_url": "",
+    "expected_answer": "古国"
+  },
+  {
+    "index": 20117,
+    "section": "简答QA",
+    "question": "张家山《奏谳书》中汉高祖七年的罪犯醴阳令叫什么？",
+    "image_url": "",
+    "expected_answer": "恢"
+  },
+  {
+    "index": 20118,
+    "section": "简答QA",
+    "question": "史料指出全域性图记出现在哪个历史时期？",
+    "image_url": "",
+    "expected_answer": "北朝"
+  },
+  {
+    "index": 20119,
+    "section": "简答QA",
+    "question": "郑玄注认为商代似乎有的司法官职名称是什么？",
+    "image_url": "",
+    "expected_answer": "司寇"
+  },
+  {
+    "index": 20120,
+    "section": "简答QA",
+    "question": "王振铎哪部遗著由李强整理补注并于 1997 年出版？",
+    "image_url": "",
+    "expected_answer": "东汉车制复原研究"
+  },
+  {
+    "index": 20121,
+    "section": "简答QA",
+    "question": "史料中提到类似洪山庙遗址的成排合葬墓在伊川土门和哪个遗址内均有发现？",
+    "image_url": "",
+    "expected_answer": "汝州中山寨"
+  },
+  {
+    "index": 20122,
+    "section": "简答QA",
+    "question": "河南贾湖遗址出土的炭化农作物是什么？",
+    "image_url": "",
+    "expected_answer": "稻米"
+  },
+  {
+    "index": 20123,
+    "section": "简答QA",
+    "question": "朱开沟遗址三足器约占陶器总数的百分比是多少？",
+    "image_url": "",
+    "expected_answer": "17.4%"
+  },
+  {
+    "index": 20124,
+    "section": "简答QA",
+    "question": "据史料记载，云纹铙最早的分布地区位于哪条流域？",
+    "image_url": "",
+    "expected_answer": "赣江流域"
+  },
+  {
+    "index": 20125,
+    "section": "简答QA",
+    "question": "屈家岭文化叠压在哪种文化之上？",
+    "image_url": "",
+    "expected_answer": "大溪文化"
+  },
+  {
+    "index": 20126,
+    "section": "简答QA",
+    "question": "西周晚期铸有完整刑典铭文的青铜器叫什么？",
+    "image_url": "",
+    "expected_answer": "匜"
+  },
+  {
+    "index": 20127,
+    "section": "简答QA",
+    "question": "出土 B 型Ⅲ式 a 陶鼎的墓号中，D6T29②M7 之外的另一个墓号是什么？",
+    "image_url": "",
+    "expected_answer": "D6T65②M22"
+  },
+  {
+    "index": 20128,
+    "section": "简答QA",
+    "question": "徂徕认为子思作《中庸》是为了反谁之学？",
+    "image_url": "",
+    "expected_answer": "老子"
+  },
+  {
+    "index": 20129,
+    "section": "简答QA",
+    "question": "河南辉县市古共城南城墙发掘简报中提到的古城叫什么？",
+    "image_url": "",
+    "expected_answer": "古共城"
+  },
+  {
+    "index": 20130,
+    "section": "简答QA",
+    "question": "朱家台出土的“龙山”文化陶器与当阳哪个遗址的基本近似？",
+    "image_url": "",
+    "expected_answer": "季家湖"
+  },
+  {
+    "index": 20131,
+    "section": "简答VQA",
+    "question": "如图所示，该陶鬲所属的考古学文化是什么？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1957484916260823040.jpg",
+    "expected_answer": "商文化"
+  },
+  {
+    "index": 20132,
+    "section": "简答VQA",
+    "question": "如图所示，图中竹简背面的斜线标记属于哪一批出土文献？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860407538114561.jpg",
+    "expected_answer": "清华简"
+  },
+  {
+    "index": 20133,
+    "section": "简答VQA",
+    "question": "如图所示，该青铜器图案出土于哪个遗址？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958855646894448641.jpg",
+    "expected_answer": "青海贵南尕马台"
+  },
+  {
+    "index": 20134,
+    "section": "简答VQA",
+    "question": "如图所示，这件铜豆出土于哪个省份的墓地？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860368619167744.jpg",
+    "expected_answer": "湖北省"
+  },
+  {
+    "index": 20135,
+    "section": "简答VQA",
+    "question": "如图所示，这件青铜器出土于湖北随州叶家山哪一号墓？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1957484918035013632.jpg",
+    "expected_answer": "M111"
+  },
+  {
+    "index": 20136,
+    "section": "简答VQA",
+    "question": "如图所示，这件青铜器铭文记载了商王赏赐作册般贝的事件，其名称是什么？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958867431823335424.jpg",
+    "expected_answer": "作册般甗"
+  },
+  {
+    "index": 20137,
+    "section": "简答VQA",
+    "question": "如图所示，图中展示的竹简残字修复过程出自哪部文献？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860434826256384.jpg",
+    "expected_answer": "上博简《举治王天下》"
+  },
+  {
+    "index": 20138,
+    "section": "简答VQA",
+    "question": "如图所示，图中瓦当上的文字是什么？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860435887415296.jpg",
+    "expected_answer": "长生无极"
+  },
+  {
+    "index": 20139,
+    "section": "简答VQA",
+    "question": "如图所示，这件青铜器属于哪个时期？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860408586690560.jpg",
+    "expected_answer": "西周晚期"
+  },
+  {
+    "index": 20140,
+    "section": "简答VQA",
+    "question": "如图所示，图中展示的是哪个朝代的世系？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958855613834944512.jpg",
+    "expected_answer": "商朝"
+  },
+  {
+    "index": 20141,
+    "section": "简答VQA",
+    "question": "如图所示，铭文记载商王举行宜祭并赏赐作册般，该文物属于哪个朝代？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958867426827919360.jpg",
+    "expected_answer": "商朝"
+  },
+  {
+    "index": 20142,
+    "section": "简答VQA",
+    "question": "如图所示，该天象模拟图反映的是哪一年间的“五星聚东井”？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958867032739504128.jpg",
+    "expected_answer": "汉二年"
+  },
+  {
+    "index": 20143,
+    "section": "简答VQA",
+    "question": "如图所示，图中玉鹰出自哪个史前遗址？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958855658894352384.jpg",
+    "expected_answer": "凌家滩"
+  },
+  {
+    "index": 20144,
+    "section": "简答VQA",
+    "question": "如图所示，牧野之战发生在图中哪个地点附近？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958867034614358016.jpg",
+    "expected_answer": "卫辉市"
+  },
+  {
+    "index": 20145,
+    "section": "简答VQA",
+    "question": "如图所示，图中青铜器铭文记载了商王赏赐作册般贝，该器物属于哪个朝代？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1958867431823335424.jpg",
+    "expected_answer": "商朝"
+  },
+  {
+    "index": 20146,
+    "section": "简答VQA",
+    "question": "如图所示，图中封泥证明秦朝曾设立哪个郡？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860454954721280.jpg",
+    "expected_answer": "即墨郡"
+  },
+  {
+    "index": 20147,
+    "section": "简答VQA",
+    "question": "如图所示，图中龟腹甲中甲出自哪个遗址？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1959860372108828672.jpg",
+    "expected_answer": "殷墟"
+  },
+  {
+    "index": 20148,
+    "section": "简答VQA",
+    "question": "如图所示，图中“姒丁尊”铭文中的“生”字应释读为何意？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985661425790083072.jpg",
+    "expected_answer": "赏"
+  },
+  {
+    "index": 20149,
+    "section": "简答VQA",
+    "question": "如图所示，图中铭文拓片主要反映了哪个朝代的称名习俗？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985661426184347648.jpg",
+    "expected_answer": "商代"
+  },
+  {
+    "index": 20150,
+    "section": "简答VQA",
+    "question": "如图所示，该文物所属的考古学文化是什么？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985661472619487232.jpg",
+    "expected_answer": "庙底沟二期文化"
+  },
+  {
+    "index": 20151,
+    "section": "简答VQA",
+    "question": "如图所示，这件半月形有孔石器属于哪个遗址的文化遗存？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985637886374567936.jpg",
+    "expected_answer": "北阴阳营"
+  },
+  {
+    "index": 20152,
+    "section": "简答VQA",
+    "question": "如图所示，图中铜镜纹饰主题为何种瑞兽？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985637883279171584.jpg",
+    "expected_answer": "龙"
+  },
+  {
+    "index": 20153,
+    "section": "简答VQA",
+    "question": "如图所示，这件猴形铜饰出自云南晋宁石寨山哪座墓葬？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985637868246786048.jpg",
+    "expected_answer": "M71"
+  },
+  {
+    "index": 20154,
+    "section": "简答VQA",
+    "question": "如图所示，图中铭文拓片出自哪件青铜器？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1985661428218585088.jpg",
+    "expected_answer": "姒丁尊"
+  },
+  {
+    "index": 20155,
+    "section": "简答VQA",
+    "question": "如图所示，图中玉圆牌出自哪个遗址？",
+    "image_url": "http://marking-platform-external.oss-cn-shanghai.aliyuncs.com/1957484903484973056.jpg",
+    "expected_answer": "刘家庄"
+  }
+]

@@ -1496,6 +1496,27 @@ section {
 .tech-pill.cat-frame  { border-left: 3px solid var(--seal); }
 .tech-pill.cat-data   { border-left: 3px solid var(--ink-mid); }
 
+.dl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: 100px;
+  background: var(--paper-warm);
+  border: 1.5px solid var(--gold);
+  color: var(--ink-dark);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 200ms, color 200ms, transform 200ms;
+}
+.dl-btn:hover {
+  background: var(--gold);
+  color: var(--paper-soft);
+  transform: translateY(-2px);
+}
+
 /* ============================================================================
    Footer
    ============================================================================ */
