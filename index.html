@@ -1,0 +1,1178 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ChronoMirror · 史鉴 · 多模态历史问答 Agent</title>
+<meta name="description" content="ChronoMirror · 一个基于 Qwen2.5-VL 与 RAG 检索的多模态历史问答 Agent" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Ma+Shan+Zheng&family=Long+Cang&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+<!-- ============================================================================
+     Scroll progress indicator
+============================================================================ -->
+<div class="scroll-progress" id="scroll-progress"></div>
+
+<!-- ============================================================================
+     Ink splash decorations (fixed)
+============================================================================ -->
+<svg class="ink-splash s1" viewBox="0 0 200 200" aria-hidden="true">
+  <g fill="#14110f"><path d="M40 100 C20 60, 60 30, 100 50 C 140 65, 160 50, 170 80 C 175 110, 130 130, 110 120 C 80 105, 60 130, 40 100 Z"/>
+  <circle cx="62" cy="138" r="3"/><circle cx="76" cy="148" r="1.6"/><circle cx="158" cy="55" r="1.8"/></g>
+</svg>
+<svg class="ink-splash s2" viewBox="0 0 200 200" aria-hidden="true">
+  <g fill="#2a2521"><path d="M60 90 C40 50, 100 30, 120 70 C 140 110, 90 130, 80 110 C 70 92, 75 100, 60 90 Z"/>
+  <circle cx="30" cy="120" r="4"/><circle cx="146" cy="40" r="2.4"/></g>
+</svg>
+<svg class="ink-splash s3" viewBox="0 0 200 200" aria-hidden="true">
+  <g fill="#524841"><path d="M70 80 Q40 100 80 140 Q 120 160 130 110 Q 145 70 110 65 Q 80 60 70 80 Z"/>
+  </g>
+</svg>
+
+<!-- ============================================================================
+     NAV
+============================================================================ -->
+<nav class="nav" id="nav">
+  <div class="nav-brand">
+    <span class="seal-icon">史鉴</span>
+    <span>ChronoMirror</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#vision">愿景</a></li>
+    <li><a href="#pipeline">流程</a></li>
+    <li><a href="#demo">演示</a></li>
+    <li><a href="#modules">模块</a></li>
+    <li><a href="#dataflow">数据流</a></li>
+    <li><a href="#numbers">数据</a></li>
+    <li><a href="#" id="open-about">关于</a></li>
+    <li><button class="btn-concert" id="btn-concert">
+      <span class="dot-blink"></span>讲解厅
+    </button></li>
+  </ul>
+</nav>
+
+<!-- ============================================================================
+     HERO
+============================================================================ -->
+<header class="hero" id="hero">
+  <canvas class="hero-trail" id="hero-trail"></canvas>
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <span class="eyebrow">Project · 2026 夏 · 上海创智学院实训</span>
+        <h1 class="hero-title">
+          <span class="title-wordmark" aria-label="ChronoMirror">
+            <span class="title-letter" data-i="0">C</span><span class="title-letter" data-i="1">h</span><span class="title-letter" data-i="2">r</span><span class="title-letter" data-i="3">o</span><span class="title-letter" data-i="4">n</span><span class="title-letter" data-i="5">o</span><span class="title-letter" data-i="6">M</span><span class="title-letter" data-i="7">i</span><span class="title-letter" data-i="8">r</span><span class="title-letter" data-i="9">r</span><span class="title-letter" data-i="10">o</span><span class="title-letter" data-i="11">r</span>
+          </span>
+          <svg class="title-flourish" viewBox="0 0 320 18" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M5 11 C 35 4 80 16 130 8 C 175 1 225 14 265 7 C 285 4 300 10 315 9"/>
+          </svg>
+        </h1>
+        <p class="subtitle">Where History Answers Itself.</p>
+        <p class="hero-tag">让历史自己回答。ChronoMirror 把 Qwen2.5-VL 的多模态理解能力、史料语料库的 RAG 检索与带引用的可解释生成拼接为一条可观察的推理管线：问题理解 → 史料检索 → 上下文组织 → 答案生成。不再用“大模型万能”应付历史问答，而是让每一条回答都能追溯到可验证的文献出处。</p>
+        <div class="hero-meta">
+          <span><span class="dot"></span>9 模块 · 7,925 行</span>
+          <span><span class="dot"></span>8 历史题例</span>
+          <span><span class="dot"></span>1,129 RAG chunks</span>
+          <span><span class="dot"></span>Qwen2.5-7B-VL</span>
+        </div>
+      </div>
+      <div class="hero-art">
+        <div class="scroll-frame">
+          <span class="axis top"></span>
+          <span class="axis bot"></span>
+          <div class="painting-stack" id="hero-painting-stack"></div>
+          <div class="painting-caption">
+            <span class="pc-title" id="hero-caption-title">安史之乱原因</span>
+            <span class="pc-meta" id="hero-caption-meta">《资治通鉴》 · 唐</span>
+          </div>
+          <div class="seal-stamp" aria-label="ChronoMirror Seal"><span>史</span><span>鉴</span><span>问</span><span>答</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <span>展卷</span>
+    <span class="line"></span>
+  </div>
+</header>
+
+<!-- ============================================================================
+     QUOTE BAND
+============================================================================ -->
+<section class="quote-band">
+  <div class="container">
+    <blockquote>
+      问者，问古今；<br>
+      答者，答有据。<br>
+      <em>ChronoMirror</em> 让 LLM 的每一句话都能被史书检验。
+    </blockquote>
+    <cite>— 从项目设计说明 §1.1</cite>
+  </div>
+</section>
+
+<!-- ============================================================================
+     VISION
+============================================================================ -->
+<section id="vision" style="padding-top: 60px;">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="eyebrow">Vision</span>
+      <h2 class="hd-2">让历史可被检验</h2>
+      <svg class="flourish" viewBox="0 0 88 18" aria-hidden="true">
+        <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
+      </svg>
+    </div>
+    <div class="fade-in" style="max-width: 820px; margin: 0 auto; text-align: center;">
+      <p class="lead">
+        历史问答的难点不是“生成”，而是“不胡说”——LLM 随口能提到《新唐书》、《资治通鉴》，但引用的句子可能压根不存在。<em>史实错误、幻觉与“充满班味”的语言</em>，是传统生成式历史问答最难跨越的三个坎。
+      </p>
+      <p class="lead" style="margin-top: 22px;">
+        <strong style="color: var(--seal-deep);">ChronoMirror</strong> 以 Qwen2.5-7B-VL 为基座，用 BGE-M3 + FAISS 从二十四史、地方志、学术文献库里拼接上下文，
+        再由 LLM 在受控 prompt 下生成 <strong>带引用的、可追溯的、可被评测脚本验证的</strong> 历史问答——
+        全线路可点击、可重检索、可与原文逐句对照。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================================
+     PIPELINE
+============================================================================ -->
+<section class="pipeline" id="pipeline">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="eyebrow">Pipeline · §3.2 of Proposal</span>
+      <h2 class="hd-2">五步问答</h2>
+      <svg class="flourish" viewBox="0 0 88 18" aria-hidden="true">
+        <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
+      </svg>
+    </div>
+    <div class="pipeline-flow stagger">
+      <div class="pipe-step active">
+        <div class="pipe-num">壹</div>
+        <h4>问题理解 · Understanding</h4>
+        <div class="pipe-meta">M1 · Qwen2.5-VL + BGE-M3</div>
+        <p>接受文本 / 图片 / 图文混合输入，Qwen2.5-VL 理解多模态问题与题面元信息，输出 768 维问题向量 q。</p>
+      </div>
+      <div class="pipe-arrow">
+        <svg viewBox="0 0 56 36" preserveAspectRatio="none">
+          <path d="M2 18 C 14 6, 30 30, 48 16" />
+          <path class="head" d="M44 11 L 52 16 L 44 21" />
+        </svg>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">贰</div>
+        <h4>题型分类 · Typing</h4>
+        <div class="pipe-meta">M2 · MLP → (infer, multi)</div>
+        <p>把问题向量 q 投到「事实↔推理 × 文本↔多模态」二维坐标 (v, a) ∈ [-1, 1]²，驱动后续检索与 prompt 选型。</p>
+      </div>
+      <div class="pipe-arrow">
+        <svg viewBox="0 0 56 36" preserveAspectRatio="none">
+          <path d="M2 18 C 18 30, 30 6, 48 18" />
+          <path class="head" d="M44 13 L 52 18 L 44 23" />
+        </svg>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">叁</div>
+        <h4>史料检索 · Retrieval</h4>
+        <div class="pipe-meta">M3 · Platform RAG API</div>
+        <p>调用平台 HTTP 检索接口，从二十四史、地方志、学术文献（1,129 chunks）取回 top-k 史料与关联图像。</p>
+      </div>
+      <div class="pipe-arrow">
+        <svg viewBox="0 0 56 36" preserveAspectRatio="none">
+          <path d="M2 18 C 14 10, 32 28, 48 14" />
+          <path class="head" d="M44 9 L 52 14 L 44 19" />
+        </svg>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">肆</div>
+        <h4>答案生成 · Generation</h4>
+        <div class="pipe-meta">M4 · Qwen2.5-7B-VL</div>
+        <p>题型坐标、口语指令、RAG 上下文共同条件化 Qwen2.5-VL；决码参数随题型自适应调节。</p>
+      </div>
+      <div class="pipe-arrow">
+        <svg viewBox="0 0 56 36" preserveAspectRatio="none">
+          <path d="M2 18 C 18 6, 28 30, 48 20" />
+          <path class="head" d="M44 15 L 52 20 L 44 25" />
+        </svg>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-num">伍</div>
+        <h4>答案精修 · Refine</h4>
+        <div class="pipe-meta">M5/M6/M7 · Rerank + Cite</div>
+        <p>检索重排、引用校验、多轮对话、幻觉过滤——让每一句回答都能追回原文。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================================
+     LIVE DEMO
+============================================================================ -->
+<section class="demo" id="demo">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="eyebrow">Interactive Showcase</span>
+      <h2 class="hd-2">展卷而问</h2>
+      <svg class="flourish" viewBox="0 0 88 18" aria-hidden="true">
+        <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
+      </svg>
+      <p class="lead" style="max-width: 620px; margin: 24px auto 0;">
+        点选一道历史问题，看 ChronoMirror 如何识别题型并选型 RAG 检索与 Qwen2.5-VL 生成策略。<br>
+        亦可拖动圆环上的红点，亲手选择「事实 × 多模态」组合，观察生成参数的实时变化。
+      </p>
+    </div>
+
+    <div class="demo-stage">
+
+      <!-- LEFT · question example -->
+      <div class="painting-panel">
+        <div class="painting-frame mode-text" id="painting-frame">
+          <img id="painting-img" src="" alt="" hidden>
+          <div class="text-scroll" id="painting-text">
+            <div class="ts-mark">問</div>
+            <div class="ts-question" id="ts-question">—</div>
+            <div class="ts-rule"></div>
+            <div class="ts-excerpt" id="ts-excerpt">—</div>
+            <div class="ts-source" id="ts-source">—</div>
+          </div>
+          <div class="seal-corner"><span>史</span><span>鉴</span></div>
+        </div>
+        <div class="painting-meta">
+          <div class="title" id="painting-title">图中这件青铜器属于哪个朝代？</div>
+          <div class="sub" id="painting-sub">Which dynasty does this bronze vessel belong to?</div>
+          <div class="tags" id="painting-tags">
+            <span class="tag dyn">商 · Shang</span>
+            <span class="tag">图像识别</span>
+            <span class="tag">多模态</span>
+          </div>
+        </div>
+        <div class="painting-thumbs" id="painting-thumbs"></div>
+      </div>
+
+      <!-- MIDDLE · Question type 2D space -->
+      <div class="va-panel">
+        <div class="va-panel-head">
+          <h3>题型坐标 Type-2D</h3>
+          <span class="mono" id="va-source">M2 ▸ q → ℝ²</span>
+        </div>
+        <div class="va-circumplex" id="va-circumplex">
+          <svg viewBox="-110 -110 220 220" xmlns="http://www.w3.org/2000/svg" id="va-svg">
+            <defs>
+              <radialGradient id="qGreen" cx="50%" cy="50%" r="60%">
+                <stop offset="0%" stop-color="#5e8466" stop-opacity="0.30"/>
+                <stop offset="100%" stop-color="#5e8466" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="qBlue" cx="50%" cy="50%" r="60%">
+                <stop offset="0%" stop-color="#2a6e96" stop-opacity="0.28"/>
+                <stop offset="100%" stop-color="#2a6e96" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="qRed" cx="50%" cy="50%" r="60%">
+                <stop offset="0%" stop-color="#b8302a" stop-opacity="0.28"/>
+                <stop offset="100%" stop-color="#b8302a" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="qGold" cx="50%" cy="50%" r="60%">
+                <stop offset="0%" stop-color="#b88f4e" stop-opacity="0.28"/>
+                <stop offset="100%" stop-color="#b88f4e" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <!-- 4 quadrant ink-wash tints -->
+            <circle cx="55" cy="-55" r="80" fill="url(#qGreen)" />
+            <circle cx="-55" cy="-55" r="80" fill="url(#qRed)" />
+            <circle cx="-55" cy="55" r="80" fill="url(#qBlue)" />
+            <circle cx="55" cy="55" r="80" fill="url(#qGold)" />
+            <!-- unit circle -->
+            <circle cx="0" cy="0" r="100" fill="none" stroke="#524841" stroke-width="0.8" />
+            <circle cx="0" cy="0" r="66"  fill="none" stroke="#a8a39e" stroke-width="0.3" stroke-dasharray="2 3"/>
+            <circle cx="0" cy="0" r="33"  fill="none" stroke="#a8a39e" stroke-width="0.3" stroke-dasharray="2 3"/>
+            <!-- axes -->
+            <line x1="-110" y1="0" x2="110" y2="0" stroke="#524841" stroke-width="0.6"/>
+            <line x1="0" y1="-110" x2="0" y2="110" stroke="#524841" stroke-width="0.6"/>
+            <!-- labels -->
+            <text x="0" y="-118" text-anchor="middle" font-size="10" font-family="Cormorant Garamond" fill="#2a2521" font-style="italic">多模态 +</text>
+            <text x="0" y="125" text-anchor="middle" font-size="10" font-family="Cormorant Garamond" fill="#2a2521" font-style="italic">纯文本 −</text>
+            <text x="118" y="3" text-anchor="start" font-size="10" font-family="Cormorant Garamond" fill="#2a2521" font-style="italic">推理 +</text>
+            <text x="-118" y="3" text-anchor="end" font-size="10" font-family="Cormorant Garamond" fill="#2a2521" font-style="italic">事实 −</text>
+            <!-- cardinal category words -->
+            <text x="70" y="-72" text-anchor="middle" font-size="8.5" fill="#5e8466" opacity="0.9">综合分析</text>
+            <text x="-70" y="-72" text-anchor="middle" font-size="8.5" fill="#b8302a" opacity="0.9">图像识别</text>
+            <text x="-70" y="78" text-anchor="middle" font-size="8.5" fill="#2a6e96" opacity="0.9">史实考据</text>
+            <text x="70" y="78" text-anchor="middle" font-size="8.5" fill="#b88f4e" opacity="0.9">因果推理</text>
+            <!-- 8 painting dots -->
+            <g id="va-dots"></g>
+            <!-- draggable point -->
+            <g id="va-pin">
+              <circle r="11" fill="#b8302a" opacity="0.20" />
+              <circle r="5.5" fill="#b8302a" />
+              <circle r="2.2" fill="#fff" />
+            </g>
+          </svg>
+          <div class="va-dot-tip" id="va-dot-tip"></div>
+        </div>
+        <div class="va-readout">
+          <div class="word" id="va-word">综合题</div>
+          <div class="coord" id="va-coord">v = -0.03  ·  a = +0.11</div>
+        </div>
+        <div class="va-hint">拖动红点 · 8 道问题散在坐标系上 · 实时切换检索与生成参数</div>
+        <div class="va-controls">
+          <button class="va-btn primary" id="btn-regen">重生成</button>
+        </div>
+      </div>
+
+      <!-- RIGHT · descriptors + RAG -->
+      <div class="output-panel">
+
+        <div class="descriptors">
+          <div class="descriptors-head">
+            <h3>生成参数</h3>
+            <span class="mono">M5/M6 · 8-slot rule</span>
+          </div>
+          <div class="slot-grid" id="slot-grid">
+            <div class="slot"><div class="slot-label">top_k</div><div class="slot-value" data-slot="tempo">—</div></div>
+            <div class="slot"><div class="slot-label">retriever</div><div class="slot-value" data-slot="mode">—</div></div>
+            <div class="slot"><div class="slot-label">rerank</div><div class="slot-value" data-slot="meter">—</div></div>
+            <div class="slot"><div class="slot-label">prompt</div><div class="slot-value" data-slot="register">—</div></div>
+            <div class="slot"><div class="slot-label">context_len</div><div class="slot-value" data-slot="texture">—</div></div>
+            <div class="slot"><div class="slot-label">temperature</div><div class="slot-value" data-slot="dynamics">—</div></div>
+            <div class="slot"><div class="slot-label">decoding</div><div class="slot-value" data-slot="articulation">—</div></div>
+            <div class="slot full"><div class="slot-label">citation_src</div><div class="slot-value" data-slot="instrumentation">—</div></div>
+          </div>
+        </div>
+
+        <div class="rag-card">
+          <div class="rag-card-head">
+            <h3>史料检索</h3>
+            <span class="mono">M3 · top-3 of 1129 chunks</span>
+          </div>
+          <div class="rag-list" id="rag-list"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================================
+     CASE STUDY · 案例研究
+============================================================================ -->
+<section class="case-study" id="case-study">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="eyebrow">Case Study · One Question, Full Trace</span>
+      <h2 class="hd-2">案例研究</h2>
+      <svg class="flourish" viewBox="0 0 88 18" aria-hidden="true">
+        <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
+      </svg>
+      <p class="lead" style="max-width: 540px; margin: 24px auto 0;">
+        以 <em>「后母戊鼎断代」</em> 为例，把 ChronoMirror pipeline 的每一步全部摊开看：从图文问题输入到题型投影、史料 RAG 检索、再到 Qwen2.5-VL 条件 prompt 的完整轨迹。
+      </p>
+    </div>
+
+    <div class="case-banner fade-in">
+      <div class="img-wrap" id="case-img-wrap">
+        <img src="assets/paintings/p2_dujin_poet_lin_bu.jpg" alt="The Poet Lin Bu Wandering in the Moonlight">
+      </div>
+      <div>
+        <h3>图中青铜器断代<br><span style="font-family:var(--serif-en);font-style:italic;font-weight:400;color:var(--ink-mid);font-size:24px;">Which dynasty does this bronze vessel belong to?</span></h3>
+        <div class="artist">题图：后母戊鼎拓片 · 商代后期王室祭器</div>
+        <p class="lead">
+          一道经典多模态问题——给出青铜器拓片与题面提示，要求判断朝代与用途。题型落在「事实 × 多模态」象限，坐标偏左上。
+        </p>
+        <p class="lead">
+          下面是 ChronoMirror 把这种「有图为证」的题面转译成具体 RAG 检索与生成参数的完整过程：
+        </p>
+        <div class="case-meta">
+          <span class="tag dyn">商 · Shang</span>
+          <span class="tag">图像识别</span>
+          <span class="tag">多模态</span>
+          <span class="tag">RAG-API · v1.0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="case-trace stagger">
+      <div class="case-step">
+        <div class="ct-num">① INPUT</div>
+        <h4>图文问题输入</h4>
+        <div class="ct-mini-svg">
+          <svg viewBox="0 0 200 110">
+            <rect x="20" y="20" width="60" height="80" rx="4" fill="#ebe1cb" stroke="#b88f4e" stroke-width="1"/>
+            <text x="50" y="65" text-anchor="middle" font-size="9" font-family="Noto Serif SC">img</text>
+            <rect x="90" y="32" width="90" height="14" rx="2" fill="#faf6ec" stroke="#a8a39e" stroke-dasharray="2 2"/>
+            <text x="135" y="42" text-anchor="middle" font-size="8" font-family="JetBrains Mono" fill="#524841">question · hint</text>
+            <rect x="90" y="54" width="90" height="14" rx="2" fill="#faf6ec" stroke="#a8a39e" stroke-dasharray="2 2"/>
+            <text x="135" y="64" text-anchor="middle" font-size="8" font-family="JetBrains Mono" fill="#524841">artist · dynasty</text>
+            <rect x="90" y="76" width="90" height="14" rx="2" fill="#faf6ec" stroke="#a8a39e" stroke-dasharray="2 2"/>
+            <text x="135" y="86" text-anchor="middle" font-size="8" font-family="JetBrains Mono" fill="#524841">school · medium</text>
+          </svg>
+        </div>
+<pre><span class="k">"question"</span>: <span class="s">"该青铜器朝代?"</span>,
+<span class="k">"image"</span>: <span class="s">"houmuwu_ding.jpg"</span>,
+<span class="k">"hint_era"</span>: <span class="s">"上古"</span>,
+<span class="k">"modality"</span>: <span class="s">"image+text"</span>,
+<span class="k">"api_key"</span>: <span class="s">"2024XXXX"</span></pre>
+        <div class="ct-foot">M1 ▸ raw question + image</div>
+      </div>
+
+      <div class="case-step">
+        <div class="ct-num">② ENCODER</div>
+        <h4>多模态编码</h4>
+        <div class="ct-mini-svg">
+          <div class="encoder-stripes">
+            <div class="encoder-stripe" style="width: 92%"></div>
+            <div class="encoder-stripe" style="width: 85%"></div>
+            <div class="encoder-stripe" style="width: 78%"></div>
+            <div class="encoder-stripe" style="width: 94%"></div>
+            <div class="encoder-stripe" style="width: 82%"></div>
+            <div class="encoder-stripe" style="width: 70%"></div>
+            <div class="encoder-stripe" style="width: 88%"></div>
+            <div class="encoder-stripe" style="width: 76%"></div>
+            <div class="encoder-stripe" style="width: 81%"></div>
+          </div>
+        </div>
+<pre><span class="k">"q_dim"</span>: <span class="n">768</span>,
+<span class="k">"e_img"</span>: <span class="s">"Qwen2.5-VL"</span>,
+<span class="k">"e_txt"</span>: <span class="s">"BGE-M3"</span>,
+<span class="k">"e_meta"</span>: <span class="s">"hash"</span>,
+<span class="k">"‖q‖₂"</span>: <span class="n">19.7</span></pre>
+        <div class="ct-foot">M1 ▸ fused multimodal q ∈ ℝ^768</div>
+      </div>
+
+      <div class="case-step">
+        <div class="ct-num">③ TYPE</div>
+        <h4>题型投影 + RAG</h4>
+        <div class="ct-mini-svg">
+          <svg viewBox="-55 -55 110 110">
+            <circle r="50" fill="none" stroke="#524841" stroke-width="0.6"/>
+            <line x1="-50" y1="0" x2="50" y2="0" stroke="#a8a39e" stroke-width="0.4"/>
+            <line x1="0" y1="-50" x2="0" y2="50" stroke="#a8a39e" stroke-width="0.4"/>
+            <path d="M0,0 L50,0 A50,50 0 0,1 0,50 Z" fill="#b88f4e" opacity="0.18" />
+            <path d="M0,0 L0,50 A50,50 0 0,1 -50,0 Z" fill="#2a6e96" opacity="0.18" />
+            <path d="M0,0 L-50,0 A50,50 0 0,1 0,-50 Z" fill="#b8302a" opacity="0.18" />
+            <path d="M0,0 L0,-50 A50,50 0 0,1 50,0 Z" fill="#5e8466" opacity="0.18" />
+            <circle cx="-3" cy="-11" r="3.5" fill="#b8302a"/>
+            <circle cx="-3" cy="-11" r="1.3" fill="#fff"/>
+          </svg>
+        </div>
+<pre><span class="k">"infer"</span>: <span class="n">-0.45</span>,
+<span class="k">"multi"</span>: <span class="n">+0.65</span>,
+<span class="k">"category"</span>: <span class="s">"文物鉴定"</span>,
+<span class="k">"rag_top1"</span>: <span class="s">"后母戊鼎</span>
+              <span class="s">1939出土"</span></pre>
+        <div class="ct-foot">M2 ▸ type · M3 ▸ top-3 RAG chunks</div>
+      </div>
+
+      <div class="case-step">
+        <div class="ct-num">④ OUTPUT</div>
+        <h4>生成参数 + 答案</h4>
+        <div class="ct-mini-svg">
+          <svg viewBox="0 0 200 110">
+            <g fill="#b8302a" opacity="0.85">
+              <rect x="10" y="50" width="3" height="20" rx="1"/>
+              <rect x="16" y="40" width="3" height="40" rx="1"/>
+              <rect x="22" y="32" width="3" height="56" rx="1"/>
+              <rect x="28" y="38" width="3" height="44" rx="1"/>
+              <rect x="34" y="46" width="3" height="28" rx="1"/>
+              <rect x="40" y="28" width="3" height="64" rx="1"/>
+              <rect x="46" y="44" width="3" height="32" rx="1"/>
+              <rect x="52" y="50" width="3" height="20" rx="1"/>
+              <rect x="58" y="36" width="3" height="48" rx="1"/>
+              <rect x="64" y="42" width="3" height="36" rx="1"/>
+              <rect x="70" y="48" width="3" height="24" rx="1"/>
+              <rect x="76" y="40" width="3" height="40" rx="1"/>
+              <rect x="82" y="50" width="3" height="20" rx="1"/>
+              <rect x="88" y="46" width="3" height="28" rx="1"/>
+              <rect x="94" y="52" width="3" height="16" rx="1"/>
+            </g>
+            <g fill="#524841" opacity="0.55">
+              <rect x="104" y="46" width="3" height="28" rx="1"/>
+              <rect x="110" y="50" width="3" height="20" rx="1"/>
+              <rect x="116" y="44" width="3" height="32" rx="1"/>
+              <rect x="122" y="48" width="3" height="24" rx="1"/>
+              <rect x="128" y="52" width="3" height="16" rx="1"/>
+              <rect x="134" y="50" width="3" height="20" rx="1"/>
+              <rect x="140" y="46" width="3" height="28" rx="1"/>
+              <rect x="146" y="54" width="3" height="12" rx="1"/>
+              <rect x="152" y="50" width="3" height="20" rx="1"/>
+              <rect x="158" y="48" width="3" height="24" rx="1"/>
+              <rect x="164" y="52" width="3" height="16" rx="1"/>
+              <rect x="170" y="50" width="3" height="20" rx="1"/>
+              <rect x="176" y="54" width="3" height="12" rx="1"/>
+              <rect x="182" y="56" width="3" height="8" rx="1"/>
+              <rect x="188" y="58" width="3" height="4" rx="1"/>
+            </g>
+          </svg>
+        </div>
+<pre><span class="k">"top_k"</span>: <span class="n">12</span>,
+<span class="k">"retriever"</span>: <span class="s">"hybrid"</span>,
+<span class="k">"cite"</span>: [<span class="s">"图录"</span>, <span class="s">"博物馆志"</span>],
+<span class="k">"prompt"</span>: <span class="s">"few-shot"</span>,
+<span class="k">"answer_len"</span>: <span class="n">186</span> tok</pre>
+        <div class="ct-foot">M5/M6 ▸ 8-slot · M4 ▸ Qwen2.5-VL</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================================
+     PAINTINGS ATLAS · 画作图谱
+============================================================================ -->
+<section class="atlas" id="atlas">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="eyebrow">8 Questions × 6 Question Types</span>
+      <h2 class="hd-2">题例图谱</h2>
+      <svg class="flourish" viewBox="0 0 88 18" aria-hidden="true">
+        <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
+      </svg>
+      <p class="lead" style="max-width: 580px; margin: 24px auto 0;">
+        从商周青铜到辛亥革命，八道历史问题跨越三千年，各自在「事实 × 多模态」坐标系里有自己的题型位置——点击任一卡看完整 pipeline 的数据轨迹。
+      </p>
+    </div>
+    <div class="atlas-grid stagger" id="atlas-grid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================================
+     MODULE SHOWCASE
+============================================================================ -->
+<section class="modules" id="modules">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="eyebrow">9 Modules · CPU-friendly demos</span>
+      <h2 class="hd-2">模块陈列</h2>
+      <svg class="flourish" viewBox="0 0 88 18" aria-hidden="true">
+        <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
+      </svg>
+      <p class="lead" style="max-width: 540px; margin: 24px auto 0;">
+        每一格对应一个独立模块：可单独安装、可单独跑 demo、可单独评测。<br>
+        <em>悬停 hover 卡片：图自动轮播 3 张。点击：灯箱全图。</em>
+      </p>
+    </div>
+    <div class="module-grid stagger" id="module-grid"></div>
+  </div>
+</section>
+
+<!-- ============================================================================
+     DATAFLOW · 模块连接图
+============================================================================ -->
+<section class="dataflow" id="dataflow">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="eyebrow">Module Topology · 9 nodes · 14 edges</span>
+      <h2 class="hd-2">模块连接图</h2>
+      <svg class="flourish" viewBox="0 0 88 18" aria-hidden="true">
+        <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
+      </svg>
+      <p class="lead" style="max-width: 660px; margin: 24px auto 0;">
+        每个模块在系统里扮演的角色：输入怎么进、产物怎么流、谁喂给谁。<br>
+        <em style="color: var(--seal-deep);">将鼠标悬停在任一节点上</em>，看它的进/出边亮起来。
+      </p>
+    </div>
+
+    <div class="df-stage fade-in">
+      <svg id="df-svg" class="df-svg" viewBox="0 0 1280 680" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <marker id="df-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#786c5f"/>
+          </marker>
+          <marker id="df-arrow-active" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#b8302a"/>
+          </marker>
+        </defs>
+
+        <!-- M8 wrapper -->
+        <rect class="m8-wrap" x="60" y="100" width="1160" height="560" rx="20"
+              fill="none" stroke="#b88f4e" stroke-width="1.2" stroke-dasharray="6 4" opacity="0.45"/>
+        <g class="m8-label">
+          <rect x="80" y="86" width="320" height="26" rx="13" fill="#faf6ec" stroke="#b88f4e" stroke-width="0.8"/>
+          <text x="240" y="103" text-anchor="middle" font-family="Cormorant Garamond" font-style="italic" font-size="13" fill="#786c5f" letter-spacing="0.08em">M8 · Frontend + Backend orchestration</text>
+        </g>
+
+        <!-- INPUTS row (y=30 - 70) -->
+        <g class="df-node input" data-id="in-img" transform="translate(110,30)">
+          <rect class="node-bg" width="120" height="40" rx="8"/>
+          <text class="node-name" x="60" y="25">题图 · image</text>
+        </g>
+        <g class="df-node input" data-id="in-text" transform="translate(250,30)">
+          <rect class="node-bg" width="120" height="40" rx="8"/>
+          <text class="node-name" x="60" y="25">问题 · question</text>
+        </g>
+        <g class="df-node input" data-id="in-meta" transform="translate(390,30)">
+          <rect class="node-bg" width="120" height="40" rx="8"/>
+          <text class="node-name" x="60" y="25">元数据 · meta</text>
+        </g>
+        <g class="df-node input" data-id="in-prompt" transform="translate(670,30)">
+          <rect class="node-bg" width="120" height="40" rx="8"/>
+          <text class="node-name" x="60" y="25">指令 · instruct</text>
+        </g>
+        <g class="df-node input" data-id="in-hum" transform="translate(820,30)">
+          <rect class="node-bg" width="120" height="40" rx="8"/>
+          <text class="node-name" x="60" y="25">追问 · follow-up</text>
+        </g>
+
+        <!-- input → encoder edges -->
+        <path class="df-edge" data-from="in-img"  data-to="m1" d="M170,70 C 170,110 300,120 300,150"/>
+        <path class="df-edge" data-from="in-text" data-to="m1" d="M310,70 L 310,150"/>
+        <path class="df-edge" data-from="in-meta" data-to="m1" d="M450,70 C 450,110 320,120 320,150"/>
+        <path class="df-edge" data-from="in-prompt" data-to="m6" d="M730,70 L 730,150"/>
+        <path class="df-edge" data-from="in-hum"  data-to="m7" d="M880,70 L 880,150"/>
+
+        <!-- ENCODERS row (y=150 - 210) -->
+        <g class="df-node cat-perception" data-id="m1" transform="translate(230,150)">
+          <rect class="node-bg" width="160" height="60" rx="10"/>
+          <rect class="node-stripe" width="160" height="3" fill="currentColor"/>
+          <text class="node-id" x="80" y="24">M1 · ENCODER</text>
+          <text class="node-name" x="80" y="46">多模态问题编码</text>
+        </g>
+        <g class="df-node cat-interaction" data-id="m6" transform="translate(650,150)">
+          <rect class="node-bg" width="160" height="60" rx="10"/>
+          <rect class="node-stripe" width="160" height="3" fill="currentColor"/>
+          <text class="node-id" x="80" y="24">M6 · PROMPT</text>
+          <text class="node-name" x="80" y="46">Prompt 翻译</text>
+        </g>
+        <g class="df-node cat-interaction" data-id="m7" transform="translate(800,150)">
+          <rect class="node-bg" width="160" height="60" rx="10"/>
+          <rect class="node-stripe" width="160" height="3" fill="currentColor"/>
+          <text class="node-id" x="80" y="24">M7 · DIALOG</text>
+          <text class="node-name" x="80" y="46">多轮对话</text>
+        </g>
+
+        <!-- M1 → M2 / M3 edges -->
+        <path class="df-edge" data-from="m1" data-to="m2" d="M280,210 C 280,260 220,260 220,300"/>
+        <text class="df-edge-label" x="218" y="262">z · 768d</text>
+
+        <path class="df-edge" data-from="m1" data-to="m3" d="M340,210 C 340,260 410,260 410,300"/>
+        <text class="df-edge-label" x="386" y="262">z · query</text>
+
+        <!-- PROJECTIONS row (y=300 - 360) -->
+        <g class="df-node cat-perception" data-id="m2" transform="translate(140,300)">
+          <rect class="node-bg" width="160" height="60" rx="10"/>
+          <rect class="node-stripe" width="160" height="3" fill="currentColor"/>
+          <text class="node-id" x="80" y="24">M2 · TYPE</text>
+          <text class="node-name" x="80" y="46">题型分类</text>
+        </g>
+        <g class="df-node cat-perception" data-id="m3" transform="translate(330,300)">
+          <rect class="node-bg" width="160" height="60" rx="10"/>
+          <rect class="node-stripe" width="160" height="3" fill="currentColor"/>
+          <text class="node-id" x="80" y="24">M3 · RAG</text>
+          <text class="node-name" x="80" y="46">历史知识检索</text>
+        </g>
+
+        <!-- All projections + helpers → M4 edges -->
+        <path class="df-edge" data-from="m2" data-to="m4" d="M220,360 C 220,420 540,420 540,460"/>
+        <text class="df-edge-label" x="270" y="412">type · (v,a)</text>
+
+        <path class="df-edge" data-from="m3" data-to="m4" d="M410,360 C 410,420 540,420 540,460"/>
+        <text class="df-edge-label" x="430" y="412">RAG · top-k</text>
+
+        <path class="df-edge" data-from="m6" data-to="m4" d="M730,210 C 730,360 560,400 540,460"/>
+        <text class="df-edge-label" x="690" y="368">prompt tmpl</text>
+
+        <path class="df-edge" data-from="m7" data-to="m4" d="M880,210 C 880,400 600,420 540,460"/>
+        <text class="df-edge-label" x="800" y="392">history ctx</text>
+
+        <!-- M4 GENERATOR (y=460 - 530) -->
+        <g class="df-node cat-generation" data-id="m4" transform="translate(440,460)">
+          <rect class="node-bg" width="200" height="70" rx="12"/>
+          <rect class="node-stripe" width="200" height="3" fill="currentColor"/>
+          <text class="node-id" x="100" y="26">M4 · GENERATOR</text>
+          <text class="node-name" x="100" y="50">Qwen2.5-VL · 答案生成</text>
+        </g>
+
+        <!-- M4 → M5 -->
+        <path class="df-edge" data-from="m4" data-to="m5" d="M540,530 L 540,580"/>
+        <text class="df-edge-label" x="588" y="558">raw answer</text>
+
+        <!-- M4 → M9 -->
+        <path class="df-edge" data-from="m4" data-to="m9" d="M640,495 C 760,495 850,500 900,500"/>
+        <text class="df-edge-label" x="760" y="488">answer + cite</text>
+
+        <!-- M5 EDITOR (y=580 - 640) -->
+        <g class="df-node cat-interaction" data-id="m5" transform="translate(440,580)">
+          <rect class="node-bg" width="200" height="60" rx="10"/>
+          <rect class="node-stripe" width="200" height="3" fill="currentColor"/>
+          <text class="node-id" x="100" y="24">M5 · REFINE</text>
+          <text class="node-name" x="100" y="46">答案精修（rerank / cite / halu）</text>
+        </g>
+
+        <!-- M5 → out-audio -->
+        <path class="df-edge" data-from="m5" data-to="out-audio" d="M640,610 C 740,610 720,615 760,615"/>
+        <text class="df-edge-label" x="700" y="600">JSON + cite</text>
+
+        <!-- OUTPUT -->
+        <g class="df-node out" data-id="out-audio" transform="translate(760,595)">
+          <rect class="node-bg" width="160" height="40" rx="8" fill="#b8302a" stroke="#8c1f1c" stroke-width="1.4"/>
+          <text class="node-name" x="80" y="25" fill="#faf6ec" font-weight="500">▸ 答案 · answer out</text>
+        </g>
+
+        <!-- M9 EVALUATOR (right side) -->
+        <g class="df-node cat-evaluation" data-id="m9" transform="translate(900,470)">
+          <rect class="node-bg" width="160" height="60" rx="10"/>
+          <rect class="node-stripe" width="160" height="3" fill="currentColor"/>
+          <text class="node-id" x="80" y="24">M9 · EVAL</text>
+          <text class="node-name" x="80" y="46">评测（EM / F1 / Recall@k）</text>
+        </g>
+
+        <!-- M9 dashed reference back to image (ground truth) -->
+        <path class="df-edge df-edge-ref" data-from="in-img" data-to="m9"
+              d="M230,50 C 800,50 1000,360 980,470" stroke-dasharray="4 3"/>
+        <text class="df-edge-label" x="980" y="68">ground-truth answer</text>
+      </svg>
+
+      <div class="df-legend">
+        <div class="legend-item"><span class="dot" style="background:var(--paper-warm); border:1px dashed var(--paper-deep)"></span>用户输入</div>
+        <div class="legend-item"><span class="dot" style="background:var(--stone-blue)"></span>感知 Perception</div>
+        <div class="legend-item"><span class="dot" style="background:var(--stone-green)"></span>交互 Interaction</div>
+        <div class="legend-item"><span class="dot" style="background:var(--seal)"></span>生成 Generation</div>
+        <div class="legend-item"><span class="dot" style="background:var(--gold-soft)"></span>评测 Evaluation</div>
+        <div class="legend-item"><span class="dot" style="background:#faf6ec; border:1px dashed var(--gold)"></span>M8 wrapper（不参与数据流，提供 API 与 UI）</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================================
+     RESEARCH CONTEXT · 研究语境
+============================================================================ -->
+<section class="context" id="context">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="eyebrow">Research Context · §2 of Proposal</span>
+      <h2 class="hd-2">研究语境</h2>
+      <svg class="flourish" viewBox="0 0 88 18" aria-hidden="true">
+        <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
+      </svg>
+      <p class="lead" style="max-width: 620px; margin: 24px auto 0;">
+        三栏对照看清 ChronoMirror 在文献与产业景观中的位置：现状有什么 / 缺什么 / 我们做什么。
+      </p>
+    </div>
+
+    <div class="context-grid stagger">
+      <div class="context-col">
+        <div class="ctx-eyebrow">State of the Field</div>
+        <h3>现状</h3>
+        <p>
+          传统 RAG 系统在通用问答任务上已趋成熟；LLM 领域亦有 Self-RAG / GraphRAG / HyDE 等增强方案。但面向专业领域（如历史）的多模态 RAG 仍在起步。
+        </p>
+        <ul>
+          <li>Qwen2.5-VL / GPT-4o 取得 SOTA 视觉问答能力</li>
+          <li>BGE-M3 / E5 为中文事实问答带来大幅检索提升</li>
+          <li>Self-RAG 证明「检索是否调用」可学习</li>
+          <li>history-domain QA 大多停在纯文本、未打通图像路径</li>
+        </ul>
+      </div>
+      <div class="context-col gap">
+        <div class="ctx-eyebrow">The Gap</div>
+        <h3><span class="accent">差距</span></h3>
+        <p>
+          跨越「图文混合输入」与「多轮检索」的历史问答系统仍是空白；现有方案处理「看图说史」基本停留在「点 OCR 加一句描述」的敷衍级调用。
+        </p>
+        <ul>
+          <li>没有针对「题型」动态选型检索与生成策略</li>
+          <li>没有可点击、可验证的引用交互</li>
+          <li>多轮追问场景下跨轮检索几乎未被优化</li>
+          <li>评测维度缺「引用一致性 citation faithfulness」</li>
+        </ul>
+      </div>
+      <div class="context-col us">
+        <div class="ctx-eyebrow">Our Approach</div>
+        <h3>ChronoMirror 的方法</h3>
+        <p>
+          把「问题 → 题型 → 检索 → 生成」明确为一条可观察、可干预、可解释的四段管线，而不是「丢给 LLM 吃一口」；历史语境通过平台 RAG API 注入。
+        </p>
+        <ul>
+          <li>多模态 q + 题型投影：两步可视、可拖动</li>
+          <li>BGE-M3 + FAISS 检索 1129 条史料 chunk</li>
+          <li>Qwen2.5-VL 接受图文混合输入与 top-k 上下文</li>
+          <li>评测含 citation faithfulness 单独打分</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================================
+     PROJECT TIMELINE · 项目时间线
+============================================================================ -->
+<section class="timeline" id="timeline">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="eyebrow">Project Journey · 2026 Summer</span>
+      <h2 class="hd-2">项目时间线</h2>
+      <svg class="flourish" viewBox="0 0 88 18" aria-hidden="true">
+        <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
+      </svg>
+    </div>
+    <div class="timeline-track stagger">
+      <div class="timeline-item done">
+        <div class="ti-date">2026 · 04 · 13 — 04 · 20</div>
+        <h4>P1 · 选题与架构</h4>
+        <p>确定 ChronoMirror 的核心命题：把历史问答作为可验证、可追溯的多模态 RAG 任务；掌握平台检索 API 文档；冻结 9 模块边界。</p>
+        <div class="ti-meta"><span>▸ 架构冻结</span><span>▸ API Key 开通</span></div>
+      </div>
+      <div class="timeline-item done">
+        <div class="ti-date">2026 · 04 · 27 — 05 · 18</div>
+        <h4>P2 · 模型骨架 + 开题答辩</h4>
+        <p>9 个独立模块代码同步推进；Qwen2.5-VL 接入 / 题型分类器 / RAG 检索骨架建立；baseline 跳通；开题报告答辩。</p>
+        <div class="ti-meta"><span>▸ 7,925 LOC</span><span>▸ Baseline EM=0.41</span><span>▸ Proposal v8</span></div>
+      </div>
+      <div class="timeline-item active">
+        <div class="ti-date">2026 · 05 · 25 — 06 · 01</div>
+        <h4>P3 · RAG 优化 + 中期 demo</h4>
+        <p>BGE-rerank 上线；CoT prompt 模板；多轮检索；引用校验模块；中期演示。</p>
+        <div class="ti-meta"><span>▸ 1,129 RAG chunks</span><span>▸ EM ↑ +9.4%</span><span>▸ Demo v1</span></div>
+      </div>
+      <div class="timeline-item">
+        <div class="ti-date">2026 · 06 · 08 — 06 · 15</div>
+        <h4>P4 · 集成 + 最终答辩</h4>
+        <p>幻觉过滤、style transfer、讲解厅 UI 集成；Qwen-Judge 自动评测 bonus；最终答辩与演示。</p>
+        <div class="ti-meta"><span>▸ Hallucination filter</span><span>▸ Auto-eval bonus</span><span>▸ Final defence</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================================
+     NUMBERS
+============================================================================ -->
+<section class="numbers" id="numbers">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="eyebrow">By the numbers</span>
+      <h2 class="hd-2">硬数字</h2>
+      <svg class="flourish" viewBox="0 0 88 18" aria-hidden="true">
+        <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
+      </svg>
+    </div>
+    <div class="number-grid stagger">
+      <div class="number-cell">
+        <div class="big" data-count="7925">0</div>
+        <div class="label">Lines of Code</div>
+        <div class="sub">Python + TS/React</div>
+        <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
+          <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
+        </svg>
+      </div>
+      <div class="number-cell">
+        <div class="big" data-count="27">0</div>
+        <div class="label">Figures</div>
+        <div class="sub">9 modules × 3 viz</div>
+        <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
+          <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
+        </svg>
+      </div>
+      <div class="number-cell">
+        <div class="big" data-count="500">0</div>
+        <div class="label">Test Questions</div>
+        <div class="sub">隐藏测试集</div>
+        <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
+          <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
+        </svg>
+      </div>
+      <div class="number-cell">
+        <div class="big" data-count="7">0<sup>B</sup></div>
+        <div class="label">Model Params</div>
+        <div class="sub">Qwen2.5-7B-VL</div>
+        <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
+          <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
+        </svg>
+      </div>
+      <div class="number-cell">
+        <div class="big" data-count="1129">0</div>
+        <div class="label">RAG Chunks</div>
+        <div class="sub">二十四史 + 地方志 + 文献</div>
+        <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
+          <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
+        </svg>
+      </div>
+      <div class="number-cell">
+        <div class="big" data-count="8">0</div>
+        <div class="label">API Endpoints</div>
+        <div class="sub">FastAPI + SSE</div>
+        <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
+          <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
+        </svg>
+      </div>
+      <div class="number-cell">
+        <div class="big" data-count="5">0</div>
+        <div class="label">Eval Dimensions</div>
+        <div class="sub">EM · F1 · BLEU · Recall · Cite</div>
+        <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
+          <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
+        </svg>
+      </div>
+      <div class="number-cell">
+        <div class="big" data-count="0">0<sup>¥</sup></div>
+        <div class="label">Budget</div>
+        <div class="sub">平台供模型与检索</div>
+        <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
+          <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================================
+     TECH STACK
+============================================================================ -->
+<section class="stack" id="stack">
+  <div class="container">
+    <div class="section-head fade-in">
+      <span class="eyebrow">Built with</span>
+      <h2 class="hd-2">技术栈</h2>
+      <svg class="flourish" viewBox="0 0 88 18" aria-hidden="true">
+        <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
+      </svg>
+    </div>
+    <div class="stack-cloud fade-in">
+      <span class="tech-pill cat-vision">Qwen2.5-7B-VL</span>
+      <span class="tech-pill cat-vision">BGE-M3</span>
+      <span class="tech-pill cat-vision">Sentence-BERT</span>
+      <span class="tech-pill cat-audio">vLLM</span>
+      <span class="tech-pill cat-audio">LoRA / PEFT</span>
+      <span class="tech-pill cat-audio">Cohere Rerank</span>
+      <span class="tech-pill cat-audio">BGE-Reranker</span>
+      <span class="tech-pill cat-audio">HyDE</span>
+      <span class="tech-pill cat-audio">Self-RAG</span>
+      <span class="tech-pill cat-lang">LangChain</span>
+      <span class="tech-pill cat-lang">LlamaIndex</span>
+      <span class="tech-pill cat-frame">FAISS</span>
+      <span class="tech-pill cat-frame">PyTorch 2.1</span>
+      <span class="tech-pill cat-frame">FastAPI</span>
+      <span class="tech-pill cat-frame">React + Vite</span>
+      <span class="tech-pill cat-frame">TypeScript</span>
+      <span class="tech-pill cat-frame">HuggingFace</span>
+      <span class="tech-pill cat-data">二十四史</span>
+      <span class="tech-pill cat-data">地方志语料</span>
+      <span class="tech-pill cat-data">学术文献库</span>
+      <span class="tech-pill cat-data">隐藏评测集</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================================
+     FOOTER
+============================================================================ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">史鉴 · ChronoMirror</div>
+        <p>An end-to-end multimodal RAG agent for verifiable historical question answering.<br>
+        Submitted for the practical training course, 上海创智学院, 2026 summer.</p>
+      </div>
+      <div>
+        <h5>Team</h5>
+        <ul>
+          <li>· 李德涵</li>
+          <li>· 谭绍庭</li>
+          <li>· 谢怿文</li>
+        </ul>
+      </div>
+      <div>
+        <h5>Advisor</h5>
+        <ul>
+          <li>上海创智学院</li>
+          <li>实训课题组</li>
+        </ul>
+        <h5 style="margin-top: 20px;">Repo</h5>
+        <p>chronomirror_code.zip · 依赖说明与运行方式见 README</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>API Key = 学号 · 平台提供模型与检索</span>
+      <span>© 2026 · Cooked with 朱印, 墨 &amp; Qwen2.5-VL</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================================
+     LIGHTBOX (figure detail viewer)
+============================================================================ -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" id="lightbox-close">✕</button>
+    <h3 id="lb-title">—</h3>
+    <p class="lead" id="lb-desc">—</p>
+    <div class="lightbox-figs" id="lb-figs"></div>
+  </div>
+</div>
+
+<!-- ============================================================================
+     CONCERT MODE overlay
+============================================================================ -->
+<div class="concert-overlay" id="concert-overlay">
+  <div class="concert-progress-bar"><div class="fill" id="concert-fill"></div></div>
+  <button class="concert-close" id="concert-close">✕</button>
+  <div class="concert-stage">
+    <div class="concert-painting">
+      <div id="concert-img-stack" style="position:absolute;inset:0;"></div>
+      <div class="seal-corner"><span>史</span><span>鉴</span></div>
+    </div>
+    <div class="concert-info">
+      <div class="index" id="concert-index">题 · 0 / 8</div>
+      <div class="title" id="concert-title">—</div>
+      <div class="sub" id="concert-sub">—</div>
+      <div class="va-line" id="concert-va">infer = 0  ·  multi = 0  ·  —</div>
+      <div class="desc" id="concert-desc">—</div>
+      <div class="concert-mini-circle">
+        <svg viewBox="-110 -110 220 220" id="concert-mini-svg">
+          <circle r="100" fill="none" stroke="rgba(245,239,226,0.32)" stroke-width="1"/>
+          <line x1="-100" y1="0" x2="100" y2="0" stroke="rgba(245,239,226,0.18)" stroke-width="0.6"/>
+          <line x1="0" y1="-100" x2="0" y2="100" stroke="rgba(245,239,226,0.18)" stroke-width="0.6"/>
+          <g id="concert-pin">
+            <circle r="11" fill="#b8302a" opacity="0.30"/>
+            <circle r="5" fill="#b8302a"/>
+            <circle r="2" fill="#faf6ec"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================================
+     CODE TRANSPARENCY PANEL
+============================================================================ -->
+<div class="code-panel" id="code-panel">
+  <button class="code-panel-toggle" id="code-panel-toggle" aria-label="Toggle code panel">
+    <span class="icon-open">⌘</span>
+    <span class="icon-close">✕</span>
+  </button>
+  <div class="code-panel-head">JSON state · live</div>
+  <button class="code-panel-copy" id="code-panel-copy" style="display:none">copy</button>
+  <div class="code-panel-body">
+    <div class="code-panel-tabs">
+      <div class="code-panel-tab active" data-tab="painting">painting</div>
+      <div class="code-panel-tab" data-tab="va">va</div>
+      <div class="code-panel-tab" data-tab="descriptors">descriptors</div>
+      <div class="code-panel-tab" data-tab="rag">rag</div>
+    </div>
+    <pre id="code-panel-pre">—</pre>
+  </div>
+</div>
+
+<!-- ============================================================================
+     ABOUT MODAL
+============================================================================ -->
+<div class="modal-overlay about-modal" id="about-modal">
+  <div class="modal-content">
+    <button class="modal-close" data-close="about-modal">✕</button>
+    <div class="about-body">
+      <div class="about-head">
+        <div class="seal-big"><span>史</span><span>鉴</span><span>问</span><span>答</span></div>
+        <h2>ChronoMirror · 史鉴</h2>
+        <div class="tagline">Where History Answers Itself.</div>
+      </div>
+
+      <div class="about-section">
+        <h3>项目本旨</h3>
+        <p>历史问答的难点不是“生成”，而是“不胡说”。LLM 随口能提及《资治通鉴》但引用句可能压根不存在。ChronoMirror 把「问题 → 题型 → 检索 → 生成」明确为一条<strong>可观察、可干预、可解释</strong>的四段式 pipeline，用「事实×多模态」题型坐标作为人机共同语言。</p>
+      </div>
+
+      <div class="about-section">
+        <h3>为什么这件事值得做</h3>
+        <p>从技术看，它把多模态语义、领域 RAG、可控生成与可解释评测拧到一起；从应用看，它为“大模型答历史题”这个被幻觉问题困扰的场景提供一个可追溯、可评测、可交互的替代方案。</p>
+      </div>
+
+      <div class="about-section">
+        <h3>底层架构</h3>
+        <p>9 个独立模块（M1 多模态问题编码 / M2 题型分类 / M3 历史 RAG / M4 Qwen2.5-VL 生成 / M5 答案精修 / M6 Prompt 翻译 / M7 多轮对话 / M8 前后端 / M9 评测）通过共用的题型与检索结果 schema 串联；后端 FastAPI，前端 React + TypeScript。</p>
+        <p>数据层包括二十四史、地方志、学术文献共 1,129 chunks；模型与检索服务由上海创智学院平台提供，身份认证以学号作为 API Key。</p>
+      </div>
+
+      <div class="about-section">
+        <h3>引用</h3>
+        <div class="citation">
+          <button class="cite-copy" id="cite-copy">copy</button>
+<pre id="bibtex-block">@misc{2026chronomirror,
+  title  = {ChronoMirror: A Multimodal RAG Agent
+            for Verifiable Historical Question Answering},
+  author = {ChronoMirror Team},
+  year   = {2026},
+  note   = {Shanghai Innovation Institute, practical training course}
+}</pre>
+        </div>
+      </div>
+
+      <div class="about-buttons">
+        <button class="primary" data-close="about-modal">浏览演示</button>
+        <button class="secondary" onclick="location.hash='#case-study'">查看案例</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================================
+     PAINTING DETAIL MODAL
+============================================================================ -->
+<div class="modal-overlay" id="painting-detail-modal">
+  <div class="modal-content">
+    <button class="modal-close" data-close="painting-detail-modal">✕</button>
+    <div class="pd-body" id="pd-body">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================================
+     IMAGE ZOOM MODAL
+============================================================================ -->
+<div class="modal-overlay zoom-modal" id="zoom-modal">
+  <div class="modal-content">
+    <button class="modal-close" data-close="zoom-modal">✕</button>
+    <img id="zoom-img" src="" alt="">
+    <div class="zoom-caption" id="zoom-caption">点击图片切换 1× / 1.6×</div>
+  </div>
+</div>
+
+<!-- ============================================================================
+     RAG MODAL · full retrieved chunk
+============================================================================ -->
+<div class="modal-overlay rag-modal" id="rag-modal">
+  <div class="modal-content">
+    <button class="modal-close" data-close="rag-modal">✕</button>
+    <div class="rag-body">
+      <div class="rag-head">
+        <div class="score-circle" id="rag-modal-score">—</div>
+        <div>
+          <h3>RAG Retrieved Chunk</h3>
+          <div class="src" id="rag-modal-src">—</div>
+        </div>
+      </div>
+      <div class="rag-text" id="rag-modal-text">—</div>
+      <div class="rag-meta-grid">
+        <div class="rag-meta-item">
+          <div class="label">embedding</div>
+          <div class="value">BAAI/bge-m3 · 1024-d</div>
+        </div>
+        <div class="rag-meta-item">
+          <div class="label">index</div>
+          <div class="value">FAISS · IndexFlatIP</div>
+        </div>
+        <div class="rag-meta-item">
+          <div class="label">corpus</div>
+          <div class="value">二十四史 + 地方志 · 1,129 chunks</div>
+        </div>
+        <div class="rag-meta-item">
+          <div class="label">similarity</div>
+          <div class="value">cosine · L2-normalised</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
