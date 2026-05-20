@@ -74,12 +74,12 @@
           </svg>
         </h1>
         <p class="subtitle">Where History Answers Itself.</p>
-        <p class="hero-tag">让历史自己回答。ChronoMirror 把 Qwen2.5-VL 的多模态理解能力、史料语料库的 RAG 检索与带引用的可解释生成拼接为一条可观察的推理管线：问题理解 → 史料检索 → 上下文组织 → 答案生成。不再用“大模型万能”应付历史问答，而是让每一条回答都能追溯到可验证的文献出处。</p>
+        <p class="hero-tag">让历史自己回答。ChronoMirror 以 Qwen2.5-VL 为生成核心、GME 多模态向量为检索引擎，构建六类专项 Agent 的 Agentic RAG 管线：每道题最多发起 4 轮 DashVector 检索、LLM 自主过滤相关性、去重 query，最终在充分上下文下生成可追溯的答案。</p>
         <div class="hero-meta">
-          <span><span class="dot"></span>9 模块 · 7,925 行</span>
-          <span><span class="dot"></span>8 历史题例</span>
-          <span><span class="dot"></span>1,129 RAG chunks</span>
-          <span><span class="dot"></span>Qwen2.5-7B-VL</span>
+          <span><span class="dot"></span>6 专项 Agent</span>
+          <span><span class="dot"></span>4 轮 Agentic 检索</span>
+          <span><span class="dot"></span>DashVector 向量库</span>
+          <span><span class="dot"></span>Qwen2.5-VL · GME</span>
         </div>
       </div>
       <div class="hero-art">
@@ -133,9 +133,7 @@
         历史问答的难点不是“生成”，而是“不胡说”——LLM 随口能提到《新唐书》、《资治通鉴》，但引用的句子可能压根不存在。<em>史实错误、幻觉与“充满班味”的语言</em>，是传统生成式历史问答最难跨越的三个坎。
       </p>
       <p class="lead" style="margin-top: 22px;">
-        <strong style="color: var(--seal-deep);">ChronoMirror</strong> 以 Qwen2.5-7B-VL 为基座，用 BGE-M3 + FAISS 从二十四史、地方志、学术文献库里拼接上下文，
-        再由 LLM 在受控 prompt 下生成 <strong>带引用的、可追溯的、可被评测脚本验证的</strong> 历史问答——
-        全线路可点击、可重检索、可与原文逐句对照。
+        <strong style="color: var(--seal-deep);">ChronoMirror</strong> 以 Qwen2.5-VL-7B 为生成基座、GME (gme-Qwen2-VL-7B-Instruct) 为多模态嵌入引擎，通过 DashVector 向量库进行史料检索——6 类专项 Agent 各自运行 Agentic 多轮检索循环，LLM 主动判断"是否已有足够上下文"再决定是否继续检索，生成 <strong>可追溯、可被评测脚本精确验证的</strong> 历史问答。
       </p>
     </div>
   </div>
@@ -147,8 +145,8 @@
 <section class="pipeline" id="pipeline">
   <div class="container">
     <div class="section-head fade-in">
-      <span class="eyebrow">Pipeline · §3.2 of Proposal</span>
-      <h2 class="hd-2">五步问答</h2>
+      <span class="eyebrow">Agentic RAG Loop · per question</span>
+      <h2 class="hd-2">四步问答</h2>
       <svg class="flourish" viewBox="0 0 88 18" aria-hidden="true">
         <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
       </svg>
@@ -156,9 +154,9 @@
     <div class="pipeline-flow stagger">
       <div class="pipe-step active">
         <div class="pipe-num">壹</div>
-        <h4>问题理解 · Understanding</h4>
-        <div class="pipe-meta">M1 · Qwen2.5-VL + BGE-M3</div>
-        <p>接受文本 / 图片 / 图文混合输入，Qwen2.5-VL 理解多模态问题与题面元信息，输出 768 维问题向量 q。</p>
+        <h4>多模态编码 · Encoding</h4>
+        <div class="pipe-meta">Embedder · gme-Qwen2-VL-7B</div>
+        <p>文本走 text 向量（1792-d）；VQA 题额外编码图像，走 fused 多模态向量。向量提交 DashVector 检索。</p>
       </div>
       <div class="pipe-arrow">
         <svg viewBox="0 0 56 36" preserveAspectRatio="none">
@@ -168,9 +166,9 @@
       </div>
       <div class="pipe-step">
         <div class="pipe-num">贰</div>
-        <h4>题型分类 · Typing</h4>
-        <div class="pipe-meta">M2 · MLP → (infer, multi)</div>
-        <p>把问题向量 q 投到「事实↔推理 × 文本↔多模态」二维坐标 (v, a) ∈ [-1, 1]²，驱动后续检索与 prompt 选型。</p>
+        <h4>多轮检索 · Multi-Round Search</h4>
+        <div class="pipe-meta">Retriever · DashVector · max 4 rounds</div>
+        <p>最多 4 轮检索：每轮 LLM 生成新 query，去重后查 DashVector top-k；VQA 双字段（text + fused）检索再合并去重。</p>
       </div>
       <div class="pipe-arrow">
         <svg viewBox="0 0 56 36" preserveAspectRatio="none">
@@ -180,9 +178,9 @@
       </div>
       <div class="pipe-step">
         <div class="pipe-num">叁</div>
-        <h4>史料检索 · Retrieval</h4>
-        <div class="pipe-meta">M3 · Platform RAG API</div>
-        <p>调用平台 HTTP 检索接口，从二十四史、地方志、学术文献（1,129 chunks）取回 top-k 史料与关联图像。</p>
+        <h4>LLM 相关性过滤 · Filter</h4>
+        <div class="pipe-meta">Qwen2.5-VL · filter + decide</div>
+        <p>LLM 阅读当轮召回结果，输出 JSON：relevant_ids 保留相关史料；enough=true 则不再追加检索轮次。</p>
       </div>
       <div class="pipe-arrow">
         <svg viewBox="0 0 56 36" preserveAspectRatio="none">
@@ -193,20 +191,8 @@
       <div class="pipe-step">
         <div class="pipe-num">肆</div>
         <h4>答案生成 · Generation</h4>
-        <div class="pipe-meta">M4 · Qwen2.5-7B-VL</div>
-        <p>题型坐标、口语指令、RAG 上下文共同条件化 Qwen2.5-VL；决码参数随题型自适应调节。</p>
-      </div>
-      <div class="pipe-arrow">
-        <svg viewBox="0 0 56 36" preserveAspectRatio="none">
-          <path d="M2 18 C 18 6, 28 30, 48 20" />
-          <path class="head" d="M44 15 L 52 20 L 44 25" />
-        </svg>
-      </div>
-      <div class="pipe-step">
-        <div class="pipe-num">伍</div>
-        <h4>答案精修 · Refine</h4>
-        <div class="pipe-meta">M5/M6/M7 · Rerank + Cite</div>
-        <p>检索重排、引用校验、多轮对话、幻觉过滤——让每一句回答都能追回原文。</p>
+        <div class="pipe-meta">Generator · Qwen2.5-VL-7B</div>
+        <p>累积的相关史料 + 原题（含图像）→ Qwen2.5-VL 在专项 prompt 下生成答案；输出经 normalize_answer 归一化写入 predictions.jsonl。</p>
       </div>
     </div>
   </div>
@@ -787,13 +773,13 @@
         <div class="ctx-eyebrow">Our Approach</div>
         <h3>ChronoMirror 的方法</h3>
         <p>
-          把「问题 → 题型 → 检索 → 生成」明确为一条可观察、可干预、可解释的四段管线，而不是「丢给 LLM 吃一口」；历史语境通过平台 RAG API 注入。
+          6 类专项 Agent 各自封装完整 Agentic RAG 循环：LLM 主动生成 query、自主判断是否继续检索、过滤无关史料，最终汇总上下文生成答案——而非单次检索后生成。
         </p>
         <ul>
-          <li>多模态 q + 题型投影：两步可视、可拖动</li>
-          <li>BGE-M3 + FAISS 检索 1129 条史料 chunk</li>
-          <li>Qwen2.5-VL 接受图文混合输入与 top-k 上下文</li>
-          <li>评测含 citation faithfulness 单独打分</li>
+          <li>GME (gme-Qwen2-VL-7B) 双字段嵌入：text + fused</li>
+          <li>DashVector 向量库检索，最多 4 轮自动决策</li>
+          <li>Qwen2.5-VL 兼任 query 生成、相关性过滤、答案生成</li>
+          <li>traces.jsonl 全链路可观测 · normalize_answer 精确匹配</li>
         </ul>
       </div>
     </div>
@@ -855,17 +841,33 @@
     </div>
     <div class="number-grid stagger">
       <div class="number-cell">
-        <div class="big" data-count="7925">0</div>
-        <div class="label">Lines of Code</div>
-        <div class="sub">Python + TS/React</div>
+        <div class="big" data-count="6">0</div>
+        <div class="label">Specialized Agents</div>
+        <div class="sub">选择 · 判断 · 简答 × QA/VQA</div>
         <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
           <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
         </svg>
       </div>
       <div class="number-cell">
-        <div class="big" data-count="27">0</div>
-        <div class="label">Figures</div>
-        <div class="sub">9 modules × 3 viz</div>
+        <div class="big" data-count="4">0</div>
+        <div class="label">Max Search Rounds</div>
+        <div class="sub">Agentic 多轮检索上限</div>
+        <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
+          <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
+        </svg>
+      </div>
+      <div class="number-cell">
+        <div class="big" data-count="1792">0</div>
+        <div class="label">Vector Dim</div>
+        <div class="sub">GME 1792-d · text + fused</div>
+        <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
+          <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
+        </svg>
+      </div>
+      <div class="number-cell">
+        <div class="big" data-count="7">0<sup>B</sup></div>
+        <div class="label">Model Params × 2</div>
+        <div class="sub">Qwen2.5-VL · GME 各 7B</div>
         <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
           <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
         </svg>
@@ -879,33 +881,17 @@
         </svg>
       </div>
       <div class="number-cell">
-        <div class="big" data-count="7">0<sup>B</sup></div>
-        <div class="label">Model Params</div>
-        <div class="sub">Qwen2.5-7B-VL</div>
+        <div class="big" data-count="2">0</div>
+        <div class="label">Vector Fields</div>
+        <div class="sub">DashVector · text + fused</div>
         <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
           <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
         </svg>
       </div>
       <div class="number-cell">
-        <div class="big" data-count="1129">0</div>
-        <div class="label">RAG Chunks</div>
-        <div class="sub">二十四史 + 地方志 + 文献</div>
-        <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
-          <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
-        </svg>
-      </div>
-      <div class="number-cell">
-        <div class="big" data-count="8">0</div>
-        <div class="label">API Endpoints</div>
-        <div class="sub">FastAPI + SSE</div>
-        <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
-          <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
-        </svg>
-      </div>
-      <div class="number-cell">
-        <div class="big" data-count="5">0</div>
-        <div class="label">Eval Dimensions</div>
-        <div class="sub">EM · F1 · BLEU · Recall · Cite</div>
+        <div class="big" data-count="3">0</div>
+        <div class="label">Answer Types</div>
+        <div class="sub">选择 · 判断 · 简答</div>
         <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
           <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
         </svg>
@@ -935,27 +921,24 @@
       </svg>
     </div>
     <div class="stack-cloud fade-in">
-      <span class="tech-pill cat-vision">Qwen2.5-7B-VL</span>
-      <span class="tech-pill cat-vision">BGE-M3</span>
-      <span class="tech-pill cat-vision">Sentence-BERT</span>
-      <span class="tech-pill cat-audio">vLLM</span>
-      <span class="tech-pill cat-audio">LoRA / PEFT</span>
-      <span class="tech-pill cat-audio">Cohere Rerank</span>
-      <span class="tech-pill cat-audio">BGE-Reranker</span>
-      <span class="tech-pill cat-audio">HyDE</span>
-      <span class="tech-pill cat-audio">Self-RAG</span>
-      <span class="tech-pill cat-lang">LangChain</span>
-      <span class="tech-pill cat-lang">LlamaIndex</span>
-      <span class="tech-pill cat-frame">FAISS</span>
+      <span class="tech-pill cat-vision">Qwen2.5-VL-7B-Instruct</span>
+      <span class="tech-pill cat-vision">gme-Qwen2-VL-7B-Instruct</span>
+      <span class="tech-pill cat-vision">GME Multimodal Embedding</span>
+      <span class="tech-pill cat-audio">DashVector</span>
+      <span class="tech-pill cat-audio">Agentic Multi-Round RAG</span>
+      <span class="tech-pill cat-audio">Dual-Field Search</span>
+      <span class="tech-pill cat-audio">LLM-as-Filter</span>
+      <span class="tech-pill cat-audio">Near-Dup Query Detection</span>
+      <span class="tech-pill cat-lang">File-Bridge IPC</span>
+      <span class="tech-pill cat-lang">StepRecorder · Tracer</span>
       <span class="tech-pill cat-frame">PyTorch 2.1</span>
-      <span class="tech-pill cat-frame">FastAPI</span>
-      <span class="tech-pill cat-frame">React + Vite</span>
-      <span class="tech-pill cat-frame">TypeScript</span>
-      <span class="tech-pill cat-frame">HuggingFace</span>
-      <span class="tech-pill cat-data">二十四史</span>
-      <span class="tech-pill cat-data">地方志语料</span>
-      <span class="tech-pill cat-data">学术文献库</span>
-      <span class="tech-pill cat-data">隐藏评测集</span>
+      <span class="tech-pill cat-frame">Transformers</span>
+      <span class="tech-pill cat-frame">HuggingFace AutoModel</span>
+      <span class="tech-pill cat-frame">Python 3.10+</span>
+      <span class="tech-pill cat-data">DashVector 向量库</span>
+      <span class="tech-pill cat-data">predictions.jsonl</span>
+      <span class="tech-pill cat-data">time_cost.jsonl</span>
+      <span class="tech-pill cat-data">traces.jsonl</span>
     </div>
   </div>
 </section>
@@ -1087,8 +1070,8 @@
 
       <div class="about-section">
         <h3>底层架构</h3>
-        <p>9 个独立模块（M1 多模态问题编码 / M2 题型分类 / M3 历史 RAG / M4 Qwen2.5-VL 生成 / M5 答案精修 / M6 Prompt 翻译 / M7 多轮对话 / M8 前后端 / M9 评测）通过共用的题型与检索结果 schema 串联；后端 FastAPI，前端 React + TypeScript。</p>
-        <p>数据层包括二十四史、地方志、学术文献共 1,129 chunks；模型与检索服务由上海创智学院平台提供，身份认证以学号作为 API Key。</p>
+        <p>核心组件：<strong>Embedder</strong>（gme-Qwen2-VL-7B，text/fused 双向量 1792-d）、<strong>Retriever</strong>（DashVector，file-bridge IPC）、<strong>Generator</strong>（Qwen2.5-VL-7B）、<strong>6 专项 Agent</strong>（ChoiceAgent / ChoiceVQAAgent / JudgeAgent / JudgeVQAAgent / ShortAnswerAgent / ShortAnswerVQAAgent）。</p>
+        <p>每道题走一次完整 Agentic 循环（最多 4 轮）：LLM 生成 query → DashVector 检索 → LLM 过滤 relevant_ids → 判断 enough → 累积上下文 → 最终答案生成。输出 predictions.jsonl + time_cost.jsonl + traces.jsonl。</p>
       </div>
 
       <div class="about-section">
@@ -1154,24 +1137,170 @@
       <div class="rag-meta-grid">
         <div class="rag-meta-item">
           <div class="label">embedding</div>
-          <div class="value">BAAI/bge-m3 · 1024-d</div>
+          <div class="value">gme-Qwen2-VL-7B · 1792-d</div>
         </div>
         <div class="rag-meta-item">
-          <div class="label">index</div>
-          <div class="value">FAISS · IndexFlatIP</div>
+          <div class="label">vector db</div>
+          <div class="value">DashVector · text + fused fields</div>
         </div>
         <div class="rag-meta-item">
-          <div class="label">corpus</div>
-          <div class="value">二十四史 + 地方志 · 1,129 chunks</div>
+          <div class="label">retrieval</div>
+          <div class="value">Agentic · max 4 rounds · top-k per round</div>
         </div>
         <div class="rag-meta-item">
           <div class="label">similarity</div>
-          <div class="value">cosine · L2-normalised</div>
+          <div class="value">cosine · L2-normalised · 1792-d</div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- ============================================================================
+     LEADERBOARD MODAL · auto-show on page load
+============================================================================ -->
+<div class="lb-overlay" id="lb-overlay">
+  <div class="lb-panel" id="lb-panel">
+    <button class="lb-close" id="lb-close" aria-label="关闭排行榜">✕</button>
+    <div class="lb-header">
+      <div class="lb-title">基于RAG的多模态历史问答Agent</div>
+      <div class="lb-subtitle">综合分</div>
+    </div>
+    <div class="lb-list" id="lb-list">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</div>
+
+<style>
+.lb-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.72);
+  backdrop-filter: blur(3px);
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s ease;
+}
+.lb-overlay.visible { opacity: 1; pointer-events: auto; }
+.lb-panel {
+  position: relative;
+  background: #151f2e;
+  border-radius: 14px;
+  width: 360px; max-width: 92vw;
+  max-height: 88vh; overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+  color: #e8edf4;
+  font-family: 'Noto Serif SC', serif;
+  padding-bottom: 16px;
+  scrollbar-width: thin; scrollbar-color: #2a3a50 transparent;
+}
+.lb-close {
+  position: absolute; top: 14px; right: 16px;
+  background: none; border: none; color: #7a8fa6;
+  font-size: 18px; cursor: pointer; line-height: 1;
+  transition: color .2s;
+}
+.lb-close:hover { color: #e8edf4; }
+.lb-header {
+  text-align: center;
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid #1e2d40;
+}
+.lb-title {
+  font-size: 18px; font-weight: 600; letter-spacing: .04em;
+  color: #e8edf4; line-height: 1.4;
+}
+.lb-subtitle {
+  font-size: 13px; color: #6e8299; margin-top: 6px;
+  font-family: 'Inter', sans-serif;
+}
+.lb-row {
+  padding: 18px 28px 14px;
+  border-bottom: 1px solid #1e2d40;
+  display: flex; align-items: center; gap: 14px;
+  transition: background .15s;
+}
+.lb-row:hover { background: #1c2b3e; }
+.lb-rank {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; color: #4a6480; min-width: 22px;
+  text-align: center;
+}
+.lb-rank.gold   { color: #f5c842; font-weight: 700; }
+.lb-rank.silver { color: #b0bec5; font-weight: 700; }
+.lb-rank.bronze { color: #c87941; font-weight: 700; }
+.lb-info { flex: 1; min-width: 0; }
+.lb-name {
+  font-size: 14px; color: #c8d6e4;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.lb-score {
+  font-size: 22px; font-weight: 700;
+  color: #00d4a0; font-family: 'JetBrains Mono', monospace;
+  letter-spacing: .02em; margin-top: 4px;
+}
+.lb-time {
+  font-size: 11px; color: #4a6480; margin-top: 3px;
+  font-family: 'Inter', sans-serif;
+}
+.lb-self .lb-name { color: #ffffff; font-weight: 600; }
+.lb-self .lb-score { color: #00ffbe; }
+.lb-self { background: #1a2e44; }
+</style>
+
+<script>
+(function () {
+  var LEADERBOARD = [
+    { name: "rag史学智能体001组", score: 0.520, time: "05-20 12:28", self: false },
+    { name: "rag史学智能体002组", score: 0.504, time: "05-20 14:13", self: false },
+    { name: "rag史学智能体003组", score: 0.495, time: "05-20 10:26", self: false },
+    { name: "rag史学智能体004组", score: 0.420, time: "05-20 14:11", self: false },
+  ];
+
+  var RANK_CLASSES = ["gold", "silver", "bronze"];
+  var RANK_LABELS  = ["①", "②", "③"];
+
+  function buildList() {
+    var list = document.getElementById("lb-list");
+    if (!list) return;
+    LEADERBOARD.forEach(function (entry, i) {
+      var row = document.createElement("div");
+      row.className = "lb-row" + (entry.self ? " lb-self" : "");
+      var rankCls = i < 3 ? RANK_CLASSES[i] : "";
+      var rankTxt = i < 3 ? RANK_LABELS[i] : (i + 1) + ".";
+      row.innerHTML =
+        '<div class="lb-rank ' + rankCls + '">' + rankTxt + '</div>' +
+        '<div class="lb-info">' +
+          '<div class="lb-name">' + entry.name + '</div>' +
+          '<div class="lb-score">' + entry.score.toFixed(3).replace(/\.?0+$/, function(m){ return entry.score % 1 === 0 ? '' : m.replace(/0+$/, ''); }) + '</div>' +
+          '<div class="lb-time">' + entry.time + '</div>' +
+        '</div>';
+      list.appendChild(row);
+    });
+  }
+
+  function show() {
+    var overlay = document.getElementById("lb-overlay");
+    if (overlay) { overlay.classList.add("visible"); }
+  }
+
+  function hide() {
+    var overlay = document.getElementById("lb-overlay");
+    if (overlay) { overlay.classList.remove("visible"); }
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    buildList();
+    setTimeout(show, 300);
+    var btn = document.getElementById("lb-close");
+    if (btn) btn.addEventListener("click", hide);
+    var overlay = document.getElementById("lb-overlay");
+    if (overlay) overlay.addEventListener("click", function (e) {
+      if (e.target === overlay) hide();
+    });
+  });
+})();
+</script>
 
 <script src="app.js"></script>
 </body>
