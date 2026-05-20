@@ -135,134 +135,77 @@ const PAINTINGS = [
 ];
 
 const MODULES = [
-  { id: 'M1', cn: '多模态问题编码', en: 'Multimodal Question Encoder',
+  // ── Infrastructure ─────────────────────────────────────────────────────────
+  { id: 'EMBEDDER', tag: 'Infra', cn: 'GME 嵌入器', en: 'Embedder · gme-Qwen2-VL-7B',
     cat: 'perception',
-    desc: 'Qwen2.5-VL 视觉编码 + BGE-M3 中英双语文本编码 + 题面元数据（朝代/人物）哈希嵌入。',
-    stat: '768d · 754 LOC', lc: '754 LOC', fc: '3 figs',
-    sig: { type: 'formula', html: `<div>q = σ(&nbsp;<em class="var-img">W<sub>v</sub>·e<sub>img</sub></em><span class="op">+</span><em class="var-txt">W<sub>t</sub>·e<sub>txt</sub></em><span class="op">+</span><em class="var-meta">W<sub>m</sub>·e<sub>meta</sub></em><span class="op">+ b</span>&nbsp;)</div>` },
-    figs: ['M1_fig_modality_norms.png','M1_fig_similarity_heatmap.png','M1_fig_fusion_diagram.png'] },
+    desc: 'infra/embedding.py — gme-Qwen2-VL-7B-Instruct 以 bfloat16 加载；encode(text, image_path=None) 做 last-token pooling + L2 归一化，返回 3584-d float 列表。VQA 题传图走多模态 fused 路径，纯文本题只编码 text。',
+    stat: '3584-d · bfloat16 · last-token pooling',
+    sig: { type: 'snippet', html: `<div class="row"><span><span class="k">emb</span> = Embedder(model_path)</span></div><div class="row"><span>vec = emb.encode(<span class="s">"商代腰坑狗牺牲"</span>)</span></div><div class="row"><span>vec = emb.encode(q, image_path=<span class="s">"x.jpg"</span>)  <span style="opacity:.5"># VQA</span></span></div><div class="row"><span>→ list[float], len=<span class="n">3584</span>, L2-norm</span></div>` },
+    figs: ['emb_arch.png'] },
 
-  { id: 'M2', cn: '题型分类', en: 'Question Typing',
+  { id: 'BRIDGE', tag: 'Infra', cn: '文件桥 IPC', en: 'Bridge · File RPC',
+    cat: 'interaction',
+    desc: 'infra/bridge.py — GPU 服务器无外网，CPU 服务器有 DashVector 权限。bridge_call() 将请求序列化为 JSON，原子 rename 到请求目录；bridge worker 轮询请求目录，调用 SDK，将结果原子写入响应目录；调用方轮询直到文件非空且可解析。修复了空响应竞态条件。',
+    stat: 'poll=0.5s · timeout=120s · atomic rename',
+    sig: { type: 'snippet', html: `<div class="row"><span><span class="k">bridge_call</span>(<span class="s">"dashvector_search"</span>,</span></div><div class="row" style="padding-left:14px"><span>embedding=vec, top_k=<span class="n">20</span>,</span></div><div class="row" style="padding-left:14px"><span>vector_field=<span class="s">"text"</span>)</span></div><div class="row"><span><span style="opacity:.5"># req.tmp→req.json→resp.json</span></span></div>` },
+    figs: ['bridge_flow.png'] },
+
+  { id: 'RETRIEVER', tag: 'Infra', cn: 'DashVector 检索器', en: 'Retriever · DashVector',
     cat: 'perception',
-    desc: 'MLP 768 → 256 → 2 把问题向量映到「事实↔推理 × 文本↔多模态」二维空间；交叉熵 + 对比学习联合监督。',
-    stat: '8 sectors · 621 LOC', lc: '621 LOC', fc: '3 figs',
-    sig: { type: 'svg', html: `
-      <svg viewBox="0 0 200 64" class="mc-illust" preserveAspectRatio="xMidYMid meet">
-        <g transform="translate(100,32)">
-          <circle r="28" fill="none" stroke="currentColor" stroke-width="1"/>
-          <line x1="-28" y1="0" x2="28" y2="0" stroke="currentColor" stroke-width="0.5" opacity="0.45"/>
-          <line x1="0" y1="-28" x2="0" y2="28" stroke="currentColor" stroke-width="0.5" opacity="0.45"/>
-          <path d="M0,0 L28,0 A28,28 0 0,1 0,28 Z" fill="#b88f4e" opacity="0.18"/>
-          <path d="M0,0 L0,28 A28,28 0 0,1 -28,0 Z" fill="#2a6e96" opacity="0.18"/>
-          <path d="M0,0 L-28,0 A28,28 0 0,1 0,-28 Z" fill="#b8302a" opacity="0.18"/>
-          <path d="M0,0 L0,-28 A28,28 0 0,1 28,0 Z" fill="#5e8466" opacity="0.18"/>
-          <g class="m2-orbit"><circle cx="0" cy="0" r="3.5" fill="#b8302a"/><circle cx="0" cy="0" r="1.4" fill="#fff"/></g>
-        </g>
-        <text x="14" y="10" font-size="8" font-family="Cormorant Garamond" font-style="italic" fill="currentColor" opacity="0.7">arousal+</text>
-        <text x="14" y="60" font-size="8" font-family="Cormorant Garamond" font-style="italic" fill="currentColor" opacity="0.7">arousal−</text>
-        <text x="155" y="38" font-size="8" font-family="Cormorant Garamond" font-style="italic" fill="currentColor" opacity="0.7">val+</text>
-      </svg>` },
-    figs: ['M2_fig_circumplex.png','M2_fig_word_distribution.png','M2_fig_loss_components.png'] },
+    desc: 'infra/retrieval.py — Retriever 封装 bridge_call；search(embedding, top_k, vector_field) 直接提交已有向量；search_text(text, image_path) 先调 Embedder.encode() 再调 search()。支持 text / fused / image 三个向量字段。',
+    stat: 'fields: text · fused · image',
+    sig: { type: 'snippet', html: `<div class="row"><span>ret.search_text(<span class="s">"商代腰坑"</span>, k=<span class="n">20</span>)</span></div><div class="row"><span>ret.search_text(q, img=img_path,</span></div><div class="row" style="padding-left:14px"><span>vector_field=<span class="s">"fused"</span>)  <span style="opacity:.5"># VQA</span></span></div><div class="row"><span>→ [{<span class="k">text</span>, <span class="k">title</span>, <span class="k">score</span>}, …]</span></div>` },
+    figs: ['ret_fields.png'] },
 
-  { id: 'M3', cn: '历史知识检索', en: 'Historical RAG',
-    cat: 'perception',
-    desc: '平台 HTTP API 提供检索服务，BGE-M3 + FAISS 双索引；语料涵盖二十四史、地方志、学术文献共 1,129 chunks。',
-    stat: '1,129 chunks', lc: '1,214 LOC', fc: '3 figs',
-    sig: { type: 'snippet', html: `
-      <div class="row"><span><span class="k">0.51</span>&nbsp; 《新唐书 · 兵志》节度使条</span></div>
-      <div class="row"><span><span class="k">0.47</span>&nbsp; 《通典 · 选举志》</span></div>
-      <div class="row"><span><span class="k">0.41</span>&nbsp; 邓嗣禹 · 考试制度史</span></div>` },
-    figs: ['M3_fig_retrieval_scores.png','M3_fig_corpus_pca.png','M3_fig_query_pipeline.png'] },
-
-  { id: 'M4', cn: '答案生成', en: 'Qwen2.5-VL Generator',
+  { id: 'GENERATOR', tag: 'Infra', cn: 'Qwen2.5-VL 生成器', en: 'Generator · Qwen2.5-VL-7B',
     cat: 'generation',
-    desc: 'Qwen2.5-7B-VL 基座 + 检索片段拼装上下文；接受图文混合输入与 Top-k 检索结果，输出带引用的历史问答。',
-    stat: '7B params · 677 LOC', lc: '677 LOC', fc: '3 figs',
-    sig: { type: 'svg', html: `
-      <svg viewBox="0 0 200 64" class="mc-illust m4-svg" preserveAspectRatio="xMidYMid meet">
-        <g class="m4-bars" fill="currentColor">
-          ${Array.from({length: 26}, (_, i) => {
-            const x = 8 + i * 7.3;
-            const h = 8 + Math.abs(Math.sin(i * 0.7) + Math.sin(i * 0.31)) * 18;
-            const y = 32 - h/2;
-            return `<rect x="${x}" y="${y}" width="3.2" height="${h}" rx="1"/>`;
-          }).join('')}
-        </g>
-      </svg>` },
-    figs: ['M4_fig_decoding_params.png','M4_fig_answer_length.png','M4_fig_generation_example.png'] },
+    desc: 'infra/generator.py — Qwen2.5-VL-7B-Instruct 以 bfloat16 加载；apply_chat_template 组装消息；process_vision_info 预处理图像像素；generate(prompt, image_path, max_new_tokens=256) 返回原始文本；normalize_answer(section, raw) 归一化写入 predictions.jsonl。',
+    stat: '7B params · bfloat16 · greedy · max_new_tokens=256',
+    sig: { type: 'snippet', html: `<div class="row"><span>generator.generate(</span></div><div class="row" style="padding-left:14px"><span>ANSWER_PROMPT.format(…),</span></div><div class="row" style="padding-left:14px"><span>image_path=img_path,</span></div><div class="row" style="padding-left:14px"><span>max_new_tokens=<span class="n">256</span>)</span></div>` },
+    figs: ['gen_params.png'] },
 
-  { id: 'M5', cn: '答案精修', en: 'Answer Refining',
+  // ── Agents ──────────────────────────────────────────────────────────────────
+  { id: 'CHOICE', tag: 'Agent', cn: '选择题 Agent', en: 'ChoiceAgent',
     cat: 'interaction',
-    desc: '检索结果重排（Cohere/BGE rerank）+ 引用校验 + 长上下文压缩 + 幻觉过滤。',
-    stat: '4 ops · 753 LOC', lc: '753 LOC', fc: '3 figs',
-    sig: { type: 'snippet', html: `
-      <div class="row"><span><span class="k">refine_ops</span> = [</span></div>
-      <div class="row" style="padding-left: 14px"><span><span class="s">'rerank'</span>,&nbsp; <span class="s">'cite-check'</span>,</span></div>
-      <div class="row" style="padding-left: 14px"><span><span class="s">'ctx-compress'</span>,&nbsp; <span class="s">'halu-filter'</span></span></div>
-      <div class="row"><span>]&nbsp;&nbsp;<span class="k">→</span> <span class="n">+9.4%</span> EM</span></div>` },
-    figs: ['M5_fig_rerank_gain.png','M5_fig_citation_check.png','M5_fig_halu_filter.png'] },
+    desc: 'agents/choice_agent.py — 选择QA 专项（纯文本）。text 字段检索 top_k=20，最多 4 轮 Agentic 循环：生成 query → DashVector 检索 → filter_docs LLM 过滤 → decide_next 判断是否继续。CLASSIFY_PROMPT 动态判断单选/多选，约束输出选项字母（如 A 或 AB）。near-dup 检测防退化。',
+    stat: 'top_k=20 · max_rounds=4 · single/multi-choice',
+    sig: { type: 'snippet', html: `<div class="row"><span><span class="k">for</span> rnd in range(<span class="n">1</span>, <span class="n">5</span>):</span></div><div class="row" style="padding-left:14px"><span>query = gen_query() <span style="opacity:.5"># or decide_next</span></span></div><div class="row" style="padding-left:14px"><span>docs  = ret.search_text(query, <span class="n">20</span>)</span></div><div class="row" style="padding-left:14px"><span>kept  = filter_docs(docs)  <span style="opacity:.5"># LLM</span></span></div><div class="row"><span>→ normalize → <span class="k">A</span> / <span class="k">AB</span> / …</span></div>` },
+    figs: ['choice_loop.png'] },
 
-  { id: 'M6', cn: 'Prompt 翻译', en: 'Prompt Engineering',
+  { id: 'CHOICEVQA', tag: 'Agent', cn: '选择VQA Agent', en: 'ChoiceVQAAgent',
     cat: 'interaction',
-    desc: '把用户口语化问题改写为结构化检索 query + 受控生成模板；支持 Zero-shot / CoT / ReAct 三档。',
-    stat: '8 slots · 967 LOC', lc: '967 LOC', fc: '3 figs',
-    sig: { type: 'snippet', html: `
-      <div class="row"><span><span class="s">"安史之乱怎么回事"</span><span class="arrow">→</span><span class="k">query</span></span></div>
-      <div class="row"><span><span class="s">"分析原因"</span><span class="arrow">→</span><span class="k">template</span>: <span class="s">'CoT'</span></span></div>
-      <div class="row"><span><span class="s">"看图答"</span><span class="arrow">→</span><span class="k">VL</span>: enabled</span></div>` },
-    figs: ['M6_fig_prompt_table.png','M6_fig_slot_heatmap.png','M6_fig_pipeline.png'] },
+    desc: 'agents/choice_vqa_agent.py — 选择VQA 专项。图像传入所有 LLM 调用（QUERY_PROMPT_VQA / DECIDE_PROMPT_VQA / FILTER_PROMPT_VQA / ANSWER_PROMPT）；双字段检索 text+fused 各取 top_k=3，合并去重（120-char 前缀键）；CLASSIFY_PROMPT 判单/多选后约束输出。',
+    stat: 'top_k=3 · dual-field text+fused · image to ALL LLM calls',
+    sig: { type: 'svg', html: `<svg viewBox="0 0 200 64" class="mc-illust" preserveAspectRatio="xMidYMid meet"><text x="6" y="14" font-size="7.5" font-family="JetBrains Mono" fill="currentColor">text_vec</text><text x="6" y="34" font-size="7.5" font-family="JetBrains Mono" fill="currentColor">fused_vec</text><line x1="60" y1="12" x2="88" y2="26" stroke="currentColor" stroke-width="1.2"/><line x1="60" y1="32" x2="88" y2="28" stroke="currentColor" stroke-width="1.2"/><rect x="90" y="20" width="52" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1"/><text x="116" y="30" font-size="6.5" font-family="JetBrains Mono" fill="currentColor" text-anchor="middle">merge+dedup</text><line x1="142" y1="27" x2="162" y2="27" stroke="currentColor" stroke-width="1.2"/><text x="164" y="30" font-size="7.5" font-family="JetBrains Mono" fill="currentColor">ans</text><text x="100" y="54" font-size="6.5" font-family="Cormorant Garamond" fill="currentColor" text-anchor="middle" font-style="italic">image → query / decide / filter / answer</text></svg>` },
+    figs: ['cvqa_dual.png'] },
 
-  { id: 'M7', cn: '多轮对话', en: 'Multi-turn Dialog',
+  { id: 'JUDGE', tag: 'Agent', cn: '判断题 Agent', en: 'JudgeAgent',
     cat: 'interaction',
-    desc: '会话记忆 + 跨轮指代消解 + 渐进式检索（多轮 retrieval）；支持「请再展开」类追问。',
-    stat: 'r=0.957 · 757 LOC', lc: '757 LOC', fc: '3 figs',
-    sig: { type: 'svg', html: `
-      <svg viewBox="0 0 200 64" class="mc-illust" preserveAspectRatio="xMidYMid meet">
-        <line x1="6" y1="56" x2="194" y2="56" stroke="currentColor" stroke-width="0.4" opacity="0.4"/>
-        <line x1="6" y1="32" x2="194" y2="32" stroke="currentColor" stroke-width="0.3" opacity="0.18" stroke-dasharray="2 3"/>
-        <path class="m7-curve" d="M6,42 Q 28,12 50,28 T 90,18 T 130,30 T 170,16 T 194,24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        <g fill="currentColor">
-          <circle cx="6" cy="42" r="1.6"/>
-          <circle cx="50" cy="28" r="1.6"/>
-          <circle cx="90" cy="18" r="1.6"/>
-          <circle cx="130" cy="30" r="1.6"/>
-          <circle cx="170" cy="16" r="1.6"/>
-        </g>
-        <text x="180" y="56" font-size="7" font-family="JetBrains Mono" fill="currentColor" opacity="0.6">A major</text>
-      </svg>` },
-    figs: ['M7_fig_turn_flow.png','M7_fig_context_window.png','M7_fig_coreference.png'] },
+    desc: 'agents/judge_agent.py — 判断QA 专项（纯文本）。text 字段检索 top_k=20，同样 4 轮 Agentic 循环；ANSWER_PROMPT instruction 约束输出只能为"正确"或"错误"，max_new_tokens=128。',
+    stat: 'top_k=20 · max_rounds=4 · output: 正确|错误',
+    sig: { type: 'snippet', html: `<div class="row"><span><span style="opacity:.5"># 约束生成指令</span></span></div><div class="row"><span>instruction =</span></div><div class="row" style="padding-left:14px"><span><span class="s">'请直接输出"正确"</span></span></div><div class="row" style="padding-left:14px"><span><span class="s"> 或"错误"，</span></span></div><div class="row" style="padding-left:14px"><span><span class="s"> 不输出其他内容'</span></span></div>` },
+    figs: ['judge_prompt.png'] },
 
-  { id: 'M8', cn: '前后端', en: 'Frontend + Backend',
-    cat: 'interface',
-    desc: 'FastAPI 8 端点 + SSE 流式推送；React + TypeScript 前端；接入平台检索 API（学号 = API Key）。',
-    stat: '8 endpoints · 1.1k LOC', lc: '1,105 LOC', fc: '3 figs',
-    sig: { type: 'snippet', html: `
-      <div class="row"><span><span class="k">POST</span> /ask</span><span style="opacity:0.5">image + text</span></div>
-      <div class="row"><span><span class="k">POST</span> /retrieve</span><span style="opacity:0.5">chunks json</span></div>
-      <div class="row"><span><span class="k">POST</span> /generate</span><span style="opacity:0.5">answer + cite</span></div>
-      <div class="row"><span><span class="k">SSE</span>&nbsp;&nbsp; /stream</span><span style="opacity:0.5">token-by-token</span></div>` },
-    figs: ['M8_fig_system_arch.png','M8_fig_endpoint_flow.png','M8_fig_va_panel_mockup.png'] },
+  { id: 'JUDGEVQA', tag: 'Agent', cn: '判断VQA Agent', en: 'JudgeVQAAgent',
+    cat: 'interaction',
+    desc: 'agents/judge_vqa_agent.py — 判断VQA 专项。双字段检索 text+fused，top_k=3；图像传入所有 LLM 调用；DECIDE_PROMPT_VQA 允许模型基于图像视觉内容判断是否已有足够证据；约束输出"正确"或"错误"。',
+    stat: 'top_k=3 · dual-field · visual-first judgement',
+    sig: { type: 'svg', html: `<svg viewBox="0 0 200 64" class="mc-illust" preserveAspectRatio="xMidYMid meet"><rect x="4" y="8" width="52" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="1"/><text x="30" y="20" font-size="6.5" font-family="JetBrains Mono" fill="currentColor" text-anchor="middle">image + q</text><line x1="56" y1="17" x2="82" y2="17" stroke="currentColor" stroke-width="1.2"/><rect x="82" y="8" width="62" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="1"/><text x="113" y="20" font-size="6.5" font-family="JetBrains Mono" fill="currentColor" text-anchor="middle">LLM decide</text><line x1="144" y1="17" x2="166" y2="17" stroke="currentColor" stroke-width="1.2"/><text x="168" y="20" font-size="7" font-family="JetBrains Mono" fill="currentColor">✓/✗</text><text x="100" y="50" font-size="7" font-family="Cormorant Garamond" fill="currentColor" text-anchor="middle" font-style="italic">output: 正确 | 错误</text></svg>` },
+    figs: ['jvqa_flow.png'] },
 
-  { id: 'M9', cn: '评测', en: 'Evaluation',
-    cat: 'evaluation',
-    desc: 'EM / F1 / BLEU + 检索 Recall@k + 引用一致性 + 人评 5 档 Likert + Qwen-Judge 自动评分。',
-    stat: '5 dims · 1.1k LOC', lc: '1,077 LOC', fc: '3 figs',
-    sig: { type: 'svg', html: `
-      <svg viewBox="0 0 200 64" class="mc-illust" preserveAspectRatio="xMidYMid meet">
-        <line x1="6" y1="56" x2="194" y2="56" stroke="currentColor" stroke-width="0.4" opacity="0.5"/>
-        <g class="m9-bar"><rect x="16" y="14" width="14" height="42" rx="1.5" fill="currentColor" opacity="0.95"/></g>
-        <g class="m9-bar"><rect x="42" y="22" width="14" height="34" rx="1.5" fill="currentColor" opacity="0.85"/></g>
-        <g class="m9-bar"><rect x="68" y="10" width="14" height="46" rx="1.5" fill="currentColor" opacity="0.92"/></g>
-        <g class="m9-bar"><rect x="94" y="20" width="14" height="36" rx="1.5" fill="currentColor" opacity="0.78"/></g>
-        <g class="m9-bar"><rect x="120" y="16" width="14" height="40" rx="1.5" fill="currentColor" opacity="0.88"/></g>
-        <text x="23" y="11" font-size="6.5" font-family="JetBrains Mono" fill="currentColor" text-anchor="middle">VA</text>
-        <text x="49" y="19" font-size="6.5" font-family="JetBrains Mono" fill="currentColor" text-anchor="middle">FAD</text>
-        <text x="75" y="7" font-size="6.5" font-family="JetBrains Mono" fill="currentColor" text-anchor="middle">cult</text>
-        <text x="101" y="17" font-size="6.5" font-family="JetBrains Mono" fill="currentColor" text-anchor="middle">qual</text>
-        <text x="127" y="13" font-size="6.5" font-family="JetBrains Mono" fill="currentColor" text-anchor="middle">pref</text>
-        <text x="170" y="34" font-size="9" font-family="Cormorant Garamond" font-style="italic" fill="currentColor" opacity="0.7">A &gt; B,C</text>
-      </svg>` },
-    figs: ['M9_fig_human_rating.png','M9_fig_va_consistency_scatter.png','M9_fig_metric_summary.png'] },
+  { id: 'SHORT', tag: 'Agent', cn: '简答题 Agent', en: 'ShortAnswerAgent',
+    cat: 'interaction',
+    desc: 'agents/short_answer_agent.py — 简答QA 专项（纯文本）。text 字段检索 top_k=20，4 轮 Agentic 循环；ANSWER_PROMPT instruction 约束输出最短关键词或短语，数字用阿拉伯数字，不含冗余单位。',
+    stat: 'top_k=20 · max_rounds=4 · concise keyword',
+    sig: { type: 'snippet', html: `<div class="row"><span><span style="opacity:.5"># 约束生成指令</span></span></div><div class="row"><span>instruction =</span></div><div class="row" style="padding-left:14px"><span><span class="s">'输出最短关键词</span></span></div><div class="row" style="padding-left:14px"><span><span class="s"> 或短语，数字用</span></span></div><div class="row" style="padding-left:14px"><span><span class="s"> 阿拉伯数字'</span></span></div>` },
+    figs: ['sa_prompt.png'] },
+
+  { id: 'SHORTVQA', tag: 'Agent', cn: '简答VQA Agent', en: 'ShortAnswerVQAAgent',
+    cat: 'interaction',
+    desc: 'agents/short_answer_vqa_agent.py — 简答VQA 专项。双字段检索 text+fused，top_k=3；图像传入所有 LLM 调用；ANSWER_PROMPT 要求优先从图像直接回答，检索文本作辅助确认；输出最简洁关键词。',
+    stat: 'top_k=3 · dual-field · image-first answer',
+    sig: { type: 'svg', html: `<svg viewBox="0 0 200 64" class="mc-illust" preserveAspectRatio="xMidYMid meet"><text x="4" y="16" font-size="7.5" font-family="JetBrains Mono" fill="currentColor">image (primary)</text><text x="4" y="36" font-size="7.5" font-family="JetBrains Mono" fill="currentColor">text (auxiliary)</text><line x1="80" y1="14" x2="106" y2="24" stroke="currentColor" stroke-width="1.4"/><line x1="80" y1="34" x2="106" y2="26" stroke="currentColor" stroke-width="0.9" stroke-dasharray="3 2"/><rect x="107" y="18" width="50" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1"/><text x="132" y="28" font-size="6.5" font-family="JetBrains Mono" fill="currentColor" text-anchor="middle">generate</text><line x1="157" y1="25" x2="177" y2="25" stroke="currentColor" stroke-width="1.2"/><text x="179" y="28" font-size="7" font-family="JetBrains Mono" fill="currentColor">kw</text><text x="100" y="52" font-size="6.5" font-family="Cormorant Garamond" fill="currentColor" text-anchor="middle" font-style="italic">image-first · text as auxiliary confirm</text></svg>` },
+    figs: ['svqa_flow.png'] },
 ];
 
 // ============================================================================
@@ -706,7 +649,7 @@ MODULES.forEach(m => {
     <div class="mc-head">
       <div class="mc-thumb"><img src="assets/figures/${thumbFig}" alt=""></div>
       <div class="mc-head-text">
-        <span class="mc-id">${m.id} · Module</span>
+        <span class="mc-id">${m.id} · ${m.tag || 'Module'}</span>
         <span class="mc-en">${m.en}</span>
       </div>
     </div>

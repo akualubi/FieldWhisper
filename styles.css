@@ -562,7 +562,7 @@ section {
 }
 .pipeline-flow {
   display: grid;
-  grid-template-columns: 1fr 56px 1fr 56px 1fr 56px 1fr 56px 1fr;
+  grid-template-columns: 1fr 56px 1fr 56px 1fr 56px 1fr;
   gap: 0;
   align-items: stretch;
   margin-top: 24px;

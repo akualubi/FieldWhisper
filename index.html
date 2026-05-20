@@ -64,7 +64,7 @@
   <div class="container">
     <div class="hero-inner">
       <div class="hero-text">
-        <span class="eyebrow">Project · 2026  · 上海创智学院实训</span>
+        <span class="eyebrow">Project · 2026 · 上海创智学院实训 · 🥇 隐藏测试集第一名</span>
         <h1 class="hero-title">
           <span class="title-wordmark" aria-label="ChronoMirror">
             <span class="title-letter" data-i="0">C</span><span class="title-letter" data-i="1">h</span><span class="title-letter" data-i="2">r</span><span class="title-letter" data-i="3">o</span><span class="title-letter" data-i="4">n</span><span class="title-letter" data-i="5">o</span><span class="title-letter" data-i="6">M</span><span class="title-letter" data-i="7">i</span><span class="title-letter" data-i="8">r</span><span class="title-letter" data-i="9">r</span><span class="title-letter" data-i="10">o</span><span class="title-letter" data-i="11">r</span>
@@ -80,6 +80,7 @@
           <span><span class="dot"></span>4 轮 Agentic 检索</span>
           <span><span class="dot"></span>DashVector 向量库</span>
           <span><span class="dot"></span>Qwen2.5-VL · GME</span>
+          <span><span class="dot" style="background:var(--seal-deep)"></span>🥇 1st Place · 隐藏测试集 0.520</span>
         </div>
       </div>
       <div class="hero-art">
@@ -156,7 +157,7 @@
         <div class="pipe-num">壹</div>
         <h4>多模态编码 · Encoding</h4>
         <div class="pipe-meta">Embedder · gme-Qwen2-VL-7B</div>
-        <p>文本走 text 向量（1792-d）；VQA 题额外编码图像，走 fused 多模态向量。向量提交 DashVector 检索。</p>
+        <p>文本走 text 向量（3584-d）；VQA 题额外编码图像，走 fused 多模态向量。向量提交 DashVector 检索。</p>
       </div>
       <div class="pipe-arrow">
         <svg viewBox="0 0 56 36" preserveAspectRatio="none">
@@ -242,72 +243,68 @@
         <div class="painting-thumbs" id="painting-thumbs"></div>
       </div>
 
-      <!-- MIDDLE · Question type 2D space -->
+      <!-- MIDDLE · Agentic RAG Loop diagram -->
       <div class="va-panel">
         <div class="va-panel-head">
-          <h3>题型坐标 Type-2D</h3>
-          <span class="mono" id="va-source">M2 ▸ q → ℝ²</span>
+          <h3>Agentic 检索循环</h3>
+          <span class="mono" id="va-source">max_rounds = 4</span>
         </div>
-        <div class="va-circumplex" id="va-circumplex">
-          <svg viewBox="-110 -110 220 220" xmlns="http://www.w3.org/2000/svg" id="va-svg">
+        <div class="va-circumplex" id="va-circumplex" style="display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 220 310" xmlns="http://www.w3.org/2000/svg" id="va-svg" style="width:100%;max-width:200px;">
             <defs>
-              <radialGradient id="qGreen" cx="50%" cy="50%" r="60%">
-                <stop offset="0%" stop-color="#5e8466" stop-opacity="0.30"/>
-                <stop offset="100%" stop-color="#5e8466" stop-opacity="0"/>
-              </radialGradient>
-              <radialGradient id="qBlue" cx="50%" cy="50%" r="60%">
-                <stop offset="0%" stop-color="#2a6e96" stop-opacity="0.28"/>
-                <stop offset="100%" stop-color="#2a6e96" stop-opacity="0"/>
-              </radialGradient>
-              <radialGradient id="qRed" cx="50%" cy="50%" r="60%">
-                <stop offset="0%" stop-color="#b8302a" stop-opacity="0.28"/>
-                <stop offset="100%" stop-color="#b8302a" stop-opacity="0"/>
-              </radialGradient>
-              <radialGradient id="qGold" cx="50%" cy="50%" r="60%">
-                <stop offset="0%" stop-color="#b88f4e" stop-opacity="0.28"/>
-                <stop offset="100%" stop-color="#b88f4e" stop-opacity="0"/>
-              </radialGradient>
+              <marker id="ag-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M0,1 L9,5 L0,9 Z" fill="#786c5f"/>
+              </marker>
+              <marker id="ag-arrow-loop" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M0,1 L9,5 L0,9 Z" fill="#b88f4e"/>
+              </marker>
             </defs>
-            <!-- 4 quadrant ink-wash tints -->
-            <circle cx="55" cy="-55" r="80" fill="url(#qGreen)" />
-            <circle cx="-55" cy="-55" r="80" fill="url(#qRed)" />
-            <circle cx="-55" cy="55" r="80" fill="url(#qBlue)" />
-            <circle cx="55" cy="55" r="80" fill="url(#qGold)" />
-            <!-- unit circle -->
-            <circle cx="0" cy="0" r="100" fill="none" stroke="#524841" stroke-width="0.8" />
-            <circle cx="0" cy="0" r="66"  fill="none" stroke="#a8a39e" stroke-width="0.3" stroke-dasharray="2 3"/>
-            <circle cx="0" cy="0" r="33"  fill="none" stroke="#a8a39e" stroke-width="0.3" stroke-dasharray="2 3"/>
-            <!-- axes -->
-            <line x1="-110" y1="0" x2="110" y2="0" stroke="#524841" stroke-width="0.6"/>
-            <line x1="0" y1="-110" x2="0" y2="110" stroke="#524841" stroke-width="0.6"/>
-            <!-- labels -->
-            <text x="0" y="-118" text-anchor="middle" font-size="10" font-family="Cormorant Garamond" fill="#2a2521" font-style="italic">多模态 +</text>
-            <text x="0" y="125" text-anchor="middle" font-size="10" font-family="Cormorant Garamond" fill="#2a2521" font-style="italic">纯文本 −</text>
-            <text x="118" y="3" text-anchor="start" font-size="10" font-family="Cormorant Garamond" fill="#2a2521" font-style="italic">推理 +</text>
-            <text x="-118" y="3" text-anchor="end" font-size="10" font-family="Cormorant Garamond" fill="#2a2521" font-style="italic">事实 −</text>
-            <!-- cardinal category words -->
-            <text x="70" y="-72" text-anchor="middle" font-size="8.5" fill="#5e8466" opacity="0.9">综合分析</text>
-            <text x="-70" y="-72" text-anchor="middle" font-size="8.5" fill="#b8302a" opacity="0.9">图像识别</text>
-            <text x="-70" y="78" text-anchor="middle" font-size="8.5" fill="#2a6e96" opacity="0.9">史实考据</text>
-            <text x="70" y="78" text-anchor="middle" font-size="8.5" fill="#b88f4e" opacity="0.9">因果推理</text>
-            <!-- 8 painting dots -->
-            <g id="va-dots"></g>
-            <!-- draggable point -->
-            <g id="va-pin">
-              <circle r="11" fill="#b8302a" opacity="0.20" />
-              <circle r="5.5" fill="#b8302a" />
-              <circle r="2.2" fill="#fff" />
-            </g>
+            <!-- Node: Input -->
+            <rect x="60" y="8" width="100" height="28" rx="6" fill="#ebe1cb" stroke="#b88f4e" stroke-width="1"/>
+            <text x="110" y="27" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#524841">question + image?</text>
+            <!-- Arrow down -->
+            <line x1="110" y1="36" x2="110" y2="54" stroke="#786c5f" stroke-width="1" marker-end="url(#ag-arrow)"/>
+            <!-- Node: Embedder -->
+            <rect x="50" y="55" width="120" height="30" rx="6" fill="#d4e0d4" stroke="#5e8466" stroke-width="1.2"/>
+            <text x="110" y="68" text-anchor="middle" font-size="8.5" font-family="JetBrains Mono" fill="#2a4a2a">GME Embedder</text>
+            <text x="110" y="79" text-anchor="middle" font-size="7.5" font-family="JetBrains Mono" fill="#5e8466">3584-d · text / fused</text>
+            <!-- Arrow down -->
+            <line x1="110" y1="85" x2="110" y2="103" stroke="#786c5f" stroke-width="1" marker-end="url(#ag-arrow)"/>
+            <!-- Node: DashVector -->
+            <rect x="45" y="104" width="130" height="30" rx="6" fill="#cfdbe8" stroke="#2a6e96" stroke-width="1.2"/>
+            <text x="110" y="118" text-anchor="middle" font-size="8.5" font-family="JetBrains Mono" fill="#1a3a5c">DashVector Search</text>
+            <text x="110" y="129" text-anchor="middle" font-size="7.5" font-family="JetBrains Mono" fill="#2a6e96">top_k = 3 · per round</text>
+            <!-- Arrow down -->
+            <line x1="110" y1="134" x2="110" y2="152" stroke="#786c5f" stroke-width="1" marker-end="url(#ag-arrow)"/>
+            <!-- Node: LLM Filter -->
+            <rect x="50" y="153" width="120" height="30" rx="6" fill="#e8d4c4" stroke="#b8302a" stroke-width="1.2"/>
+            <text x="110" y="167" text-anchor="middle" font-size="8.5" font-family="JetBrains Mono" fill="#5c1a1a">LLM Filter</text>
+            <text x="110" y="178" text-anchor="middle" font-size="7.5" font-family="JetBrains Mono" fill="#b8302a">relevant_ids [ ]</text>
+            <!-- Arrow down -->
+            <line x1="110" y1="183" x2="110" y2="201" stroke="#786c5f" stroke-width="1" marker-end="url(#ag-arrow)"/>
+            <!-- Node: Decide -->
+            <polygon points="110,202 170,222 110,242 50,222" fill="#faf0d8" stroke="#b88f4e" stroke-width="1.2"/>
+            <text x="110" y="219" text-anchor="middle" font-size="8" font-family="JetBrains Mono" fill="#7a5a10">enough?</text>
+            <text x="110" y="230" text-anchor="middle" font-size="7" font-family="JetBrains Mono" fill="#b88f4e">round ≤ 4</text>
+            <!-- Loop back: No → next query (left side loop) -->
+            <path d="M50,222 C10,222 10,119 45,119" stroke="#b88f4e" stroke-width="1" fill="none" marker-end="url(#ag-arrow-loop)" stroke-dasharray="3 2"/>
+            <text x="4" y="175" text-anchor="middle" font-size="7" font-family="JetBrains Mono" fill="#b88f4e" transform="rotate(-90,4,175)">No · new query</text>
+            <!-- Arrow down: Yes -->
+            <line x1="110" y1="242" x2="110" y2="260" stroke="#786c5f" stroke-width="1" marker-end="url(#ag-arrow)"/>
+            <text x="118" y="254" font-size="7" font-family="JetBrains Mono" fill="#5e8466">Yes</text>
+            <!-- Node: Generator -->
+            <rect x="45" y="261" width="130" height="32" rx="6" fill="#d4cbe8" stroke="#524841" stroke-width="1.2"/>
+            <text x="110" y="276" text-anchor="middle" font-size="8.5" font-family="JetBrains Mono" fill="#2a2130">Qwen2.5-VL Generate</text>
+            <text x="110" y="288" text-anchor="middle" font-size="7.5" font-family="JetBrains Mono" fill="#524841">greedy · max_tokens=256</text>
           </svg>
-          <div class="va-dot-tip" id="va-dot-tip"></div>
         </div>
         <div class="va-readout">
-          <div class="word" id="va-word">综合题</div>
-          <div class="coord" id="va-coord">v = -0.03  ·  a = +0.11</div>
+          <div class="word" id="va-word">Agentic RAG</div>
+          <div class="coord" id="va-coord">agent · rounds · vector_field</div>
         </div>
-        <div class="va-hint">拖动红点 · 8 道问题散在坐标系上 · 实时切换检索与生成参数</div>
+        <div class="va-hint">6 专项 Agent 各自运行此循环 · VQA 额外走 fused 字段双路检索</div>
         <div class="va-controls">
-          <button class="va-btn primary" id="btn-regen">重生成</button>
+          <button class="va-btn primary" id="btn-regen">切换题例</button>
         </div>
       </div>
 
@@ -316,25 +313,24 @@
 
         <div class="descriptors">
           <div class="descriptors-head">
-            <h3>生成参数</h3>
-            <span class="mono">M5/M6 · 8-slot rule</span>
+            <h3>Agent 参数</h3>
+            <span class="mono">per question · auto</span>
           </div>
           <div class="slot-grid" id="slot-grid">
-            <div class="slot"><div class="slot-label">top_k</div><div class="slot-value" data-slot="tempo">—</div></div>
-            <div class="slot"><div class="slot-label">retriever</div><div class="slot-value" data-slot="mode">—</div></div>
-            <div class="slot"><div class="slot-label">rerank</div><div class="slot-value" data-slot="meter">—</div></div>
-            <div class="slot"><div class="slot-label">prompt</div><div class="slot-value" data-slot="register">—</div></div>
-            <div class="slot"><div class="slot-label">context_len</div><div class="slot-value" data-slot="texture">—</div></div>
+            <div class="slot"><div class="slot-label">agent</div><div class="slot-value" data-slot="tempo">—</div></div>
+            <div class="slot"><div class="slot-label">top_k</div><div class="slot-value" data-slot="mode">—</div></div>
+            <div class="slot"><div class="slot-label">max_rounds</div><div class="slot-value" data-slot="meter">—</div></div>
+            <div class="slot"><div class="slot-label">vector_field</div><div class="slot-value" data-slot="register">—</div></div>
+            <div class="slot"><div class="slot-label">max_new_tokens</div><div class="slot-value" data-slot="texture">—</div></div>
             <div class="slot"><div class="slot-label">temperature</div><div class="slot-value" data-slot="dynamics">—</div></div>
-            <div class="slot"><div class="slot-label">decoding</div><div class="slot-value" data-slot="articulation">—</div></div>
-            <div class="slot full"><div class="slot-label">citation_src</div><div class="slot-value" data-slot="instrumentation">—</div></div>
+            <div class="slot full"><div class="slot-label">decoding</div><div class="slot-value" data-slot="articulation">—</div></div>
           </div>
         </div>
 
         <div class="rag-card">
           <div class="rag-card-head">
             <h3>史料检索</h3>
-            <span class="mono">M3 · top-3 of 1129 chunks</span>
+            <span class="mono">DashVector · top-3 per round</span>
           </div>
           <div class="rag-list" id="rag-list"></div>
         </div>
@@ -356,7 +352,7 @@
         <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
       </svg>
       <p class="lead" style="max-width: 540px; margin: 24px auto 0;">
-        以 <em>「后母戊鼎断代」</em> 为例，把 ChronoMirror pipeline 的每一步全部摊开看：从图文问题输入到题型投影、史料 RAG 检索、再到 Qwen2.5-VL 条件 prompt 的完整轨迹。
+        以 <em>「后母戊鼎断代」</em> 为例，把 ChronoMirror Agentic RAG 循环的每一步全部摊开看：从图文问题输入、GME 编码、多轮 DashVector 检索、LLM 过滤，到 Qwen2.5-VL 生成答案的完整轨迹。
       </p>
     </div>
 
@@ -368,16 +364,16 @@
         <h3>图中青铜器断代<br><span style="font-family:var(--serif-en);font-style:italic;font-weight:400;color:var(--ink-mid);font-size:24px;">Which dynasty does this bronze vessel belong to?</span></h3>
         <div class="artist">题图：后母戊鼎拓片 · 商代后期王室祭器</div>
         <p class="lead">
-          一道经典多模态问题——给出青铜器拓片与题面提示，要求判断朝代与用途。题型落在「事实 × 多模态」象限，坐标偏左上。
+          一道经典 VQA 题——图片传入 ChoiceVQAAgent，GME 同时编码文本 query 与图像，走 text + fused 双字段检索；LLM 判断 enough 决定是否继续检索轮次。
         </p>
         <p class="lead">
-          下面是 ChronoMirror 把这种「有图为证」的题面转译成具体 RAG 检索与生成参数的完整过程：
+          下面是四步 Agentic 循环在这道题上的完整展开：
         </p>
         <div class="case-meta">
           <span class="tag dyn">商 · Shang</span>
-          <span class="tag">图像识别</span>
-          <span class="tag">多模态</span>
-          <span class="tag">RAG-API · v1.0</span>
+          <span class="tag">ChoiceVQAAgent</span>
+          <span class="tag">dual-field</span>
+          <span class="tag">DashVector</span>
         </div>
       </div>
     </div>
@@ -398,17 +394,16 @@
             <text x="135" y="86" text-anchor="middle" font-size="8" font-family="JetBrains Mono" fill="#524841">school · medium</text>
           </svg>
         </div>
-<pre><span class="k">"question"</span>: <span class="s">"该青铜器朝代?"</span>,
-<span class="k">"image"</span>: <span class="s">"houmuwu_ding.jpg"</span>,
-<span class="k">"hint_era"</span>: <span class="s">"上古"</span>,
-<span class="k">"modality"</span>: <span class="s">"image+text"</span>,
-<span class="k">"api_key"</span>: <span class="s">"2024XXXX"</span></pre>
-        <div class="ct-foot">M1 ▸ raw question + image</div>
+<pre><span class="k">"section"</span>: <span class="s">"选择VQA"</span>,
+<span class="k">"question"</span>: <span class="s">"该青铜器朝代?"</span>,
+<span class="k">"image_url"</span>: <span class="s">"houmuwu_ding.jpg"</span>,
+<span class="k">"agent"</span>: <span class="s">"ChoiceVQAAgent"</span></pre>
+        <div class="ct-foot">pipeline.py ▸ load_input → ChoiceVQAAgent</div>
       </div>
 
       <div class="case-step">
-        <div class="ct-num">② ENCODER</div>
-        <h4>多模态编码</h4>
+        <div class="ct-num">② ENCODE</div>
+        <h4>GME 多模态编码</h4>
         <div class="ct-mini-svg">
           <div class="encoder-stripes">
             <div class="encoder-stripe" style="width: 92%"></div>
@@ -422,41 +417,41 @@
             <div class="encoder-stripe" style="width: 81%"></div>
           </div>
         </div>
-<pre><span class="k">"q_dim"</span>: <span class="n">768</span>,
-<span class="k">"e_img"</span>: <span class="s">"Qwen2.5-VL"</span>,
-<span class="k">"e_txt"</span>: <span class="s">"BGE-M3"</span>,
-<span class="k">"e_meta"</span>: <span class="s">"hash"</span>,
-<span class="k">"‖q‖₂"</span>: <span class="n">19.7</span></pre>
-        <div class="ct-foot">M1 ▸ fused multimodal q ∈ ℝ^768</div>
+<pre><span class="k">"model"</span>: <span class="s">"gme-Qwen2-VL-7B"</span>,
+<span class="k">"dim"</span>: <span class="n">3584</span>,
+<span class="k">"text_field"</span>: <span class="s">"text"</span>,
+<span class="k">"fused_field"</span>: <span class="s">"fused"</span>,
+<span class="k">"L2_norm"</span>: <span class="n">true</span></pre>
+        <div class="ct-foot">embedding.py ▸ Embedder.encode() → 3584-d</div>
       </div>
 
       <div class="case-step">
-        <div class="ct-num">③ TYPE</div>
-        <h4>题型投影 + RAG</h4>
+        <div class="ct-num">③ SEARCH</div>
+        <h4>多轮 DashVector 检索</h4>
         <div class="ct-mini-svg">
-          <svg viewBox="-55 -55 110 110">
-            <circle r="50" fill="none" stroke="#524841" stroke-width="0.6"/>
-            <line x1="-50" y1="0" x2="50" y2="0" stroke="#a8a39e" stroke-width="0.4"/>
-            <line x1="0" y1="-50" x2="0" y2="50" stroke="#a8a39e" stroke-width="0.4"/>
-            <path d="M0,0 L50,0 A50,50 0 0,1 0,50 Z" fill="#b88f4e" opacity="0.18" />
-            <path d="M0,0 L0,50 A50,50 0 0,1 -50,0 Z" fill="#2a6e96" opacity="0.18" />
-            <path d="M0,0 L-50,0 A50,50 0 0,1 0,-50 Z" fill="#b8302a" opacity="0.18" />
-            <path d="M0,0 L0,-50 A50,50 0 0,1 50,0 Z" fill="#5e8466" opacity="0.18" />
-            <circle cx="-3" cy="-11" r="3.5" fill="#b8302a"/>
-            <circle cx="-3" cy="-11" r="1.3" fill="#fff"/>
+          <svg viewBox="0 0 200 110">
+            <rect x="10" y="15" width="80" height="24" rx="4" fill="#cfdbe8" stroke="#2a6e96" stroke-width="1"/>
+            <text x="50" y="31" text-anchor="middle" font-size="8" font-family="JetBrains Mono" fill="#1a3a5c">text field</text>
+            <rect x="110" y="15" width="80" height="24" rx="4" fill="#d4cbe8" stroke="#524841" stroke-width="1"/>
+            <text x="150" y="31" text-anchor="middle" font-size="8" font-family="JetBrains Mono" fill="#2a2130">fused field</text>
+            <line x1="50" y1="39" x2="50" y2="55" stroke="#786c5f" stroke-width="0.8"/>
+            <line x1="150" y1="39" x2="150" y2="55" stroke="#786c5f" stroke-width="0.8"/>
+            <rect x="60" y="55" width="80" height="22" rx="4" fill="#e8d4c4" stroke="#b8302a" stroke-width="1"/>
+            <text x="100" y="69" text-anchor="middle" font-size="8" font-family="JetBrains Mono" fill="#5c1a1a">LLM Filter</text>
+            <line x1="100" y1="77" x2="100" y2="92" stroke="#786c5f" stroke-width="0.8"/>
+            <text x="100" y="102" text-anchor="middle" font-size="8" font-family="JetBrains Mono" fill="#b88f4e">enough? → next round</text>
           </svg>
         </div>
-<pre><span class="k">"infer"</span>: <span class="n">-0.45</span>,
-<span class="k">"multi"</span>: <span class="n">+0.65</span>,
-<span class="k">"category"</span>: <span class="s">"文物鉴定"</span>,
-<span class="k">"rag_top1"</span>: <span class="s">"后母戊鼎</span>
-              <span class="s">1939出土"</span></pre>
-        <div class="ct-foot">M2 ▸ type · M3 ▸ top-3 RAG chunks</div>
+<pre><span class="k">"rounds"</span>: <span class="n">1</span><span class="s">..4</span>,
+<span class="k">"top_k"</span>: <span class="n">3</span>,
+<span class="k">"fields"</span>: [<span class="s">"text"</span>, <span class="s">"fused"</span>],
+<span class="k">"filter"</span>: <span class="s">"relevant_ids"</span></pre>
+        <div class="ct-foot">retrieval.py ▸ bridge → DashVector · dual-field</div>
       </div>
 
       <div class="case-step">
-        <div class="ct-num">④ OUTPUT</div>
-        <h4>生成参数 + 答案</h4>
+        <div class="ct-num">④ GENERATE</div>
+        <h4>Qwen2.5-VL 生成答案</h4>
         <div class="ct-mini-svg">
           <svg viewBox="0 0 200 110">
             <g fill="#b8302a" opacity="0.85">
@@ -468,62 +463,131 @@
               <rect x="40" y="28" width="3" height="64" rx="1"/>
               <rect x="46" y="44" width="3" height="32" rx="1"/>
               <rect x="52" y="50" width="3" height="20" rx="1"/>
-              <rect x="58" y="36" width="3" height="48" rx="1"/>
-              <rect x="64" y="42" width="3" height="36" rx="1"/>
-              <rect x="70" y="48" width="3" height="24" rx="1"/>
-              <rect x="76" y="40" width="3" height="40" rx="1"/>
-              <rect x="82" y="50" width="3" height="20" rx="1"/>
-              <rect x="88" y="46" width="3" height="28" rx="1"/>
-              <rect x="94" y="52" width="3" height="16" rx="1"/>
             </g>
             <g fill="#524841" opacity="0.55">
-              <rect x="104" y="46" width="3" height="28" rx="1"/>
-              <rect x="110" y="50" width="3" height="20" rx="1"/>
-              <rect x="116" y="44" width="3" height="32" rx="1"/>
-              <rect x="122" y="48" width="3" height="24" rx="1"/>
-              <rect x="128" y="52" width="3" height="16" rx="1"/>
-              <rect x="134" y="50" width="3" height="20" rx="1"/>
-              <rect x="140" y="46" width="3" height="28" rx="1"/>
-              <rect x="146" y="54" width="3" height="12" rx="1"/>
-              <rect x="152" y="50" width="3" height="20" rx="1"/>
-              <rect x="158" y="48" width="3" height="24" rx="1"/>
-              <rect x="164" y="52" width="3" height="16" rx="1"/>
-              <rect x="170" y="50" width="3" height="20" rx="1"/>
-              <rect x="176" y="54" width="3" height="12" rx="1"/>
-              <rect x="182" y="56" width="3" height="8" rx="1"/>
-              <rect x="188" y="58" width="3" height="4" rx="1"/>
+              <rect x="62" y="44" width="3" height="32" rx="1"/>
+              <rect x="68" y="48" width="3" height="24" rx="1"/>
+              <rect x="74" y="52" width="3" height="16" rx="1"/>
+              <rect x="80" y="50" width="3" height="20" rx="1"/>
+              <rect x="86" y="54" width="3" height="12" rx="1"/>
+              <rect x="92" y="56" width="3" height="8" rx="1"/>
             </g>
           </svg>
         </div>
-<pre><span class="k">"top_k"</span>: <span class="n">12</span>,
-<span class="k">"retriever"</span>: <span class="s">"hybrid"</span>,
-<span class="k">"cite"</span>: [<span class="s">"图录"</span>, <span class="s">"博物馆志"</span>],
-<span class="k">"prompt"</span>: <span class="s">"few-shot"</span>,
-<span class="k">"answer_len"</span>: <span class="n">186</span> tok</pre>
-        <div class="ct-foot">M5/M6 ▸ 8-slot · M4 ▸ Qwen2.5-VL</div>
+<pre><span class="k">"model"</span>: <span class="s">"Qwen2.5-VL-7B"</span>,
+<span class="k">"do_sample"</span>: <span class="n">false</span>,
+<span class="k">"temperature"</span>: <span class="n">null</span>,
+<span class="k">"max_new_tokens"</span>: <span class="n">256</span></pre>
+        <div class="ct-foot">generator.py ▸ Generator.generate() → normalize_answer()</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ============================================================================
-     PAINTINGS ATLAS · 画作图谱
+     QUESTION TYPE ATLAS · 题型图谱
 ============================================================================ -->
 <section class="atlas" id="atlas">
   <div class="container">
     <div class="section-head fade-in">
-      <span class="eyebrow">8 Questions × 6 Question Types</span>
-      <h2 class="hd-2">题例图谱</h2>
+      <span class="eyebrow">6 Question Types · 6 Agents</span>
+      <h2 class="hd-2">题型图谱</h2>
       <svg class="flourish" viewBox="0 0 88 18" aria-hidden="true">
         <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
       </svg>
-      <p class="lead" style="max-width: 580px; margin: 24px auto 0;">
-        从商周青铜到辛亥革命，八道历史问题跨越三千年，各自在「事实 × 多模态」坐标系里有自己的题型位置——点击任一卡看完整 pipeline 的数据轨迹。
+      <p class="lead" style="max-width: 640px; margin: 24px auto 0;">
+        六类题型等分一圆，每类对应一个专项 Agent。VQA 题额外走 fused 字段双路检索。<br>
+        为防过拟合，项目自建两份测试集：<strong>ChronoClose-150</strong>（源自公开样例，贴近竞赛分布，覆盖全部六类题型含图）和 <strong>ChronoWide-700</strong>（66 个历史主题关键词宽域检索，仅纯文本三类题）。
       </p>
     </div>
-    <div class="atlas-grid stagger" id="atlas-grid">
-      <!-- populated by JS -->
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:48px;padding:20px 0;">
+      <!-- Pie chart -->
+      <svg viewBox="0 0 600 540" style="width:100%;max-width:520px;" xmlns="http://www.w3.org/2000/svg">
+        <!-- Sector 1: 选择QA  270°→330° -->
+        <path d="M 300 270 L 300 50 A 220 220 0 0 1 490 160 Z"
+              fill="#2a6e96" opacity="0.88" stroke="#faf6ec" stroke-width="2"/>
+        <!-- Sector 2: 选择VQA  330°→30° -->
+        <path d="M 300 270 L 490 160 A 220 220 0 0 1 490 380 Z"
+              fill="#5e8466" opacity="0.88" stroke="#faf6ec" stroke-width="2"/>
+        <!-- Sector 3: 判断QA  30°→90° -->
+        <path d="M 300 270 L 490 380 A 220 220 0 0 1 300 490 Z"
+              fill="#b8302a" opacity="0.88" stroke="#faf6ec" stroke-width="2"/>
+        <!-- Sector 4: 判断VQA  90°→150° -->
+        <path d="M 300 270 L 300 490 A 220 220 0 0 1 110 380 Z"
+              fill="#b88f4e" opacity="0.88" stroke="#faf6ec" stroke-width="2"/>
+        <!-- Sector 5: 简答QA  150°→210° -->
+        <path d="M 300 270 L 110 380 A 220 220 0 0 1 110 160 Z"
+              fill="#786c5f" opacity="0.88" stroke="#faf6ec" stroke-width="2"/>
+        <!-- Sector 6: 简答VQA  210°→270° -->
+        <path d="M 300 270 L 110 160 A 220 220 0 0 1 300 50 Z"
+              fill="#7b5ea7" opacity="0.88" stroke="#faf6ec" stroke-width="2"/>
+
+        <!-- Center circle -->
+        <circle cx="300" cy="270" r="62" fill="#faf6ec" stroke="#a8a39e" stroke-width="1.2"/>
+        <text x="300" y="264" text-anchor="middle" font-size="13" font-family="Noto Serif SC" fill="#2a2521" font-weight="600">题型</text>
+        <text x="300" y="282" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#786c5f">6 types</text>
+
+        <!-- Labels inside sectors (at r≈138 from center) -->
+        <!-- Seg 1 mid=300°  → (300+69, 270-119.5)=(369,150.5) -->
+        <text x="369" y="148" text-anchor="middle" font-size="13" font-family="Noto Serif SC" fill="#fff" font-weight="600">选择</text>
+        <text x="369" y="164" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#d4eaf5">QA</text>
+        <!-- Seg 2 mid=0°   → (300+138, 270)=(438,270) -->
+        <text x="438" y="267" text-anchor="middle" font-size="13" font-family="Noto Serif SC" fill="#fff" font-weight="600">选择</text>
+        <text x="438" y="283" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#c8e8c8">VQA</text>
+        <!-- Seg 3 mid=60°  → (300+69, 270+119.5)=(369,389.5) -->
+        <text x="369" y="387" text-anchor="middle" font-size="13" font-family="Noto Serif SC" fill="#fff" font-weight="600">判断</text>
+        <text x="369" y="403" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#f5d4d4">QA</text>
+        <!-- Seg 4 mid=120° → (300-69, 270+119.5)=(231,389.5) -->
+        <text x="231" y="387" text-anchor="middle" font-size="13" font-family="Noto Serif SC" fill="#fff" font-weight="600">判断</text>
+        <text x="231" y="403" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#faecd4">VQA</text>
+        <!-- Seg 5 mid=180° → (300-138, 270)=(162,270) -->
+        <text x="162" y="267" text-anchor="middle" font-size="13" font-family="Noto Serif SC" fill="#fff" font-weight="600">简答</text>
+        <text x="162" y="283" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#e0d8d0">QA</text>
+        <!-- Seg 6 mid=240° → (300-69, 270-119.5)=(231,150.5) -->
+        <text x="231" y="148" text-anchor="middle" font-size="13" font-family="Noto Serif SC" fill="#fff" font-weight="600">简答</text>
+        <text x="231" y="164" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#ddd0f0">VQA</text>
+
+        <!-- Outer tick labels at r=246 -->
+        <text x="369" y="118" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#524841" opacity="0.7">ChoiceAgent</text>
+        <text x="468" y="272" text-anchor="start"  font-size="9" font-family="JetBrains Mono" fill="#524841" opacity="0.7">ChoiceVQA</text>
+        <text x="369" y="432" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#524841" opacity="0.7">JudgeAgent</text>
+        <text x="231" y="432" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#524841" opacity="0.7">JudgeVQA</text>
+        <text x="72"  y="272" text-anchor="end"    font-size="9" font-family="JetBrains Mono" fill="#524841" opacity="0.7">ShortAnswer</text>
+        <text x="231" y="118" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#524841" opacity="0.7">ShortAnswerVQA</text>
+      </svg>
+
+      <!-- Legend grid -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:660px;width:100%;">
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#faf6ec;border-radius:8px;border:1px solid #e0d8cc;">
+          <span style="width:14px;height:14px;border-radius:50%;background:#2a6e96;flex-shrink:0;"></span>
+          <div><div style="font-size:13px;font-family:var(--serif-cn);color:#2a2521;">选择 QA</div><div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:#786c5f;">ChoiceAgent</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#faf6ec;border-radius:8px;border:1px solid #e0d8cc;">
+          <span style="width:14px;height:14px;border-radius:50%;background:#5e8466;flex-shrink:0;"></span>
+          <div><div style="font-size:13px;font-family:var(--serif-cn);color:#2a2521;">选择 VQA</div><div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:#786c5f;">ChoiceVQAAgent</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#faf6ec;border-radius:8px;border:1px solid #e0d8cc;">
+          <span style="width:14px;height:14px;border-radius:50%;background:#b8302a;flex-shrink:0;"></span>
+          <div><div style="font-size:13px;font-family:var(--serif-cn);color:#2a2521;">判断 QA</div><div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:#786c5f;">JudgeAgent</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#faf6ec;border-radius:8px;border:1px solid #e0d8cc;">
+          <span style="width:14px;height:14px;border-radius:50%;background:#b88f4e;flex-shrink:0;"></span>
+          <div><div style="font-size:13px;font-family:var(--serif-cn);color:#2a2521;">判断 VQA</div><div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:#786c5f;">JudgeVQAAgent</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#faf6ec;border-radius:8px;border:1px solid #e0d8cc;">
+          <span style="width:14px;height:14px;border-radius:50%;background:#786c5f;flex-shrink:0;"></span>
+          <div><div style="font-size:13px;font-family:var(--serif-cn);color:#2a2521;">简答 QA</div><div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:#786c5f;">ShortAnswerAgent</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#faf6ec;border-radius:8px;border:1px solid #e0d8cc;">
+          <span style="width:14px;height:14px;border-radius:50%;background:#7b5ea7;flex-shrink:0;"></span>
+          <div><div style="font-size:13px;font-family:var(--serif-cn);color:#2a2521;">简答 VQA</div><div style="font-size:10px;font-family:'JetBrains Mono',monospace;color:#786c5f;">ShortAnswerVQAAgent</div></div>
+        </div>
+      </div>
     </div>
+
+    <!-- keep for JS compat -->
+    <div id="atlas-grid" style="display:none"></div>
   </div>
 </section>
 
@@ -533,14 +597,14 @@
 <section class="modules" id="modules">
   <div class="container">
     <div class="section-head fade-in">
-      <span class="eyebrow">9 Modules · CPU-friendly demos</span>
+      <span class="eyebrow">4 Infra + 6 Agents · Agentic RAG</span>
       <h2 class="hd-2">模块陈列</h2>
       <svg class="flourish" viewBox="0 0 88 18" aria-hidden="true">
         <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
       </svg>
-      <p class="lead" style="max-width: 540px; margin: 24px auto 0;">
-        每一格对应一个独立模块：可单独安装、可单独跑 demo、可单独评测。<br>
-        <em>悬停 hover 卡片：图自动轮播 3 张。点击：灯箱全图。</em>
+      <p class="lead" style="max-width: 620px; margin: 24px auto 0;">
+        基础设施 4 个（<strong>Embedder · Bridge · Retriever · Generator</strong>）+ 专项 Agent 6 个（<strong>Choice / Judge / ShortAnswer × QA / VQA</strong>）。<br>
+        每张卡片对应一个源文件，展示其核心 API 与工作原理。点击卡片查看完整说明。
       </p>
     </div>
     <div class="module-grid stagger" id="module-grid"></div>
@@ -553,19 +617,19 @@
 <section class="dataflow" id="dataflow">
   <div class="container">
     <div class="section-head fade-in">
-      <span class="eyebrow">Module Topology · 9 nodes · 14 edges</span>
+      <span class="eyebrow">System Topology · Agentic RAG Pipeline</span>
       <h2 class="hd-2">模块连接图</h2>
       <svg class="flourish" viewBox="0 0 88 18" aria-hidden="true">
         <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
       </svg>
       <p class="lead" style="max-width: 660px; margin: 24px auto 0;">
-        每个模块在系统里扮演的角色：输入怎么进、产物怎么流、谁喂给谁。<br>
+        每个组件在系统里扮演的角色：输入怎么进、产物怎么流、谁喂给谁。<br>
         <em style="color: var(--seal-deep);">将鼠标悬停在任一节点上</em>，看它的进/出边亮起来。
       </p>
     </div>
 
     <div class="df-stage fade-in">
-      <svg id="df-svg" class="df-svg" viewBox="0 0 1280 680" preserveAspectRatio="xMidYMid meet">
+      <svg id="df-svg" class="df-svg" viewBox="0 0 1100 620" preserveAspectRatio="xMidYMid meet">
         <defs>
           <marker id="df-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
             <path d="M0,0 L10,5 L0,10 Z" fill="#786c5f"/>
@@ -573,154 +637,166 @@
           <marker id="df-arrow-active" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
             <path d="M0,0 L10,5 L0,10 Z" fill="#b8302a"/>
           </marker>
+          <marker id="df-arrow-loop" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#b88f4e"/>
+          </marker>
         </defs>
 
-        <!-- M8 wrapper -->
-        <rect class="m8-wrap" x="60" y="100" width="1160" height="560" rx="20"
+        <!-- Agentic Loop dashed wrapper -->
+        <rect x="60" y="150" width="980" height="340" rx="20"
               fill="none" stroke="#b88f4e" stroke-width="1.2" stroke-dasharray="6 4" opacity="0.45"/>
-        <g class="m8-label">
-          <rect x="80" y="86" width="320" height="26" rx="13" fill="#faf6ec" stroke="#b88f4e" stroke-width="0.8"/>
-          <text x="240" y="103" text-anchor="middle" font-family="Cormorant Garamond" font-style="italic" font-size="13" fill="#786c5f" letter-spacing="0.08em">M8 · Frontend + Backend orchestration</text>
+        <rect x="76" y="136" width="330" height="26" rx="13" fill="#faf6ec" stroke="#b88f4e" stroke-width="0.8"/>
+        <text x="240" y="153" text-anchor="middle" font-family="Cormorant Garamond" font-style="italic" font-size="13" fill="#786c5f" letter-spacing="0.06em">Agentic Loop · max 4 rounds per question</text>
+
+        <!-- ── INPUT row ── -->
+        <g class="df-node input" data-id="in-q" transform="translate(240,30)">
+          <rect class="node-bg" width="160" height="40" rx="8"/>
+          <text class="node-name" x="80" y="25">question · section</text>
+        </g>
+        <g class="df-node input" data-id="in-img" transform="translate(420,30)">
+          <rect class="node-bg" width="140" height="40" rx="8"/>
+          <text class="node-name" x="70" y="25">image (VQA)</text>
         </g>
 
-        <!-- INPUTS row (y=30 - 70) -->
-        <g class="df-node input" data-id="in-img" transform="translate(110,30)">
-          <rect class="node-bg" width="120" height="40" rx="8"/>
-          <text class="node-name" x="60" y="25">题图 · image</text>
-        </g>
-        <g class="df-node input" data-id="in-text" transform="translate(250,30)">
-          <rect class="node-bg" width="120" height="40" rx="8"/>
-          <text class="node-name" x="60" y="25">问题 · question</text>
-        </g>
-        <g class="df-node input" data-id="in-meta" transform="translate(390,30)">
-          <rect class="node-bg" width="120" height="40" rx="8"/>
-          <text class="node-name" x="60" y="25">元数据 · meta</text>
-        </g>
-        <g class="df-node input" data-id="in-prompt" transform="translate(670,30)">
-          <rect class="node-bg" width="120" height="40" rx="8"/>
-          <text class="node-name" x="60" y="25">指令 · instruct</text>
-        </g>
-        <g class="df-node input" data-id="in-hum" transform="translate(820,30)">
-          <rect class="node-bg" width="120" height="40" rx="8"/>
-          <text class="node-name" x="60" y="25">追问 · follow-up</text>
+        <!-- INPUT → Pipeline -->
+        <path class="df-edge" data-from="in-q"   data-to="pipeline" d="M320,70 C 320,100 460,110 480,120"/>
+        <path class="df-edge" data-from="in-img"  data-to="pipeline" d="M490,70 L 490,120"/>
+
+        <!-- ── PIPELINE orchestrator ── -->
+        <g class="df-node cat-perception" data-id="pipeline" transform="translate(370,120)">
+          <rect class="node-bg" width="240" height="50" rx="10"/>
+          <rect class="node-stripe" width="240" height="3" fill="currentColor"/>
+          <text class="node-id" x="120" y="22">RAGPipeline</text>
+          <text class="node-name" x="120" y="40">pipeline.py · 按 section 选 Agent</text>
         </g>
 
-        <!-- input → encoder edges -->
-        <path class="df-edge" data-from="in-img"  data-to="m1" d="M170,70 C 170,110 300,120 300,150"/>
-        <path class="df-edge" data-from="in-text" data-to="m1" d="M310,70 L 310,150"/>
-        <path class="df-edge" data-from="in-meta" data-to="m1" d="M450,70 C 450,110 320,120 320,150"/>
-        <path class="df-edge" data-from="in-prompt" data-to="m6" d="M730,70 L 730,150"/>
-        <path class="df-edge" data-from="in-hum"  data-to="m7" d="M880,70 L 880,150"/>
+        <!-- Pipeline → Embedder -->
+        <path class="df-edge" data-from="pipeline" data-to="embedder" d="M370,170 C 280,180 220,185 220,200"/>
+        <text class="df-edge-label" x="268" y="182">query text</text>
 
-        <!-- ENCODERS row (y=150 - 210) -->
-        <g class="df-node cat-perception" data-id="m1" transform="translate(230,150)">
-          <rect class="node-bg" width="160" height="60" rx="10"/>
-          <rect class="node-stripe" width="160" height="3" fill="currentColor"/>
-          <text class="node-id" x="80" y="24">M1 · ENCODER</text>
-          <text class="node-name" x="80" y="46">多模态问题编码</text>
-        </g>
-        <g class="df-node cat-interaction" data-id="m6" transform="translate(650,150)">
-          <rect class="node-bg" width="160" height="60" rx="10"/>
-          <rect class="node-stripe" width="160" height="3" fill="currentColor"/>
-          <text class="node-id" x="80" y="24">M6 · PROMPT</text>
-          <text class="node-name" x="80" y="46">Prompt 翻译</text>
-        </g>
-        <g class="df-node cat-interaction" data-id="m7" transform="translate(800,150)">
-          <rect class="node-bg" width="160" height="60" rx="10"/>
-          <rect class="node-stripe" width="160" height="3" fill="currentColor"/>
-          <text class="node-id" x="80" y="24">M7 · DIALOG</text>
-          <text class="node-name" x="80" y="46">多轮对话</text>
+        <!-- Pipeline → Embedder(image) for VQA -->
+        <path class="df-edge" data-from="in-img" data-to="embedder"
+              d="M490,70 C 490,90 220,140 220,200" stroke-dasharray="4 3"/>
+        <text class="df-edge-label" x="300" y="128">image (VQA only)</text>
+
+        <!-- ── EMBEDDER ── left -->
+        <g class="df-node cat-perception" data-id="embedder" transform="translate(100,200)">
+          <rect class="node-bg" width="240" height="65" rx="10"/>
+          <rect class="node-stripe" width="240" height="3" fill="currentColor"/>
+          <text class="node-id" x="120" y="22">Embedder · GME</text>
+          <text class="node-name" x="120" y="42">gme-Qwen2-VL-7B</text>
+          <text class="node-name" x="120" y="57" font-size="10" opacity="0.75">3584-d · text / fused</text>
         </g>
 
-        <!-- M1 → M2 / M3 edges -->
-        <path class="df-edge" data-from="m1" data-to="m2" d="M280,210 C 280,260 220,260 220,300"/>
-        <text class="df-edge-label" x="218" y="262">z · 768d</text>
+        <!-- Embedder → Bridge -->
+        <path class="df-edge" data-from="embedder" data-to="bridge" d="M340,233 L 410,233"/>
+        <text class="df-edge-label" x="352" y="226">vector 3584-d</text>
 
-        <path class="df-edge" data-from="m1" data-to="m3" d="M340,210 C 340,260 410,260 410,300"/>
-        <text class="df-edge-label" x="386" y="262">z · query</text>
-
-        <!-- PROJECTIONS row (y=300 - 360) -->
-        <g class="df-node cat-perception" data-id="m2" transform="translate(140,300)">
-          <rect class="node-bg" width="160" height="60" rx="10"/>
-          <rect class="node-stripe" width="160" height="3" fill="currentColor"/>
-          <text class="node-id" x="80" y="24">M2 · TYPE</text>
-          <text class="node-name" x="80" y="46">题型分类</text>
-        </g>
-        <g class="df-node cat-perception" data-id="m3" transform="translate(330,300)">
-          <rect class="node-bg" width="160" height="60" rx="10"/>
-          <rect class="node-stripe" width="160" height="3" fill="currentColor"/>
-          <text class="node-id" x="80" y="24">M3 · RAG</text>
-          <text class="node-name" x="80" y="46">历史知识检索</text>
-        </g>
-
-        <!-- All projections + helpers → M4 edges -->
-        <path class="df-edge" data-from="m2" data-to="m4" d="M220,360 C 220,420 540,420 540,460"/>
-        <text class="df-edge-label" x="270" y="412">type · (v,a)</text>
-
-        <path class="df-edge" data-from="m3" data-to="m4" d="M410,360 C 410,420 540,420 540,460"/>
-        <text class="df-edge-label" x="430" y="412">RAG · top-k</text>
-
-        <path class="df-edge" data-from="m6" data-to="m4" d="M730,210 C 730,360 560,400 540,460"/>
-        <text class="df-edge-label" x="690" y="368">prompt tmpl</text>
-
-        <path class="df-edge" data-from="m7" data-to="m4" d="M880,210 C 880,400 600,420 540,460"/>
-        <text class="df-edge-label" x="800" y="392">history ctx</text>
-
-        <!-- M4 GENERATOR (y=460 - 530) -->
-        <g class="df-node cat-generation" data-id="m4" transform="translate(440,460)">
-          <rect class="node-bg" width="200" height="70" rx="12"/>
+        <!-- ── BRIDGE ── center-top -->
+        <g class="df-node cat-interaction" data-id="bridge" transform="translate(410,200)">
+          <rect class="node-bg" width="200" height="65" rx="10"/>
           <rect class="node-stripe" width="200" height="3" fill="currentColor"/>
-          <text class="node-id" x="100" y="26">M4 · GENERATOR</text>
-          <text class="node-name" x="100" y="50">Qwen2.5-VL · 答案生成</text>
+          <text class="node-id" x="100" y="22">Bridge · IPC</text>
+          <text class="node-name" x="100" y="42">bridge.py</text>
+          <text class="node-name" x="100" y="57" font-size="10" opacity="0.75">GPU ↔ CPU · file RPC</text>
         </g>
 
-        <!-- M4 → M5 -->
-        <path class="df-edge" data-from="m4" data-to="m5" d="M540,530 L 540,580"/>
-        <text class="df-edge-label" x="588" y="558">raw answer</text>
+        <!-- Bridge → DashVector -->
+        <path class="df-edge" data-from="bridge" data-to="dashvector" d="M610,233 L 680,233"/>
+        <text class="df-edge-label" x="622" y="226">search req</text>
 
-        <!-- M4 → M9 -->
-        <path class="df-edge" data-from="m4" data-to="m9" d="M640,495 C 760,495 850,500 900,500"/>
-        <text class="df-edge-label" x="760" y="488">answer + cite</text>
-
-        <!-- M5 EDITOR (y=580 - 640) -->
-        <g class="df-node cat-interaction" data-id="m5" transform="translate(440,580)">
-          <rect class="node-bg" width="200" height="60" rx="10"/>
-          <rect class="node-stripe" width="200" height="3" fill="currentColor"/>
-          <text class="node-id" x="100" y="24">M5 · REFINE</text>
-          <text class="node-name" x="100" y="46">答案精修（rerank / cite / halu）</text>
+        <!-- ── DASHVECTOR ── right -->
+        <g class="df-node cat-perception" data-id="dashvector" transform="translate(680,200)">
+          <rect class="node-bg" width="230" height="65" rx="10"/>
+          <rect class="node-stripe" width="230" height="3" fill="currentColor"/>
+          <text class="node-id" x="115" y="22">DashVector</text>
+          <text class="node-name" x="115" y="42">ccv_cb_student</text>
+          <text class="node-name" x="115" y="57" font-size="10" opacity="0.75">top_k · text + fused fields</text>
         </g>
 
-        <!-- M5 → out-audio -->
-        <path class="df-edge" data-from="m5" data-to="out-audio" d="M640,610 C 740,610 720,615 760,615"/>
-        <text class="df-edge-label" x="700" y="600">JSON + cite</text>
+        <!-- DashVector → Bridge (response) -->
+        <path class="df-edge" data-from="dashvector" data-to="bridge"
+              d="M795,265 C 795,290 610,290 510,265" stroke-dasharray="3 2"/>
+        <text class="df-edge-label" x="670" y="296">docs result</text>
 
-        <!-- OUTPUT -->
-        <g class="df-node out" data-id="out-audio" transform="translate(760,595)">
-          <rect class="node-bg" width="160" height="40" rx="8" fill="#b8302a" stroke="#8c1f1c" stroke-width="1.4"/>
-          <text class="node-name" x="80" y="25" fill="#faf6ec" font-weight="500">▸ 答案 · answer out</text>
+        <!-- Bridge → LLMFilter -->
+        <path class="df-edge" data-from="bridge" data-to="llmfilter" d="M510,265 C 510,290 510,310 510,330"/>
+        <text class="df-edge-label" x="516" y="306">docs[]</text>
+
+        <!-- ── LLM FILTER ── -->
+        <g class="df-node cat-generation" data-id="llmfilter" transform="translate(380,330)">
+          <rect class="node-bg" width="260" height="65" rx="10"/>
+          <rect class="node-stripe" width="260" height="3" fill="currentColor"/>
+          <text class="node-id" x="130" y="22">LLM Filter + Decide</text>
+          <text class="node-name" x="130" y="42">Qwen2.5-VL</text>
+          <text class="node-name" x="130" y="57" font-size="10" opacity="0.75">relevant_ids · enough: true/false</text>
         </g>
 
-        <!-- M9 EVALUATOR (right side) -->
-        <g class="df-node cat-evaluation" data-id="m9" transform="translate(900,470)">
-          <rect class="node-bg" width="160" height="60" rx="10"/>
-          <rect class="node-stripe" width="160" height="3" fill="currentColor"/>
-          <text class="node-id" x="80" y="24">M9 · EVAL</text>
-          <text class="node-name" x="80" y="46">评测（EM / F1 / Recall@k）</text>
+        <!-- LLMFilter → loop back (not enough) -->
+        <path class="df-edge" data-from="llmfilter" data-to="embedder"
+              d="M380,362 C 220,362 180,310 180,265" stroke="#b88f4e" stroke-dasharray="5 3" marker-end="url(#df-arrow-loop)"/>
+        <text class="df-edge-label" x="174" y="340" fill="#b88f4e">not enough · new query</text>
+
+        <!-- LLMFilter → Generator (enough) -->
+        <path class="df-edge" data-from="llmfilter" data-to="generator" d="M510,395 L 510,440"/>
+        <text class="df-edge-label" x="516" y="422">context[]</text>
+
+        <!-- ── GENERATOR ── -->
+        <g class="df-node cat-generation" data-id="generator" transform="translate(370,440)">
+          <rect class="node-bg" width="280" height="70" rx="12"/>
+          <rect class="node-stripe" width="280" height="3" fill="currentColor"/>
+          <text class="node-id" x="140" y="24">Generator · Qwen2.5-VL</text>
+          <text class="node-name" x="140" y="46">Qwen2.5-VL-7B-Instruct</text>
+          <text class="node-name" x="140" y="61" font-size="10" opacity="0.75">greedy · do_sample=False · max_new_tokens=256</text>
         </g>
 
-        <!-- M9 dashed reference back to image (ground truth) -->
-        <path class="df-edge df-edge-ref" data-from="in-img" data-to="m9"
-              d="M230,50 C 800,50 1000,360 980,470" stroke-dasharray="4 3"/>
-        <text class="df-edge-label" x="980" y="68">ground-truth answer</text>
+        <!-- Generator → outputs -->
+        <path class="df-edge" data-from="generator" data-to="out-pred" d="M420,510 C 350,530 300,545 280,560"/>
+        <path class="df-edge" data-from="generator" data-to="out-time" d="M510,510 L 510,560"/>
+        <path class="df-edge" data-from="generator" data-to="out-trace" d="M600,510 C 680,530 740,545 760,560"/>
+
+        <!-- ── OUTPUTS ── -->
+        <g class="df-node out" data-id="out-pred" transform="translate(140,560)">
+          <rect class="node-bg" width="200" height="45" rx="8" fill="#b8302a" stroke="#8c1f1c" stroke-width="1.4"/>
+          <text class="node-name" x="100" y="20" fill="#faf6ec" font-weight="500">predictions.jsonl</text>
+          <text class="node-name" x="100" y="36" fill="#faf6ec" font-size="10" opacity="0.8">normalize_answer()</text>
+        </g>
+        <g class="df-node out" data-id="out-time" transform="translate(390,560)">
+          <rect class="node-bg" width="200" height="45" rx="8" fill="#786c5f" stroke="#524841" stroke-width="1.4"/>
+          <text class="node-name" x="100" y="20" fill="#faf6ec" font-weight="500">time_cost.jsonl</text>
+          <text class="node-name" x="100" y="36" fill="#faf6ec" font-size="10" opacity="0.8">per-question timing</text>
+        </g>
+        <g class="df-node out" data-id="out-trace" transform="translate(640,560)">
+          <rect class="node-bg" width="200" height="45" rx="8" fill="#2a6e96" stroke="#1a4a6c" stroke-width="1.4"/>
+          <text class="node-name" x="100" y="20" fill="#faf6ec" font-weight="500">traces.jsonl</text>
+          <text class="node-name" x="100" y="36" fill="#faf6ec" font-size="10" opacity="0.8">StepRecorder · Tracer</text>
+        </g>
+
+        <!-- 6 Agent pills (right side annotation) -->
+        <rect x="920" y="170" width="160" height="300" rx="12"
+              fill="#faf6ec" stroke="#a8a39e" stroke-width="0.8" opacity="0.7"/>
+        <text x="1000" y="192" text-anchor="middle" font-size="10" font-family="Cormorant Garamond" fill="#524841" font-style="italic">6 Agents</text>
+        <text x="1000" y="212" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#2a6e96">ChoiceAgent</text>
+        <text x="1000" y="232" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#2a6e96">ChoiceVQAAgent</text>
+        <text x="1000" y="252" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#5e8466">JudgeAgent</text>
+        <text x="1000" y="272" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#5e8466">JudgeVQAAgent</text>
+        <text x="1000" y="292" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#b88f4e">ShortAnswerAgent</text>
+        <text x="1000" y="312" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#b88f4e">ShortAnswerVQA</text>
+        <line x1="930" y1="200" x2="910" y2="233" stroke="#a8a39e" stroke-width="0.6" stroke-dasharray="3 2"/>
+        <text x="1000" y="348" text-anchor="middle" font-size="8.5" font-family="Cormorant Garamond" fill="#786c5f" font-style="italic">section type →</text>
+        <text x="1000" y="362" text-anchor="middle" font-size="8.5" font-family="Cormorant Garamond" fill="#786c5f" font-style="italic">agent selected</text>
+        <text x="1000" y="376" text-anchor="middle" font-size="8.5" font-family="Cormorant Garamond" fill="#786c5f" font-style="italic">by pipeline.py</text>
+        <text x="1000" y="400" text-anchor="middle" font-size="8" font-family="JetBrains Mono" fill="#b8302a">VQA: dual-field</text>
+        <text x="1000" y="416" text-anchor="middle" font-size="8" font-family="JetBrains Mono" fill="#b8302a">text + fused</text>
+        <text x="1000" y="440" text-anchor="middle" font-size="8" font-family="JetBrains Mono" fill="#524841">QA: text only</text>
       </svg>
 
       <div class="df-legend">
-        <div class="legend-item"><span class="dot" style="background:var(--paper-warm); border:1px dashed var(--paper-deep)"></span>用户输入</div>
-        <div class="legend-item"><span class="dot" style="background:var(--stone-blue)"></span>感知 Perception</div>
-        <div class="legend-item"><span class="dot" style="background:var(--stone-green)"></span>交互 Interaction</div>
-        <div class="legend-item"><span class="dot" style="background:var(--seal)"></span>生成 Generation</div>
-        <div class="legend-item"><span class="dot" style="background:var(--gold-soft)"></span>评测 Evaluation</div>
-        <div class="legend-item"><span class="dot" style="background:#faf6ec; border:1px dashed var(--gold)"></span>M8 wrapper（不参与数据流，提供 API 与 UI）</div>
+        <div class="legend-item"><span class="dot" style="background:var(--paper-warm); border:1px dashed var(--paper-deep)"></span>输入</div>
+        <div class="legend-item"><span class="dot" style="background:var(--stone-blue)"></span>感知/检索 Embedder · DashVector</div>
+        <div class="legend-item"><span class="dot" style="background:var(--stone-green)"></span>Bridge IPC</div>
+        <div class="legend-item"><span class="dot" style="background:var(--seal)"></span>生成 Generator · LLM Filter</div>
+        <div class="legend-item"><span class="dot" style="background:#b88f4e"></span>Loop · not enough → next query</div>
       </div>
     </div>
   </div>
@@ -773,13 +849,14 @@
         <div class="ctx-eyebrow">Our Approach</div>
         <h3>ChronoMirror 的方法</h3>
         <p>
-          6 类专项 Agent 各自封装完整 Agentic RAG 循环：LLM 主动生成 query、自主判断是否继续检索、过滤无关史料，最终汇总上下文生成答案——而非单次检索后生成。
+          四次提交逻辑递进：Sub 1 建立 File-Bridge IPC；Sub 2 分析离线 KB、实现在线混合检索+RRF+Evidence Cards；Sub 3 推出 6 类 Agentic RAG Agent（隐藏测试 0.520）；Sub 4 将离线增强与 Multi-Agent 完整融合，综合排名第一。
         </p>
         <ul>
-          <li>GME (gme-Qwen2-VL-7B) 双字段嵌入：text + fused</li>
-          <li>DashVector 向量库检索，最多 4 轮自动决策</li>
-          <li>Qwen2.5-VL 兼任 query 生成、相关性过滤、答案生成</li>
-          <li>traces.jsonl 全链路可观测 · normalize_answer 精确匹配</li>
+          <li>GME 双字段嵌入 3584-d：text + fused；VQA 图文联合向量</li>
+          <li>DashVector＋文件桥 IPC；最多 4 轮 Agentic 检索循环</li>
+          <li>RRF 融合 + LexicalRerank + PlanAwareRerank</li>
+          <li>LocalSparse 稀疏检索 + 邻块扩展（第四次提交激活）</li>
+          <li>ChronoClose-150 / ChronoWide-700 自建测试集防过拟合</li>
         </ul>
       </div>
     </div>
@@ -792,7 +869,7 @@
 <section class="timeline" id="timeline">
   <div class="container">
     <div class="section-head fade-in">
-      <span class="eyebrow">Project Journey · 2026 Summer</span>
+      <span class="eyebrow">Project Journey · 2026.05</span>
       <h2 class="hd-2">项目时间线</h2>
       <svg class="flourish" viewBox="0 0 88 18" aria-hidden="true">
         <path d="M3 9 Q 25 3 44 10 Q 63 17 85 8"/>
@@ -800,28 +877,28 @@
     </div>
     <div class="timeline-track stagger">
       <div class="timeline-item done">
-        <div class="ti-date">2026 · 04 · 13 — 04 · 20</div>
-        <h4>P1 · 选题与架构</h4>
-        <p>确定 ChronoMirror 的核心命题：把历史问答作为可验证、可追溯的多模态 RAG 任务；掌握平台检索 API 文档；冻结 9 模块边界。</p>
-        <div class="ti-meta"><span>▸ 架构冻结</span><span>▸ API Key 开通</span></div>
+        <div class="ti-date">2026 · 05 · 18  18:00 &nbsp;|&nbsp; 第一次提交</div>
+        <h4>Sub 1 · DashVector 桥接 + 基础 RAG 循环</h4>
+        <p>GPU 无网络，需通过文件 IPC 调用 CPU 侧的 DashVector SDK。实现 <code>bridge_call</code> JSON 序列化 + 临时文件原子重命名，修复空响应竞态条件；搭通 question→embedding→retrieval→generation 基础循环。</p>
+        <div class="ti-meta"><span>▸ File-Bridge IPC</span><span>▸ 基础 RAG loop</span><span>▸ 竞态修复</span></div>
       </div>
       <div class="timeline-item done">
-        <div class="ti-date">2026 · 04 · 27 — 05 · 18</div>
-        <h4>P2 · 模型骨架 + 开题答辩</h4>
-        <p>9 个独立模块代码同步推进；Qwen2.5-VL 接入 / 题型分类器 / RAG 检索骨架建立；baseline 跳通；开题报告答辩。</p>
-        <div class="ti-meta"><span>▸ 7,925 LOC</span><span>▸ Baseline EM=0.41</span><span>▸ Proposal v8</span></div>
+        <div class="ti-date">第二次提交</div>
+        <h4>Sub 2 · 离线 KB 分析 + 在线混合检索设计</h4>
+        <p>全量遍历 DashVector collection（keyset 分页，游标安全推进）；分析 document/page/seq 元数据结构，发现邻块扩展与稀疏检索机会。在线实装：多路由 query 构建、RRF 融合、metadata 去重、LexicalRerank + PlanAwareRerank、结构化 evidence cards、任务约束生成格式。</p>
+        <div class="ti-meta"><span>▸ RRF Fusion</span><span>▸ Evidence Cards</span><span>▸ 隐藏测试 0.462</span></div>
       </div>
-      <div class="timeline-item active">
-        <div class="ti-date">2026 · 05 · 25 — 06 · 01</div>
-        <h4>P3 · RAG 优化 + 中期 demo</h4>
-        <p>BGE-rerank 上线；CoT prompt 模板；多轮检索；引用校验模块；中期演示。</p>
-        <div class="ti-meta"><span>▸ 1,129 RAG chunks</span><span>▸ EM ↑ +9.4%</span><span>▸ Demo v1</span></div>
+      <div class="timeline-item done">
+        <div class="ti-date">第三次提交</div>
+        <h4>Sub 3 · 多 Agent Agentic RAG · <span style="color:var(--seal-deep)">Best 0.520</span></h4>
+        <p>6 类专项 Agent（Choice / Judge / ShortAnswer × QA / VQA）各自运行多轮检索循环：LLM 主动生成 query → DashVector 检索 → LLM Filter → Decide（enough?）→ 继续或停止。VQA 走 text + fused 双字段；near-duplicate query 检测防退化循环；traces.jsonl 全链路追踪。</p>
+        <div class="ti-meta"><span>▸ 6 Agents</span><span>▸ VQA 双字段</span><span>▸ 隐藏测试 0.520 🥇</span></div>
       </div>
-      <div class="timeline-item">
-        <div class="ti-date">2026 · 06 · 08 — 06 · 15</div>
-        <h4>P4 · 集成 + 最终答辩</h4>
-        <p>幻觉过滤、style transfer、讲解厅 UI 集成；Qwen-Judge 自动评测 bonus；最终答辩与演示。</p>
-        <div class="ti-meta"><span>▸ Hallucination filter</span><span>▸ Auto-eval bonus</span><span>▸ Final defence</span></div>
+      <div class="timeline-item done">
+        <div class="ti-date">2026 · 05 · 20  18:00 &nbsp;|&nbsp; 第四次提交（最终）</div>
+        <h4>Sub 4 · 本地检索增强 + Multi-Agent 最终集成</h4>
+        <p>将第二次提交的离线分析成果正式激活：LocalSparseSearch、邻块扩展（document+seq）、结构化去重（document/page/seq/text_hash）接入推理管线；与第三次 Multi-Agent 框架完整融合，形成最终系统，隐藏测试集 0.513，综合排名 <strong>第一名</strong>。</p>
+        <div class="ti-meta"><span>▸ LocalSparse</span><span>▸ 邻块扩展</span><span>▸ 隐藏测试 0.513</span><span>▸ 🥇 第一名</span></div>
       </div>
     </div>
   </div>
@@ -857,9 +934,9 @@
         </svg>
       </div>
       <div class="number-cell">
-        <div class="big" data-count="1792">0</div>
+        <div class="big" data-count="3584">0</div>
         <div class="label">Vector Dim</div>
-        <div class="sub">GME 1792-d · text + fused</div>
+        <div class="sub">GME 3584-d · text / fused / image</div>
         <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
           <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
         </svg>
@@ -873,7 +950,7 @@
         </svg>
       </div>
       <div class="number-cell">
-        <div class="big" data-count="500">0</div>
+        <div class="big" data-count="1000">0</div>
         <div class="label">Test Questions</div>
         <div class="sub">隐藏测试集</div>
         <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
@@ -897,9 +974,25 @@
         </svg>
       </div>
       <div class="number-cell">
-        <div class="big" data-count="0">0<sup>¥</sup></div>
-        <div class="label">Budget</div>
-        <div class="sub">平台供模型与检索</div>
+        <div class="big" style="font-size:2.2rem;line-height:1.1">🥇 1st</div>
+        <div class="label">Leaderboard Rank</div>
+        <div class="sub">隐藏测试集 1000 题</div>
+        <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
+          <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
+        </svg>
+      </div>
+      <div class="number-cell">
+        <div class="big">0.52</div>
+        <div class="label">Best Hidden Score</div>
+        <div class="sub">Sub 3 · Agentic RAG</div>
+        <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
+          <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
+        </svg>
+      </div>
+      <div class="number-cell">
+        <div class="big" data-count="4">0</div>
+        <div class="label">Submissions</div>
+        <div class="sub">4 次迭代提交</div>
         <svg class="underline" viewBox="0 0 36 6" aria-hidden="true">
           <path d="M2 4 Q 10 1 18 4 Q 26 7 34 3"/>
         </svg>
@@ -931,6 +1024,14 @@
       <span class="tech-pill cat-audio">Near-Dup Query Detection</span>
       <span class="tech-pill cat-lang">File-Bridge IPC</span>
       <span class="tech-pill cat-lang">StepRecorder · Tracer</span>
+      <span class="tech-pill cat-audio">RRF Fusion</span>
+      <span class="tech-pill cat-audio">LexicalRerank</span>
+      <span class="tech-pill cat-audio">PlanAwareRerank</span>
+      <span class="tech-pill cat-audio">Evidence Cards</span>
+      <span class="tech-pill cat-lang">LocalSparse 稀疏检索</span>
+      <span class="tech-pill cat-lang">邻块扩展 (seq)</span>
+      <span class="tech-pill cat-frame">ChronoClose-150</span>
+      <span class="tech-pill cat-frame">ChronoWide-700</span>
       <span class="tech-pill cat-frame">PyTorch 2.1</span>
       <span class="tech-pill cat-frame">Transformers</span>
       <span class="tech-pill cat-frame">HuggingFace AutoModel</span>
@@ -1060,7 +1161,7 @@
 
       <div class="about-section">
         <h3>项目本旨</h3>
-        <p>历史问答的难点不是“生成”，而是“不胡说”。LLM 随口能提及《资治通鉴》但引用句可能压根不存在。ChronoMirror 把「问题 → 题型 → 检索 → 生成」明确为一条<strong>可观察、可干预、可解释</strong>的四段式 pipeline，用「事实×多模态」题型坐标作为人机共同语言。</p>
+        <p>历史问答的难点不是"生成"，而是"不胡说"。LLM 随口能提及《资治通鉴》但引用句可能压根不存在。ChronoMirror 用 6 类专项 Agent 封装完整 Agentic RAG 循环——LLM 主动生成检索 query、自主判断是否继续、过滤无关史料——把<strong>可观察、可干预、可解释</strong>的多轮检索与生成过程作为可追溯答案的核心机制。</p>
       </div>
 
       <div class="about-section">
@@ -1070,7 +1171,7 @@
 
       <div class="about-section">
         <h3>底层架构</h3>
-        <p>核心组件：<strong>Embedder</strong>（gme-Qwen2-VL-7B，text/fused 双向量 1792-d）、<strong>Retriever</strong>（DashVector，file-bridge IPC）、<strong>Generator</strong>（Qwen2.5-VL-7B）、<strong>6 专项 Agent</strong>（ChoiceAgent / ChoiceVQAAgent / JudgeAgent / JudgeVQAAgent / ShortAnswerAgent / ShortAnswerVQAAgent）。</p>
+        <p>核心组件：<strong>Embedder</strong>（gme-Qwen2-VL-7B，3584-d 向量，字段 text / fused / image）、<strong>Retriever</strong>（DashVector，file-bridge IPC；GPU 服务器无网，通过文件 RPC 桥接到 CPU 服务器）、<strong>Generator</strong>（Qwen2.5-VL-7B，greedy decode，max_new_tokens=256）、<strong>6 专项 Agent</strong>（ChoiceAgent / ChoiceVQAAgent / JudgeAgent / JudgeVQAAgent / ShortAnswerAgent / ShortAnswerVQAAgent）。</p>
         <p>每道题走一次完整 Agentic 循环（最多 4 轮）：LLM 生成 query → DashVector 检索 → LLM 过滤 relevant_ids → 判断 enough → 累积上下文 → 最终答案生成。输出 predictions.jsonl + time_cost.jsonl + traces.jsonl。</p>
       </div>
 
@@ -1137,7 +1238,7 @@
       <div class="rag-meta-grid">
         <div class="rag-meta-item">
           <div class="label">embedding</div>
-          <div class="value">gme-Qwen2-VL-7B · 1792-d</div>
+          <div class="value">gme-Qwen2-VL-7B · 3584-d</div>
         </div>
         <div class="rag-meta-item">
           <div class="label">vector db</div>
@@ -1149,7 +1250,7 @@
         </div>
         <div class="rag-meta-item">
           <div class="label">similarity</div>
-          <div class="value">cosine · L2-normalised · 1792-d</div>
+          <div class="value">cosine · L2-normalised · 3584-d</div>
         </div>
       </div>
     </div>
