@@ -1,0 +1,5 @@
+{
+  "trigger": {
+    "min_hits": 1
+  }
+}

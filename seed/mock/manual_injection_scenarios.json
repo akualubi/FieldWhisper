@@ -1,0 +1,81 @@
+{
+  "_comment": "演讲现场点按钮就能点亮整条 pipeline 的预设场景。每条 = Collector 模拟收到的一组信号包，注入后会顺着 Analyzer → Decision → Delivery → SSE 推到前端。三条覆盖三种灾种，足够演讲 5 分钟。",
+  "scenarios": [
+    {
+      "id": "DEMO-LANCHANG-YU",
+      "label": "烂场雨场景：河北馆陶冬小麦 5/28 起连阴雨",
+      "narrative_hook": "演讲到'如果你是种了 320 亩小麦的老李头'，按这个按钮。",
+      "inject": {
+        "parcel_id": "P-HEB-GUANTAO-001",
+        "weather_override": {
+          "daily": [
+            {"date": "2026-05-26", "tmax": 27, "tmin": 18, "precip_mm": 0,  "rh_max": 70, "wind_max_ms": 3},
+            {"date": "2026-05-27", "tmax": 25, "tmin": 19, "precip_mm": 2,  "rh_max": 82, "wind_max_ms": 3},
+            {"date": "2026-05-28", "tmax": 22, "tmin": 19, "precip_mm": 18, "rh_max": 92, "wind_max_ms": 2},
+            {"date": "2026-05-29", "tmax": 21, "tmin": 19, "precip_mm": 22, "rh_max": 94, "wind_max_ms": 2},
+            {"date": "2026-05-30", "tmax": 22, "tmin": 19, "precip_mm": 25, "rh_max": 95, "wind_max_ms": 2},
+            {"date": "2026-05-31", "tmax": 23, "tmin": 19, "precip_mm": 14, "rh_max": 90, "wind_max_ms": 3},
+            {"date": "2026-06-01", "tmax": 24, "tmin": 19, "precip_mm": 8,  "rh_max": 86, "wind_max_ms": 3}
+          ]
+        },
+        "ndvi_override": null,
+        "bulletin_override": ["通报 1", "通报 4"],
+        "expected_decision": {
+          "peril_code": "HEAVY_RAIN_AT_HARVEST",
+          "risk_level": "高",
+          "matched_history_case": "CASE-001"
+        }
+      }
+    },
+    {
+      "id": "DEMO-WAN-FROST",
+      "label": "晚霜冻场景：黑龙江绥化春玉米苗期 5/27 夜间 -2°C",
+      "narrative_hook": "演讲到'东北用户' 时按这个，对比第一个场景说明系统会按地理/作物分别决策。",
+      "inject": {
+        "parcel_id": "P-HLJ-SUIHUA-003",
+        "weather_override": {
+          "daily": [
+            {"date": "2026-05-26", "tmax": 18, "tmin": 6,  "precip_mm": 0, "rh_max": 60, "wind_max_ms": 4},
+            {"date": "2026-05-27", "tmax": 15, "tmin": -2, "precip_mm": 0, "rh_max": 45, "wind_max_ms": 2, "_note": "辐射降温夜晚"},
+            {"date": "2026-05-28", "tmax": 16, "tmin": 4,  "precip_mm": 0, "rh_max": 55, "wind_max_ms": 3},
+            {"date": "2026-05-29", "tmax": 18, "tmin": 7,  "precip_mm": 0, "rh_max": 60, "wind_max_ms": 3}
+          ]
+        },
+        "ndvi_override": null,
+        "bulletin_override": ["通报 2"],
+        "expected_decision": {
+          "peril_code": "LATE_FROST",
+          "risk_level": "中",
+          "matched_history_case": null
+        }
+      }
+    },
+    {
+      "id": "DEMO-HAIL",
+      "label": "冰雹场景：山东烟台果园 6/12 午后强对流（T-0 即时启动赔付）",
+      "narrative_hook": "演讲到'有些灾不可预防、但可以让赔付在 1 小时内启动'时按这个。这条用来证明穗安在不可预防场景下的价值是闭环效率，不是预报。",
+      "inject": {
+        "parcel_id": "P-SD-YANTAI-EXTRA",
+        "parcel_extra": {
+          "id": "P-SD-YANTAI-EXTRA",
+          "name": "山东烟台栖霞苹果园（演示临时地块）",
+          "lat": 37.3354,
+          "lon": 120.8499,
+          "crop": "apple",
+          "crop_stage": "膨果期",
+          "policy_no": "DEMO-APPLE-2026-0001"
+        },
+        "weather_override": null,
+        "ndvi_override": null,
+        "bulletin_override": [],
+        "social_signal_override": ["群聊 4"],
+        "expected_decision": {
+          "peril_code": "HAIL",
+          "risk_level": "极高",
+          "matched_history_case": "CASE-005",
+          "recommended_action": "AUTO_CLAIM_INITIATED"
+        }
+      }
+    }
+  ]
+}

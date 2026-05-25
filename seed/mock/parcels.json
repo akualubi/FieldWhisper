@@ -1,0 +1,47 @@
+{
+  "_comment": "Demo 默认 3 块地。坐标精确到小数点后 4 位，对应 2026-05-25 的真实物候期。crop_stage 是 Analyzer 做风险判定的关键先验。",
+  "parcels": [
+    {
+      "id": "P-HEB-GUANTAO-001",
+      "name": "河北馆陶冬小麦示范田",
+      "owner_id": "U-001",
+      "lat": 36.5475,
+      "lon": 115.2887,
+      "area_mu": 320,
+      "crop": "winter_wheat",
+      "variety": "济麦22",
+      "sowing_date": "2025-10-12",
+      "crop_stage": "灌浆末-蜡熟初",
+      "stage_risks": ["烂场雨穗发芽", "干热风", "倒伏", "赤霉病二次侵染"],
+      "policy_no": "PICC-WH-2025-0731-0001"
+    },
+    {
+      "id": "P-HEN-ZHONGMU-002",
+      "name": "河南郑州中牟夏玉米地块",
+      "owner_id": "U-002",
+      "lat": 34.7191,
+      "lon": 113.9758,
+      "area_mu": 180,
+      "crop": "summer_maize",
+      "variety": "郑单958",
+      "sowing_date": "2026-06-05",
+      "crop_stage": "播前-待播",
+      "stage_risks": ["播期墒情不足", "出苗期低温", "苗期暴雨冲毁"],
+      "policy_no": "CPIC-MZ-2026-0511-0014"
+    },
+    {
+      "id": "P-HLJ-SUIHUA-003",
+      "name": "黑龙江绥化北林春玉米地块",
+      "owner_id": "U-003",
+      "lat": 46.6373,
+      "lon": 126.9852,
+      "area_mu": 540,
+      "crop": "spring_maize",
+      "variety": "德美亚3号",
+      "sowing_date": "2026-05-02",
+      "crop_stage": "三叶期-五叶期",
+      "stage_risks": ["延后倒春寒", "苗期低温寡照", "夏季大风倒伏"],
+      "policy_no": "SUNLIGHT-MZ-2026-0428-0207"
+    }
+  ]
+}

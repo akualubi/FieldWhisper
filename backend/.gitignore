@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+suian.db
+suian.db-journal
+.venv/
+.pytest_cache/

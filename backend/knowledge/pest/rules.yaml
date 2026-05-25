@@ -1,0 +1,12 @@
+crop_pests:
+  玉米: [草地贪夜蛾, 大斑病, 玉米螟, 锈病]
+  小麦: [条锈病, 叶锈病, 白粉病, 蚜虫, 赤霉病]
+  水稻: [稻飞虱, 稻瘟病, 二化螟, 纹枯病]
+  大豆: [食心虫, 锈病, 蚜虫]
+
+signal_score:
+  notice_severity_high: 2
+  notice_severity_normal: 1
+  image_high_conf: 2
+  image_low_conf: 1
+  post_keyword: 1

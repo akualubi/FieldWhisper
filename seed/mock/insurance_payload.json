@@ -1,0 +1,80 @@
+{
+  "_comment": "Delivery Agent 给保险公司发出的赔付预警通知样例。字段参考行业 claim-notification 通用做法，足够 demo。保险公司接入时按他们的 schema 再做映射即可。",
+  "schema_version": "suian.delivery.insurance.v1",
+  "examples": [
+    {
+      "claim_intent_id": "CI-2026-05-25-000123",
+      "generated_at": "2026-05-25T08:14:32+08:00",
+      "policy_no": "PICC-WH-2025-0731-0001",
+      "insured_party": {
+        "user_id": "U-001",
+        "name_masked": "李**",
+        "id_card_masked": "1306************4521"
+      },
+      "parcel": {
+        "id": "P-HEB-GUANTAO-001",
+        "lat": 36.5475,
+        "lon": 115.2887,
+        "area_mu": 320,
+        "crop": "winter_wheat",
+        "growth_stage": "灌浆末-蜡熟初"
+      },
+      "peril_code": "HEAVY_RAIN_AT_HARVEST",
+      "peril_name_zh": "成熟期烂场雨",
+      "risk_level": "高",
+      "confidence": 0.81,
+      "onset_window": {
+        "start": "2026-05-28T00:00:00+08:00",
+        "end": "2026-06-02T23:59:59+08:00"
+      },
+      "evidence": {
+        "weather_summary": "5/28-6/2 累计降水 78mm，日均湿度 88%，无明显风干窗口",
+        "weather_provider": "open-meteo",
+        "ndvi_anomaly": null,
+        "photo_urls": [],
+        "matched_history_case": "CASE-001"
+      },
+      "recommended_action": "PRE_CLAIM_PREP",
+      "recommended_action_zh": "建议进入查勘待命：1) 通知投保人 T-3 天抢收 2) 协调附近烘干塔 3) T+1 天启动现场查勘",
+      "model_version": "suian-decision-2026.05.0",
+      "signed_by": "agent.decision@suian"
+    },
+    {
+      "claim_intent_id": "CI-2026-05-25-000124",
+      "generated_at": "2026-05-25T08:14:33+08:00",
+      "policy_no": "SUNLIGHT-MZ-2026-0428-0207",
+      "insured_party": {
+        "user_id": "U-003",
+        "name_masked": "王**",
+        "id_card_masked": "2312************0913"
+      },
+      "parcel": {
+        "id": "P-HLJ-SUIHUA-003",
+        "lat": 46.6373,
+        "lon": 126.9852,
+        "area_mu": 540,
+        "crop": "spring_maize",
+        "growth_stage": "三叶期-五叶期"
+      },
+      "peril_code": "LATE_FROST",
+      "peril_name_zh": "苗期晚霜冻",
+      "risk_level": "中",
+      "confidence": 0.62,
+      "onset_window": {
+        "start": "2026-05-27T22:00:00+08:00",
+        "end": "2026-05-28T06:00:00+08:00"
+      },
+      "evidence": {
+        "weather_summary": "5/27 夜间地面最低气温预测 -1.5°C，无云层覆盖，辐射降温显著",
+        "weather_provider": "open-meteo",
+        "ndvi_anomaly": null,
+        "photo_urls": [],
+        "matched_history_case": null
+      },
+      "recommended_action": "MONITOR_ONLY",
+      "recommended_action_zh": "目前苗龄三叶期，耐寒性尚可。建议监测 T+1 实际气温与苗情，不立即触发查勘。",
+      "model_version": "suian-decision-2026.05.0",
+      "signed_by": "agent.decision@suian"
+    }
+  ]
+}

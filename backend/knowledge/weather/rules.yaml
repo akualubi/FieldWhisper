@@ -1,0 +1,28 @@
+heat:
+  temp_c: 35.0          # ≥ 该温度记为高温小时
+  consec_hours: 6       # 48h 内累计达到该小时数即触发
+
+wind:
+  speed_ms: 13.8        # ≈ 6-7 级
+  consec_hours: 3
+
+rain:
+  mm_24h: 50.0          # 24h 累计降水阈值
+
+rain_continuous:
+  mm_per_day_min: 10.0  # 日累计 ≥ 该值算"阴雨日"
+  consec_days: 4        # 连续天数 ≥ 该值 → 烂场雨/菌核病 风险
+
+drought:
+  soil_moisture_min: 0.18
+  rain_mm_24h_max: 1.0
+
+frost:
+  tmin_c: 0.0           # 任意日最低温 ≤ 该值即触发霜冻
+  severe_tmin_c: -2.0   # 低于此为重霜冻
+
+dry_hot_wind:
+  temp_c_at_14: 32.0
+  rh_pct_at_14_max: 30
+  wind_ms_at_14_min: 3.0
+  consec_days: 3

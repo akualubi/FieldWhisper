@@ -1,0 +1,7 @@
+baseline_growth:
+  h24: 0     # 不干预增量（按等级）
+  h48: 1
+  h72: 1
+
+mitigation:
+  level_delta: -1   # 采纳建议后整体降一级
