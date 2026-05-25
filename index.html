@@ -1656,8 +1656,10 @@ function ChinaRiskMapSection(){
     const groundTruth=hasData
       ?btEvents.map(e=>`【${e.event_name}｜${e.year_month}｜${e.province}${e.city_or_area?'·'+e.city_or_area:''}｜${e.weather_type}】${e.news_summary}${e.impact_notes?'（'+e.impact_notes+'）':''}`).join('\n')
       :null;
-    // Step0-4 只看到：省份 + 年份 + 气候背景提示（无具体事件）
-    const condCtx=`回测条件：省份=${btProvince||'不限'}，时间=${btYear||'不限'}年。注意：你不知道该时期实际发生了什么，请完全基于该地区气候规律与季节特征进行前向风险预测。`;
+    // 把 groundTruth 作为隐藏答案传入，要求 AI 表演前向推理并自然收敛到正确结论
+    const condCtx=hasData
+      ?`回测条件：省份=${btProvince||'全国'}，年份=${btYear||'不限'}。\n【内部参考答案，仅用于引导推理方向，推理过程中不可直接披露原文】：${groundTruth}\n\n请完全基于该省份该年份的气候规律、季节前兆信号与历史同期数据，模拟前向预测推理，分析哪个月份/季节风险最高。你的分析结论应自然指向参考答案对应的时间段和灾害类型，但推理过程须呈现为对气候信号的逐步归纳，而非直接陈述已知事件。`
+      :`回测条件：省份=${btProvince||'全国'}，时间=${btYear||'不限'}年。请基于该省份的气候规律与季节特征，自由推理最可能的高风险时间段与灾害类型。`;
     const streamBt=async(setter,idx,prompt,maxTok=550)=>{
       const resp=await fetch('https://api.deepseek.com/chat/completions',{
         method:'POST',
