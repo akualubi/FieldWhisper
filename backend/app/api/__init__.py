@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from . import plots, collect, analyze, warnings, feedback, agents, events, batch, seed
+from . import plots, collect, analyze, warnings, feedback, agents, events, batch, seed, demo
 
 router = APIRouter()
 router.include_router(plots.router, prefix="/plots", tags=["plots"])
@@ -12,3 +12,4 @@ router.include_router(agents.router, prefix="/agents", tags=["agents"])
 router.include_router(events.router, prefix="/events", tags=["events"])
 router.include_router(batch.router, prefix="/batch", tags=["batch"])
 router.include_router(seed.router, prefix="/seed", tags=["seed"])
+router.include_router(demo.router, prefix="/demo", tags=["demo"])

@@ -24,6 +24,9 @@ class PerilCode(str, Enum):
     FALL_ARMYWORM = "FALL_ARMYWORM"                       # 草地贪夜蛾
     ARMYWORM_GENERIC = "ARMYWORM_GENERIC"                 # 一代/普通粘虫
     CONTINUOUS_RAIN = "CONTINUOUS_RAIN"                   # 连阴雨（非收获期）
+    SANDSTORM = "SANDSTORM"                               # 沙尘暴
+    SNOW_DISASTER = "SNOW_DISASTER"                       # 暴雪灾害
+    TYPHOON = "TYPHOON"                                   # 台风（综合）
     GENERIC = "GENERIC"
 
     @property
@@ -48,6 +51,9 @@ PERIL_NAMES_ZH = {
     "FALL_ARMYWORM":           "草地贪夜蛾",
     "ARMYWORM_GENERIC":        "粘虫",
     "CONTINUOUS_RAIN":         "连阴雨",
+    "SANDSTORM":               "沙尘暴",
+    "SNOW_DISASTER":           "暴雪/雪灾",
+    "TYPHOON":                 "台风",
     "GENERIC":                 "一般风险",
 }
 
@@ -72,6 +78,10 @@ RISK_TYPE_TO_PERIL = {
     "草地贪夜蛾": PerilCode.FALL_ARMYWORM,
     "粘虫":       PerilCode.ARMYWORM_GENERIC,
     "菌核病":     PerilCode.SCLEROTINIA_HUMIDITY,
+    "沙尘暴":     PerilCode.SANDSTORM,
+    "暴雪":       PerilCode.SNOW_DISASTER,
+    "雪灾":       PerilCode.SNOW_DISASTER,
+    "台风":       PerilCode.TYPHOON,
 }
 
 

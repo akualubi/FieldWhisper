@@ -52,6 +52,51 @@ curl -X POST "http://localhost:8000/api/feedback/$WID" \
 curl http://localhost:8000/api/agents/plot/history | jq
 ```
 
+## 演讲交互层 `/api/demo`
+
+> 给"拖图标到省份"前端用的高层封装。
+
+| 端点 | 用途 |
+|------|------|
+| `GET /api/demo/weathers` | 图标库：8 种可拖气象 intent（暴雨/大风/暴雪/沙尘暴/台风/干旱/高温/冰雹）|
+| `GET /api/demo/provinces` | 34 个省级行政区中心 + 默认作物 |
+| `POST /api/demo/drop` | **核心**：拖一次 → 注入 + 跑 pipeline + 返回 warnings |
+| `GET /api/demo/map` | 当前各省最高风险等级 + peril_code 列表（前端着色用） |
+| `POST /api/demo/reset` | 演讲下一段前清空 runtime 数据 |
+
+**拖拽流示例**：
+```bash
+# 前端拖"沙尘暴"到内蒙古
+curl -X POST http://localhost:8000/api/demo/drop \
+  -H "content-type: application/json" \
+  -d '{"province":"内蒙古","weather":"沙尘暴","intensity":"重","duration_h":48}'
+
+# 响应（节选）：
+# {
+#   "province": "内蒙古",
+#   "weather": "沙尘暴",
+#   "plot": { "plot_id": "P-DEMO-内蒙古", "crop": "spring_maize", ... },
+#   "data_items_injected": 9,
+#   "overall_risk_level": "高",
+#   "warnings": [{
+#       "headline": "spring_maize·沙尘暴 风险等级：高",
+#       "peril_code": "SANDSTORM",
+#       "actions": ["在沙尘暴来 6 小时内提前对玉米田东西向遮挡..."],
+#       "matched_history_case": "CASE-003",
+#       ...
+#   }]
+# }
+
+# 刷新地图色块
+curl http://localhost:8000/api/demo/map | jq
+```
+
+**plot 解析逻辑**（前端只传 province 即可，无需关心 plot）：
+1. 优先使用该省的 seed plot（河北→馆陶冬麦 / 河南→中牟夏玉米 / 黑龙江→绥化春玉米 / 山东→烟台果园）
+2. 否则自动创建 `P-DEMO-<省>` 临时地块，作物按 `province_map` 默认（北方→玉米/小麦，南方→水稻，新疆→棉花…）
+
+---
+
 ## API 一览
 
 | 类别 | 端点 | 备注 |
@@ -68,6 +113,8 @@ curl http://localhost:8000/api/agents/plot/history | jq
 | Agent | `GET /api/agents/{name}/assets` / `…/history` | 透明可审计 |
 | 批量 | `POST /api/batch/score` | 保险公司视角，批量 plot_ids |
 | **Seed** | `GET /api/seed*` | 直通暴露 seed 内容（parcels / scenarios / bulletins / chats / insurance / experience） |
+| **Demo** | `POST /api/demo/drop` | 拖气象到省份 → 注入 + pipeline + Warning |
+| **Demo** | `GET /api/demo/map` | 各省当前风险（前端着色） |
 | **Live** | `GET /api/events/stream` | SSE 实时事件流（演讲大屏订阅） |
 
 ## 与 seed/ 的对应关系

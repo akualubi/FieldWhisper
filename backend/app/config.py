@@ -13,7 +13,12 @@ SEED_ROOT = REPO_ROOT / "seed"
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_prefix="", extra="ignore")
+    # 始终从 backend/.env 加载，避免 cwd 不同时读不到
+    model_config = SettingsConfigDict(
+        env_file=str(BACKEND_ROOT / ".env"),
+        env_prefix="",
+        extra="ignore",
+    )
 
     suian_db_path: str = str(BACKEND_ROOT / "suian.db")
 

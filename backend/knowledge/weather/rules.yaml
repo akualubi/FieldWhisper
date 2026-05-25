@@ -26,3 +26,18 @@ dry_hot_wind:
   rh_pct_at_14_max: 30
   wind_ms_at_14_min: 3.0
   consec_days: 3
+
+sandstorm:
+  wind_ms_min: 10.0    # 大风
+  rh_pct_max: 25       # 极干燥
+  visibility_km_max: 2.0  # 低能见度（可选字段）
+
+typhoon:
+  wind_ms_min: 17.2    # 8 级以上
+  rain_mm_per_day_min: 25
+  rh_pct_min: 88
+
+snow_disaster:
+  tmin_c_max: -5.0
+  snow_depth_cm_min: 5
+  precip_mm_per_day_min: 5

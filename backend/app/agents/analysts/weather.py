@@ -45,6 +45,9 @@ class WeatherAnalyst(AnalystAgent):
         rain_cont = rules.get("rain_continuous", {"mm_per_day_min": 10.0, "consec_days": 4})
         drought = rules.get("drought", {"soil_moisture_min": 0.18, "rain_mm_24h_max": 1.0})
         frost = rules.get("frost", {"tmin_c": 0.0, "severe_tmin_c": -2.0})
+        sandstorm = rules.get("sandstorm", {"wind_ms_min": 10.0, "rh_pct_max": 25, "visibility_km_max": 2.0})
+        typhoon = rules.get("typhoon", {"wind_ms_min": 17.2, "rain_mm_per_day_min": 25, "rh_pct_min": 88})
+        snow_dis = rules.get("snow_disaster", {"tmin_c_max": -5.0, "snow_depth_cm_min": 5, "precip_mm_per_day_min": 5})
 
         forecasts = [i for i in items if i.type == "forecast" and "error" not in i.payload]
         if not forecasts:
@@ -60,6 +63,8 @@ class WeatherAnalyst(AnalystAgent):
         rains = [_get(f.payload, "precipitation_mm") or 0 for f in forecasts]
         humids = [_get(f.payload, "rh_max_pct", "humidity_pct") for f in forecasts]
         soils = [_get(f.payload, "soil_moisture_0_10cm") for f in forecasts]
+        snows = [_get(f.payload, "snow_depth_cm") for f in forecasts]
+        visis = [_get(f.payload, "visibility_km") for f in forecasts]
 
         judgments: list[RiskJudgment] = []
 
@@ -143,6 +148,65 @@ class WeatherAnalyst(AnalystAgent):
                     rule_refs=["drought.soil_moisture_min"],
                     extras={"avg_soil": avg_soil},
                 ))
+
+        # ---- 沙尘暴 ----（强风 + 极低湿 + 可选低能见度）
+        sand_hits = 0
+        for w_v, h_v, v_v in zip(winds, humids, visis):
+            if (w_v is not None and w_v >= sandstorm["wind_ms_min"]
+                    and h_v is not None and h_v <= sandstorm["rh_pct_max"]):
+                sand_hits += 1
+                if v_v is not None and v_v <= sandstorm["visibility_km_max"]:
+                    sand_hits += 1  # 能见度低再加权
+        if sand_hits >= 2:
+            judgments.append(RiskJudgment(
+                agent_kind=self.agent_kind, plot_id=plot.plot_id,
+                risk_type="沙尘暴",
+                level=RiskLevel.HIGH if sand_hits >= 6 else RiskLevel.MEDIUM,
+                confidence=0.8,
+                rationale=f"持续大风 + 极低湿度（{sand_hits} 个时段命中），疑似沙尘暴/扬沙",
+                evidence=ev_ids,
+                rule_refs=["sandstorm.wind_ms_min", "sandstorm.rh_pct_max"],
+                extras={"sand_hits": sand_hits},
+            ))
+
+        # ---- 台风 ----（极强风 + 强降水 + 高湿）
+        typhoon_hits = 0
+        for w_v, r_v, h_v in zip(winds, rains, humids):
+            if (w_v is not None and w_v >= typhoon["wind_ms_min"]
+                    and r_v is not None and r_v >= typhoon["rain_mm_per_day_min"]
+                    and h_v is not None and h_v >= typhoon["rh_pct_min"]):
+                typhoon_hits += 1
+        if typhoon_hits >= 1:
+            judgments.append(RiskJudgment(
+                agent_kind=self.agent_kind, plot_id=plot.plot_id,
+                risk_type="台风",
+                level=RiskLevel.EXTREME if typhoon_hits >= 4 else RiskLevel.HIGH,
+                confidence=0.88,
+                rationale=f"风速 ≥{typhoon['wind_ms_min']} m/s + 强降水 + 高湿（{typhoon_hits} 个时段命中），符合台风影响特征",
+                evidence=ev_ids,
+                rule_refs=["typhoon.wind_ms_min", "typhoon.rain_mm_per_day_min"],
+                extras={"typhoon_hits": typhoon_hits},
+            ))
+
+        # ---- 暴雪 ----（低温 + 降雪 + 可选积雪深度）
+        snow_hits = 0
+        for t_v, r_v, s_v in zip(temps_min, rains, snows):
+            if (t_v is not None and t_v <= snow_dis["tmin_c_max"]
+                    and r_v is not None and r_v >= snow_dis["precip_mm_per_day_min"]):
+                snow_hits += 1
+                if s_v is not None and s_v >= snow_dis["snow_depth_cm_min"]:
+                    snow_hits += 1
+        if snow_hits >= 1:
+            judgments.append(RiskJudgment(
+                agent_kind=self.agent_kind, plot_id=plot.plot_id,
+                risk_type="暴雪",
+                level=RiskLevel.EXTREME if snow_hits >= 3 else RiskLevel.HIGH,
+                confidence=0.85,
+                rationale=f"低温 + 强降水（{snow_hits} 命中），符合暴雪/雪灾特征",
+                evidence=ev_ids,
+                rule_refs=["snow_disaster.tmin_c_max", "snow_disaster.precip_mm_per_day_min"],
+                extras={"snow_hits": snow_hits},
+            ))
 
         # ---- 晚霜冻 ----
         valid_tmins = [(i, t) for i, t in enumerate(temps_min) if t is not None]
