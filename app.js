@@ -1,1287 +1,403 @@
-/* ============================================================================
-   ChronoMirror · 史鉴 · Historical RAG Q&A Showcase · interaction layer v2
-   ============================================================================ */
 
-(() => {
-'use strict';
+// ================================================================
+// AgriVid AI — app.js
+// ================================================================
 
-// ============================================================================
-// 1. Data
-// ============================================================================
+// ---- Particle System ----
+(function initParticles() {
+  const canvas = document.getElementById('hero-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W = 0, H = 0, particles = [], animId;
 
-// 8 historical Q&A scenarios. The schema mirrors the original painting schema
-// so the existing render pipeline keeps working — but semantics now map to:
-//   title    →  问题 (the user-facing historical question)
-//   titleEn  →  English rendition of the question
-//   artist   →  涉及人物 / 史料出处
-//   dynasty  →  朝代 / 时期
-//   tags     →  题型标签
-//   va[0]    →  事实型(-1) ↔ 推理型(+1)
-//   va[1]    →  纯文本(-1) ↔ 多模态(+1)
-//   rag      →  Top-3 检索到的史料片段
-//   mode     →  'text' 纯文本题 / 'image' 多模态题图题
-//   excerpt  →  纯文本题在题面卡上展示的代表性史料引文
-//   file     →  多模态题图文件名（assets/paintings/ 下）
-const PAINTINGS = [
-  {
-    id: 'p1', mode: 'text', file: '',
-    title: '安史之乱的根本原因？', titleEn: 'What were the root causes of the An Lushan Rebellion?',
-    artist: '《资治通鉴 · 卷二一七》',
-    dynasty: '唐 · Tang', dynKey: '唐',
-    tags: ['因果推理', '纯文本', '中等难度'],
-    excerpt: '「安禄山潜豋十余年，兼范阳、平卢、河东三镇节度使，掌兵十八万余，根本动摇于内。」',
-    va: [0.35, -0.55],
-    rag: [
-      { score: 0.42, text: '《新唐书 · 兵志》载：天宝以来节度使权重，安禄山兼范阳、平卢、河东三镇，掌兵十八万余，根本动摇于内。' },
-      { score: 0.39, text: '开元盛世后期土地兼并加剧，府兵制崩坏，募兵制下藩镇兵将私属化，朝廷难以节制。' },
-      { score: 0.36, text: '李林甫、杨国忠权斗及"重用蕃将"政策直接为安禄山起兵创造了条件，是政治制度性失衡的爆点。' },
-    ],
-  },
-  {
-    id: 'p2', mode: 'image', file: 'p2_houmuwu_ding.jpg',
-    title: '图中这件青铜器属于哪个朝代？', titleEn: 'Which dynasty does this bronze vessel belong to?',
-    artist: '题图：后母戊鼎（国家博物馆藏）',
-    dynasty: '商 · Shang', dynKey: '商',
-    tags: ['文物鉴定', '多模态', '考古学'],
-    va: [-0.45, 0.65],
-    rag: [
-      { score: 0.51, text: '后母戊鼎（旧称司母戊鼎）为商代后期王室祭祀重器，1939 年河南安阳武官村出土，现藏国家博物馆。' },
-      { score: 0.44, text: '商代铜器以饕餮纹、云雷纹为主要装饰，方鼎多为礼器；后母戊鼎重 832.84 公斤，是迄今出土最大青铜礼器。' },
-      { score: 0.39, text: '铭文"后母戊"指商王祖庚或祖甲为其母"戊"所铸祭器，断代依据为铭文字体与纹饰风格。' },
-    ],
-  },
-  {
-    id: 'p3', mode: 'text', file: '',
-    title: '王安石变法为何最终失败？', titleEn: 'Why did Wang Anshi\'s reforms ultimately fail?',
-    artist: '《宋史 · 王安石传》',
-    dynasty: '北宋 · N. Song', dynKey: '宋',
-    tags: ['综合推理', '纯文本', '高难度'],
-    excerpt: '「熙宁二年，安石参知政事，市易、青苗、免役诸法相继而出。天下讛讚，鬘鬘不能安。」',
-    va: [0.62, -0.40],
-    rag: [
-      { score: 0.48, text: '熙宁变法（1069）推行青苗、免役、市易等法，意在富国强兵，但官吏执行中强行配贷，扰民甚于救民。' },
-      { score: 0.43, text: '司马光为首的旧党与变法派围绕"祖宗之法"激烈党争，神宗去世后高太后听政尽废新法（元祐更化）。' },
-      { score: 0.38, text: '钱穆《国史大纲》指出：王安石的改革缺乏足够基层吏治支撑，"立法之意虽善，行法之吏未善"。' },
-    ],
-  },
-  {
-    id: 'p4', mode: 'text', file: '',
-    title: '科举制是何时正式确立的？', titleEn: 'When was the imperial examination system formally established?',
-    artist: '《通典 · 选举志》',
-    dynasty: '隋-唐 · Sui-Tang', dynKey: '隋唐',
-    tags: ['史实考据', '纯文本', '简单'],
-    excerpt: '「炀皇大业二年，始建进士科，以试策取士。自是以后，天下以文章进身。」',
-    va: [-0.70, -0.55],
-    rag: [
-      { score: 0.55, text: '隋炀帝大业二年（606）始置进士科，以试策取士，标志着科举制度正式确立，结束了九品中正制。' },
-      { score: 0.47, text: '唐代完善常科（明经、进士）与制科，进士科尤重诗赋；武则天创殿试，开后世皇帝亲试之先河。' },
-      { score: 0.41, text: '邓嗣禹《中国考试制度史》：科举制延续 1300 年，至清光绪三十一年（1905）废止，是中古选官制度的核心。' },
-    ],
-  },
-  {
-    id: 'p5', mode: 'image', file: 'p5_battle_red_cliffs_map.jpg',
-    title: '请识别这幅地图所反映的历史时期与战役', titleEn: 'Identify the era and battle depicted in this historical map.',
-    artist: '题图：赤壁之战军势示意图',
-    dynasty: '东汉末 · Late E. Han', dynKey: '汉',
-    tags: ['图像识别', '多模态', '军事史'],
-    va: [0.20, 0.70],
-    rag: [
-      { score: 0.49, text: '赤壁之战（208 年冬）发生于建安十三年，孙刘联军于长江赤壁段以火攻大破曹军，奠定三国鼎立基础。' },
-      { score: 0.42, text: '《三国志 · 周瑜传》载黄盖诈降以火船冲曹军连环战船，加之北军水土不服疫病流行，曹操败走华容道。' },
-      { score: 0.37, text: '陈寅恪指出，赤壁地理位置历来有蒲圻、黄州二说，主流考证倾向今湖北赤壁市。' },
-    ],
-  },
-  {
-    id: 'p6', mode: 'text', file: '',
-    title: '丝绸之路的开通对中外交流有何影响？', titleEn: 'What impact did the opening of the Silk Road have on East-West exchange?',
-    artist: '《史记 · 大宛列传》',
-    dynasty: '西汉 · W. Han', dynKey: '汉',
-    tags: ['综合分析', '纯文本', '文明交流'],
-    excerpt: '「张騫凿空，西域之道始通。使者相望于道，一辈大者数百，少者百余人。」',
-    va: [0.45, 0.50],
-    rag: [
-      { score: 0.50, text: '汉武帝建元三年（前 138）张骞出使大月氏，凿空西域；元狩四年（前 119）再使乌孙，正式打通陆上丝路。' },
-      { score: 0.44, text: '丝绸、漆器、铸铁技术西传，葡萄、苜蓿、汗血马及佛教、祆教、摩尼教东传，开启欧亚大陆物质与思想双向流动。' },
-      { score: 0.38, text: '季羡林《中印文化交流史》强调：丝路不仅是商道，更是宗教、艺术、医学、天文知识的输送动脉。' },
-    ],
-  },
-  {
-    id: 'p7', mode: 'text', file: '',
-    title: '辛亥革命的历史意义是什么？', titleEn: 'What is the historical significance of the 1911 Revolution?',
-    artist: '《孙中山选集 · 临时大总统宣言书》',
-    dynasty: '清末民初 · 1911', dynKey: '近代',
-    tags: ['综合评价', '纯文本', '近代史'],
-    excerpt: '「国家之本在于人民，合汉、满、蒙、回、藏诸地为一国，即合汉、满、蒙、回、藏诸族为一人。」',
-    va: [0.75, -0.30],
-    rag: [
-      { score: 0.46, text: '辛亥革命推翻清王朝，结束中国两千余年君主专制，于 1912 年 1 月 1 日建立中华民国，为亚洲第一个共和国。' },
-      { score: 0.41, text: '革命未完成反帝反封建任务：袁世凯窃取果实，"二次革命"失败显示资产阶级革命派的局限性。' },
-      { score: 0.36, text: '陈旭麓《近代中国社会的新陈代谢》：辛亥的最大意义在于把"民主共和"观念深植国人心中，使复辟成为不可能。' },
-    ],
-  },
-  {
-    id: 'p8', mode: 'image', file: 'p8_zhangheng_seismograph.jpg',
-    title: '图中这位人物是谁？他有何主要贡献？', titleEn: 'Who is the figure in the image, and what are his major contributions?',
-    artist: '题图：张衡像与候风地动仪',
-    dynasty: '东汉 · E. Han', dynKey: '汉',
-    tags: ['人物识别', '多模态', '科技史'],
-    va: [-0.10, 0.55],
-    rag: [
-      { score: 0.53, text: '张衡（78–139），南阳西鄂人，东汉天文学家、数学家、文学家，曾任太史令。著《灵宪》《浑天仪图注》。' },
-      { score: 0.45, text: '阳嘉元年（132）造候风地动仪，能测千里之外地震方位，是世界上最早的地震仪；浑天仪以漏壶水力驱动。' },
-      { score: 0.39, text: '李约瑟《中国科学技术史》评：张衡的浑天说（"浑天如鸡子"）领先西方地心宇宙论数百年。' },
-    ],
-  },
-];
-
-const MODULES = [
-  // ── Infrastructure ─────────────────────────────────────────────────────────
-  { id: 'EMBEDDER', tag: 'Infra', cn: 'GME 嵌入器', en: 'Embedder · gme-Qwen2-VL-7B',
-    cat: 'perception',
-    desc: 'infra/embedding.py — gme-Qwen2-VL-7B-Instruct 以 bfloat16 加载；encode(text, image_path=None) 做 last-token pooling + L2 归一化，返回 3584-d float 列表。VQA 题传图走多模态 fused 路径，纯文本题只编码 text。',
-    stat: '3584-d · bfloat16 · last-token pooling',
-    sig: { type: 'snippet', html: `<div class="row"><span><span class="k">emb</span> = Embedder(model_path)</span></div><div class="row"><span>vec = emb.encode(<span class="s">"商代腰坑狗牺牲"</span>)</span></div><div class="row"><span>vec = emb.encode(q, image_path=<span class="s">"x.jpg"</span>)  <span style="opacity:.5"># VQA</span></span></div><div class="row"><span>→ list[float], len=<span class="n">3584</span>, L2-norm</span></div>` },
-    figs: ['placeholder.svg'] },
-
-  { id: 'BRIDGE', tag: 'Infra', cn: '文件桥 IPC', en: 'Bridge · File RPC',
-    cat: 'interaction',
-    desc: 'infra/bridge.py — GPU 服务器无外网，CPU 服务器有 DashVector 权限。bridge_call() 将请求序列化为 JSON，原子 rename 到请求目录；bridge worker 轮询请求目录，调用 SDK，将结果原子写入响应目录；调用方轮询直到文件非空且可解析。修复了空响应竞态条件。',
-    stat: 'poll=0.5s · timeout=120s · atomic rename',
-    sig: { type: 'snippet', html: `<div class="row"><span><span class="k">bridge_call</span>(<span class="s">"dashvector_search"</span>,</span></div><div class="row" style="padding-left:14px"><span>embedding=vec, top_k=<span class="n">20</span>,</span></div><div class="row" style="padding-left:14px"><span>vector_field=<span class="s">"text"</span>)</span></div><div class="row"><span><span style="opacity:.5"># req.tmp→req.json→resp.json</span></span></div>` },
-    figs: ['placeholder.svg'] },
-
-  { id: 'RETRIEVER', tag: 'Infra', cn: 'DashVector 检索器', en: 'Retriever · DashVector',
-    cat: 'perception',
-    desc: 'infra/retrieval.py — Retriever 封装 bridge_call；search(embedding, top_k, vector_field) 直接提交已有向量；search_text(text, image_path) 先调 Embedder.encode() 再调 search()。支持 text / fused / image 三个向量字段。',
-    stat: 'fields: text · fused · image',
-    sig: { type: 'snippet', html: `<div class="row"><span>ret.search_text(<span class="s">"商代腰坑"</span>, k=<span class="n">20</span>)</span></div><div class="row"><span>ret.search_text(q, img=img_path,</span></div><div class="row" style="padding-left:14px"><span>vector_field=<span class="s">"fused"</span>)  <span style="opacity:.5"># VQA</span></span></div><div class="row"><span>→ [{<span class="k">text</span>, <span class="k">title</span>, <span class="k">score</span>}, …]</span></div>` },
-    figs: ['placeholder.svg'] },
-
-  { id: 'GENERATOR', tag: 'Infra', cn: 'Qwen2.5-VL 生成器', en: 'Generator · Qwen2.5-VL-7B',
-    cat: 'generation',
-    desc: 'infra/generator.py — Qwen2.5-VL-7B-Instruct 以 bfloat16 加载；apply_chat_template 组装消息；process_vision_info 预处理图像像素；generate(prompt, image_path, max_new_tokens=256) 返回原始文本；normalize_answer(section, raw) 归一化写入 predictions.jsonl。',
-    stat: '7B params · bfloat16 · greedy · max_new_tokens=256',
-    sig: { type: 'snippet', html: `<div class="row"><span>generator.generate(</span></div><div class="row" style="padding-left:14px"><span>ANSWER_PROMPT.format(…),</span></div><div class="row" style="padding-left:14px"><span>image_path=img_path,</span></div><div class="row" style="padding-left:14px"><span>max_new_tokens=<span class="n">256</span>)</span></div>` },
-    figs: ['placeholder.svg'] },
-
-  // ── Agents ──────────────────────────────────────────────────────────────────
-  { id: 'CHOICE', tag: 'Agent', cn: '选择题 Agent', en: 'ChoiceAgent',
-    cat: 'interaction',
-    desc: 'agents/choice_agent.py — 选择QA 专项（纯文本）。text 字段检索 top_k=20，最多 4 轮 Agentic 循环：生成 query → DashVector 检索 → filter_docs LLM 过滤 → decide_next 判断是否继续。CLASSIFY_PROMPT 动态判断单选/多选，约束输出选项字母（如 A 或 AB）。near-dup 检测防退化。',
-    stat: 'top_k=20 · max_rounds=4 · single/multi-choice',
-    sig: { type: 'snippet', html: `<div class="row"><span><span class="k">for</span> rnd in range(<span class="n">1</span>, <span class="n">5</span>):</span></div><div class="row" style="padding-left:14px"><span>query = gen_query() <span style="opacity:.5"># or decide_next</span></span></div><div class="row" style="padding-left:14px"><span>docs  = ret.search_text(query, <span class="n">20</span>)</span></div><div class="row" style="padding-left:14px"><span>kept  = filter_docs(docs)  <span style="opacity:.5"># LLM</span></span></div><div class="row"><span>→ normalize → <span class="k">A</span> / <span class="k">AB</span> / …</span></div>` },
-    figs: ['placeholder.svg'] },
-
-  { id: 'CHOICEVQA', tag: 'Agent', cn: '选择VQA Agent', en: 'ChoiceVQAAgent',
-    cat: 'interaction',
-    desc: 'agents/choice_vqa_agent.py — 选择VQA 专项。图像传入所有 LLM 调用（QUERY_PROMPT_VQA / DECIDE_PROMPT_VQA / FILTER_PROMPT_VQA / ANSWER_PROMPT）；双字段检索 text+fused 各取 top_k=3，合并去重（120-char 前缀键）；CLASSIFY_PROMPT 判单/多选后约束输出。',
-    stat: 'top_k=3 · dual-field text+fused · image to ALL LLM calls',
-    sig: { type: 'svg', html: `<svg viewBox="0 0 200 64" class="mc-illust" preserveAspectRatio="xMidYMid meet"><text x="6" y="14" font-size="7.5" font-family="JetBrains Mono" fill="currentColor">text_vec</text><text x="6" y="34" font-size="7.5" font-family="JetBrains Mono" fill="currentColor">fused_vec</text><line x1="60" y1="12" x2="88" y2="26" stroke="currentColor" stroke-width="1.2"/><line x1="60" y1="32" x2="88" y2="28" stroke="currentColor" stroke-width="1.2"/><rect x="90" y="20" width="52" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1"/><text x="116" y="30" font-size="6.5" font-family="JetBrains Mono" fill="currentColor" text-anchor="middle">merge+dedup</text><line x1="142" y1="27" x2="162" y2="27" stroke="currentColor" stroke-width="1.2"/><text x="164" y="30" font-size="7.5" font-family="JetBrains Mono" fill="currentColor">ans</text><text x="100" y="54" font-size="6.5" font-family="Cormorant Garamond" fill="currentColor" text-anchor="middle" font-style="italic">image → query / decide / filter / answer</text></svg>` },
-    figs: ['placeholder.svg'] },
-
-  { id: 'JUDGE', tag: 'Agent', cn: '判断题 Agent', en: 'JudgeAgent',
-    cat: 'interaction',
-    desc: 'agents/judge_agent.py — 判断QA 专项（纯文本）。text 字段检索 top_k=20，同样 4 轮 Agentic 循环；ANSWER_PROMPT instruction 约束输出只能为"正确"或"错误"，max_new_tokens=128。',
-    stat: 'top_k=20 · max_rounds=4 · output: 正确|错误',
-    sig: { type: 'snippet', html: `<div class="row"><span><span style="opacity:.5"># 约束生成指令</span></span></div><div class="row"><span>instruction =</span></div><div class="row" style="padding-left:14px"><span><span class="s">'请直接输出"正确"</span></span></div><div class="row" style="padding-left:14px"><span><span class="s"> 或"错误"，</span></span></div><div class="row" style="padding-left:14px"><span><span class="s"> 不输出其他内容'</span></span></div>` },
-    figs: ['placeholder.svg'] },
-
-  { id: 'JUDGEVQA', tag: 'Agent', cn: '判断VQA Agent', en: 'JudgeVQAAgent',
-    cat: 'interaction',
-    desc: 'agents/judge_vqa_agent.py — 判断VQA 专项。双字段检索 text+fused，top_k=3；图像传入所有 LLM 调用；DECIDE_PROMPT_VQA 允许模型基于图像视觉内容判断是否已有足够证据；约束输出"正确"或"错误"。',
-    stat: 'top_k=3 · dual-field · visual-first judgement',
-    sig: { type: 'svg', html: `<svg viewBox="0 0 200 64" class="mc-illust" preserveAspectRatio="xMidYMid meet"><rect x="4" y="8" width="52" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="1"/><text x="30" y="20" font-size="6.5" font-family="JetBrains Mono" fill="currentColor" text-anchor="middle">image + q</text><line x1="56" y1="17" x2="82" y2="17" stroke="currentColor" stroke-width="1.2"/><rect x="82" y="8" width="62" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="1"/><text x="113" y="20" font-size="6.5" font-family="JetBrains Mono" fill="currentColor" text-anchor="middle">LLM decide</text><line x1="144" y1="17" x2="166" y2="17" stroke="currentColor" stroke-width="1.2"/><text x="168" y="20" font-size="7" font-family="JetBrains Mono" fill="currentColor">✓/✗</text><text x="100" y="50" font-size="7" font-family="Cormorant Garamond" fill="currentColor" text-anchor="middle" font-style="italic">output: 正确 | 错误</text></svg>` },
-    figs: ['placeholder.svg'] },
-
-  { id: 'SHORT', tag: 'Agent', cn: '简答题 Agent', en: 'ShortAnswerAgent',
-    cat: 'interaction',
-    desc: 'agents/short_answer_agent.py — 简答QA 专项（纯文本）。text 字段检索 top_k=20，4 轮 Agentic 循环；ANSWER_PROMPT instruction 约束输出最短关键词或短语，数字用阿拉伯数字，不含冗余单位。',
-    stat: 'top_k=20 · max_rounds=4 · concise keyword',
-    sig: { type: 'snippet', html: `<div class="row"><span><span style="opacity:.5"># 约束生成指令</span></span></div><div class="row"><span>instruction =</span></div><div class="row" style="padding-left:14px"><span><span class="s">'输出最短关键词</span></span></div><div class="row" style="padding-left:14px"><span><span class="s"> 或短语，数字用</span></span></div><div class="row" style="padding-left:14px"><span><span class="s"> 阿拉伯数字'</span></span></div>` },
-    figs: ['placeholder.svg'] },
-
-  { id: 'SHORTVQA', tag: 'Agent', cn: '简答VQA Agent', en: 'ShortAnswerVQAAgent',
-    cat: 'interaction',
-    desc: 'agents/short_answer_vqa_agent.py — 简答VQA 专项。双字段检索 text+fused，top_k=3；图像传入所有 LLM 调用；ANSWER_PROMPT 要求优先从图像直接回答，检索文本作辅助确认；输出最简洁关键词。',
-    stat: 'top_k=3 · dual-field · image-first answer',
-    sig: { type: 'svg', html: `<svg viewBox="0 0 200 64" class="mc-illust" preserveAspectRatio="xMidYMid meet"><text x="4" y="16" font-size="7.5" font-family="JetBrains Mono" fill="currentColor">image (primary)</text><text x="4" y="36" font-size="7.5" font-family="JetBrains Mono" fill="currentColor">text (auxiliary)</text><line x1="80" y1="14" x2="106" y2="24" stroke="currentColor" stroke-width="1.4"/><line x1="80" y1="34" x2="106" y2="26" stroke="currentColor" stroke-width="0.9" stroke-dasharray="3 2"/><rect x="107" y="18" width="50" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1"/><text x="132" y="28" font-size="6.5" font-family="JetBrains Mono" fill="currentColor" text-anchor="middle">generate</text><line x1="157" y1="25" x2="177" y2="25" stroke="currentColor" stroke-width="1.2"/><text x="179" y="28" font-size="7" font-family="JetBrains Mono" fill="currentColor">kw</text><text x="100" y="52" font-size="6.5" font-family="Cormorant Garamond" fill="currentColor" text-anchor="middle" font-style="italic">image-first · text as auxiliary confirm</text></svg>` },
-    figs: ['placeholder.svg'] },
-];
-
-// ============================================================================
-// 2. V-A → word + descriptors (mirrors M2 + M6)
-// ============================================================================
-
-// 把 (factual↔inferential, text↔multimodal) 二维坐标映射为题型标签词
-// X = valence (factual-, inferential+),  Y = arousal (text-, multimodal+)
-function vaToWord(v, a) {
-  const r = Math.hypot(v, a);
-  if (r < 0.15) return '综合题';
-  const theta = Math.atan2(a, v);
-  const sectors = [
-    { lo: -Math.PI/8,        hi:  Math.PI/8,        word: '因果推理' },   // 推理 + 文本
-    { lo:  Math.PI/8,        hi:  3*Math.PI/8,      word: '综合分析' },   // 推理 + 多模态
-    { lo:  3*Math.PI/8,      hi:  5*Math.PI/8,      word: '图像识别' },   // 中性 + 多模态
-    { lo:  5*Math.PI/8,      hi:  7*Math.PI/8,      word: '文物鉴定' },   // 事实 + 多模态
-    { lo:  7*Math.PI/8,      hi:  Math.PI + 1e-3,   word: '史实考据' },   // 事实 + 文本
-    { lo: -Math.PI - 1e-3,   hi: -7*Math.PI/8,      word: '史实考据' },
-    { lo: -7*Math.PI/8,      hi: -5*Math.PI/8,      word: '年代判定' },
-    { lo: -5*Math.PI/8,      hi: -3*Math.PI/8,      word: '人物识别' },
-    { lo: -3*Math.PI/8,      hi: -Math.PI/8,        word: '综合评价' },
-  ];
-  for (const s of sectors) if (theta >= s.lo && theta < s.hi) return s.word;
-  return '综合题';
-}
-
-// 引用来源池（按象限）：题型 → 主要史料类别
-const INSTRUMENTS_BY_QUADRANT = {
-  'pp': ['正史', '考古报告'],   // 推理 + 多模态
-  'pn': ['正史', '私家著述'],   // 推理 + 文本
-  'np': ['图录', '博物馆志'],   // 事实 + 多模态
-  'nn': ['正史', '类书'],       // 事实 + 文本
-};
-
-// 把 (题型, 多模态强度) 二维坐标映射为 8 项 RAG/生成参数
-// a 轴 (多模态强度) 影响：top_k、context_len、decoding
-// v 轴 (推理程度)   影响：prompt 模板、temperature、rerank
-function vaToDescriptors(v, a) {
-  // top_k：多模态强 → 检索更多片段以覆盖图文证据
-  const tempo =
-    a >  0.45 ? 'k=12' :
-    a >  0.15 ? 'k=8' :
-    a > -0.15 ? 'k=5' :
-    a > -0.45 ? 'k=3' : 'k=2';
-  // temperature：推理型 → 略高 T 鼓励发散
-  const dynamics =
-    v < -0.55 ? 'T=0.1' :
-    v < -0.25 ? 'T=0.2' :
-    v <  0.05 ? 'T=0.3' :
-    v <  0.35 ? 'T=0.5' :
-    v <  0.65 ? 'T=0.7' : 'T=0.9';
-  // context_len：多模态/复杂题 → 长上下文
-  const texture =
-    a < -0.25 ? 'ctx=2k' :
-    a >  0.25 ? 'ctx=8k' : 'ctx=4k';
-  // decoding：多模态 → beam，纯文本 → greedy
-  const articulation = a > 0.3 ? 'beam=4' : 'greedy';
-  // prompt 模板：推理型 → CoT，事实型 → zero-shot
-  const register =
-    v < -0.3 ? 'zero-shot' :
-    v >  0.3 ? 'CoT'      : 'few-shot';
-  // rerank：复杂问题启用
-  const meter = Math.abs(v) > 0.45 ? 'BGE-rerank' : 'none';
-  // retriever：根据题型选择
-  let mode;
-  if (v < -0.25) mode = 'dense (BGE-M3)';
-  else if (v > 0.25) mode = 'hybrid';
-  else mode = 'sparse (BM25)';
-  // 引用来源
-  const quad = (v >= 0 ? 'p' : 'n') + (a >= 0 ? 'p' : 'n');
-  const instrumentation = INSTRUMENTS_BY_QUADRANT[quad];
-  return { tempo, mode, meter, register, texture, dynamics, articulation, instrumentation };
-}
-
-// ============================================================================
-// 3. DOM helpers
-// ============================================================================
-
-const $  = (s, root = document) => root.querySelector(s);
-const $$ = (s, root = document) => Array.from(root.querySelectorAll(s));
-
-// ============================================================================
-// 4. Nav scroll state
-// ============================================================================
-
-const nav = $('#nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 60);
-});
-
-// ============================================================================
-// 5. IntersectionObserver — fade-in + stagger + counter
-// ============================================================================
-
-const observer = new IntersectionObserver((entries) => {
-  for (const e of entries) {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      if (e.target.dataset.count) animateCount(e.target, parseInt(e.target.dataset.count, 10));
-      if (e.target.classList.contains('number-cell'))
-        $$('[data-count]', e.target).forEach(el => animateCount(el, parseInt(el.dataset.count, 10)));
-      observer.unobserve(e.target);
-    }
+  function resize() {
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
   }
-}, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  window.addEventListener('resize', resize);
+  resize();
 
-$$('.fade-in, .stagger, [data-count], .number-cell, .pipeline, .section-head').forEach(el => observer.observe(el));
+  const COLORS = ['#00e5ff', '#00ff88', '#7c3aed', '#ff6b35'];
 
-function animateCount(el, target) {
-  const dur = 1400;
-  const start = performance.now();
-  const sup = el.querySelector('sup');
-  const supHtml = sup ? sup.outerHTML : '';
-  function step(now) {
-    const t = Math.min(1, (now - start) / dur);
-    const eased = 1 - Math.pow(1 - t, 3);
-    const val = Math.round(target * eased);
-    el.innerHTML = val.toLocaleString() + supHtml;
-    if (t < 1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-
-// ============================================================================
-// 6. Hero painting rotation + Ken Burns
-// ============================================================================
-
-const HERO_ROTATION = ['p1', 'p2', 'p6', 'p8']; // mix of text + image
-const heroStack = $('#hero-painting-stack');
-const heroCapTitle = $('#hero-caption-title');
-const heroCapMeta = $('#hero-caption-meta');
-
-HERO_ROTATION.forEach((pid, i) => {
-  const p = PAINTINGS.find(x => x.id === pid);
-  if (!p) return;
-  const layer = document.createElement('div');
-  layer.className = 'hero-layer' + (i === 0 ? ' active' : '');
-  layer.dataset.pid = pid;
-  if (p.mode === 'image') {
-    const im = document.createElement('img');
-    im.src = `assets/paintings/${p.file}`;
-    im.alt = p.titleEn;
-    layer.appendChild(im);
-  } else {
-    layer.classList.add('mode-text');
-    layer.innerHTML = `
-      <div class="text-scroll hero-scroll">
-        <div class="ts-mark">問</div>
-        <div class="ts-question">${p.title}</div>
-        <div class="ts-rule"></div>
-        <div class="ts-excerpt">${p.excerpt || ''}</div>
-        <div class="ts-source">${p.artist}</div>
-      </div>`;
-  }
-  heroStack.appendChild(layer);
-});
-
-let heroIndex = 0;
-const heroLayers = $$('.hero-layer', heroStack);
-function rotateHero() {
-  heroLayers[heroIndex].classList.remove('active');
-  heroIndex = (heroIndex + 1) % heroLayers.length;
-  heroLayers[heroIndex].classList.add('active');
-  const pid = heroLayers[heroIndex].dataset.pid;
-  const p = PAINTINGS.find(x => x.id === pid);
-  if (p) {
-    heroCapTitle.textContent = p.title.replace(/[？?]$/, '');
-    heroCapMeta.textContent = `${p.artist.replace(/^题图：/, '')} · ${p.dynasty.split(' · ')[0]}`;
-  }
-}
-setInterval(rotateHero, 7200);
-// initial caption
-(function initHeroCaption(){
-  const p = PAINTINGS.find(x => x.id === HERO_ROTATION[0]);
-  if (p) {
-    heroCapTitle.textContent = p.title.replace(/[？?]$/, '');
-    heroCapMeta.textContent = `${p.artist.replace(/^题图：/, '')} · ${p.dynasty.split(' · ')[0]}`;
-  }
-})();
-
-// ============================================================================
-// 7. Painting picker + thumbs + V-A dots on circumplex
-// ============================================================================
-
-let currentPainting = PAINTINGS[0]; // boot with first text-mode question
-let currentVA = [...currentPainting.va];
-let userDraggedFar = false;
-
-// Build thumbs
-const thumbsEl = $('#painting-thumbs');
-PAINTINGS.forEach((p, i) => {
-  const t = document.createElement('div');
-  t.className = 'thumb' + (i === 0 ? ' active' : '');
-  t.dataset.id = p.id;
-  t.classList.add(p.mode === 'image' ? 'thumb-image' : 'thumb-text');
-  t.innerHTML = p.mode === 'image'
-    ? `<img src="assets/paintings/${p.file}" alt="${p.titleEn}">`
-    : `<div class="thumb-glyph">${p.dynKey || '史'}</div>`;
-  t.addEventListener('click', () => selectPainting(p.id));
-  thumbsEl.appendChild(t);
-});
-
-// Build painting dots on circumplex (placed in <g id="va-dots">)
-const vaDotsGroup = $('#va-dots');
-const dotTip = $('#va-dot-tip');
-function renderPaintingDots() {
-  vaDotsGroup.innerHTML = '';
-  PAINTINGS.forEach((p) => {
-    const x = p.va[0] * 100;
-    const y = -p.va[1] * 100;
-    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    g.classList.add('va-painting-dot');
-    g.setAttribute('transform', `translate(${x},${y})`);
-    g.dataset.id = p.id;
-    g.innerHTML = `
-      <circle class="halo" r="6" />
-      <circle class="core" r="3.2" />
-    `;
-    g.addEventListener('mouseenter', (e) => {
-      const rect = $('#va-circumplex').getBoundingClientRect();
-      const svgRect = $('#va-svg').getBoundingClientRect();
-      const scaleX = svgRect.width / 220;
-      const scaleY = svgRect.height / 220;
-      const cx = svgRect.left + (x + 110) * scaleX - rect.left;
-      const cy = svgRect.top + (y + 110) * scaleY - rect.top;
-      dotTip.style.left = cx + 'px';
-      dotTip.style.top  = cy + 'px';
-      dotTip.textContent = `${p.title} · ${p.dynKey}`;
-      dotTip.classList.add('show');
-    });
-    g.addEventListener('mouseleave', () => dotTip.classList.remove('show'));
-    g.addEventListener('click', () => selectPainting(p.id));
-    vaDotsGroup.appendChild(g);
-  });
-  highlightActiveDot();
-}
-function highlightActiveDot() {
-  $$('.va-painting-dot', vaDotsGroup).forEach(el => {
-    el.classList.toggle('active', el.dataset.id === currentPainting.id);
-  });
-}
-
-function selectPainting(id) {
-  const p = PAINTINGS.find(x => x.id === id);
-  if (!p) return;
-  currentPainting = p;
-  currentVA = [...p.va];
-  userDraggedFar = false;
-
-  // swap frame content with fade — image mode or text-scroll mode
-  const frame = $('#painting-frame');
-  const img = $('#painting-img');
-  frame.classList.add('changing');
-  setTimeout(() => {
-    if (p.mode === 'image') {
-      frame.classList.remove('mode-text');
-      frame.classList.add('mode-image');
-      img.hidden = false;
-      img.src = `assets/paintings/${p.file}`;
-      img.alt = p.titleEn;
-    } else {
-      frame.classList.remove('mode-image');
-      frame.classList.add('mode-text');
-      img.hidden = true;
-      img.removeAttribute('src');
-      $('#ts-question').textContent = p.title;
-      $('#ts-excerpt').textContent = p.excerpt || '';
-      $('#ts-source').textContent = p.artist;
-    }
-    frame.classList.remove('changing');
-  }, 240);
-
-  // meta
-  $('#painting-title').textContent = p.title;
-  $('#painting-sub').textContent = `${p.artist} · ${p.titleEn}`;
-  const tagsEl = $('#painting-tags');
-  tagsEl.innerHTML = `<span class="tag dyn">${p.dynasty}</span>` +
-    p.tags.map(t => `<span class="tag">${t}</span>`).join('');
-
-  // thumbs active
-  $$('.thumb', thumbsEl).forEach(t => t.classList.toggle('active', t.dataset.id === p.id));
-
-  // V-A pin + descriptors + word + dots
-  setVA(p.va[0], p.va[1], true);
-  highlightActiveDot();
-
-  // RAG (re-render to retrigger CSS slide-in)
-  renderRag(p.rag);
-
-  // update code panel
-  refreshCodePanel();
-}
-
-// ============================================================================
-// 8. V-A circumplex — drag
-// ============================================================================
-
-const svg = $('#va-svg');
-const pin = $('#va-pin');
-const wordEl = $('#va-word');
-const coordEl = $('#va-coord');
-let dragging = false;
-
-function vaToPin(v, a) {
-  return { x: v * 100, y: -a * 100 };
-}
-
-function setVA(v, a, animate = false) {
-  v = Math.max(-1, Math.min(1, v));
-  a = Math.max(-1, Math.min(1, a));
-  currentVA = [v, a];
-  const { x, y } = vaToPin(v, a);
-  if (animate) {
-    pin.style.transition = 'transform 700ms cubic-bezier(0.4,0,0.2,1)';
-    setTimeout(() => pin.style.transition = '', 800);
-  } else {
-    pin.style.transition = '';
-  }
-  pin.setAttribute('transform', `translate(${x},${y})`);
-  wordEl.textContent = vaToWord(v, a);
-  coordEl.textContent = `v = ${v.toFixed(2)}  ·  a = ${a.toFixed(2)}`;
-  const colorMap = {
-    '史实考据':'#b88f4e', '年代判定':'#b88f4e',
-    '因果推理':'#5e8466', '综合分析':'#5e8466', '综合评价':'#5e8466',
-    '图像识别':'#b8302a', '文物鉴定':'#b8302a',
-    '人物识别':'#2a6e96', '综合题':'#2a6e96',
-  };
-  wordEl.style.color = colorMap[wordEl.textContent] || 'var(--ink-dark)';
-  renderDescriptors(vaToDescriptors(v, a));
-  refreshCodePanel();
-}
-
-function clientToVA(clientX, clientY) {
-  const rect = svg.getBoundingClientRect();
-  const xPct = (clientX - rect.left) / rect.width;
-  const yPct = (clientY - rect.top) / rect.height;
-  const v = (xPct * 2 - 1) * 1.1;
-  const a = -((yPct * 2 - 1) * 1.1);
-  return [
-    Math.max(-1, Math.min(1, v)),
-    Math.max(-1, Math.min(1, a)),
-  ];
-}
-
-function startDrag(e) {
-  dragging = true;
-  svg.classList.add('dragging');
-  moveDrag(e);
-}
-function moveDrag(e) {
-  if (!dragging) return;
-  e.preventDefault();
-  const pt = e.touches ? e.touches[0] : e;
-  const [v, a] = clientToVA(pt.clientX, pt.clientY);
-  setVA(v, a);
-  // check if user has drifted far from painting's preset
-  const dx = v - currentPainting.va[0];
-  const dy = a - currentPainting.va[1];
-  if (Math.hypot(dx, dy) > 0.30) userDraggedFar = true;
-}
-function endDrag() {
-  if (!dragging) return;
-  dragging = false;
-  svg.classList.remove('dragging');
-}
-
-// V-A drag handlers — bind on document so dragging continues outside SVG
-svg.addEventListener('mousedown', startDrag);
-window.addEventListener('mousemove', moveDrag);
-window.addEventListener('mouseup', endDrag);
-svg.addEventListener('touchstart', startDrag, { passive: false });
-window.addEventListener('touchmove', moveDrag, { passive: false });
-window.addEventListener('touchend', endDrag);
-
-// ============================================================================
-// 9. Regenerate button — slot pulse only
-// ============================================================================
-
-$('#btn-regen').addEventListener('click', () => {
-  const btn = $('#btn-regen');
-  const original = btn.textContent;
-  btn.textContent = '生成中…';
-  btn.disabled = true;
-  $$('.slot').forEach(s => { s.classList.add('flash'); setTimeout(() => s.classList.remove('flash'), 800); });
-  setTimeout(() => {
-    btn.textContent = original;
-    btn.disabled = false;
-  }, 1100);
-});
-
-// ============================================================================
-// 10. Descriptors render
-// ============================================================================
-
-function renderDescriptors(d) {
-  const grid = $('#slot-grid');
-  $$('.slot', grid).forEach(slot => {
-    const key = $('.slot-value', slot).dataset.slot;
-    const val = d[key];
-    const valEl = $('.slot-value', slot);
-    if (key === 'instrumentation' && Array.isArray(val)) {
-      valEl.textContent = val.join(' · ');
-    } else {
-      valEl.textContent = val;
-    }
-    const isNeutral = ['k=5', 'T=0.3', 'greedy', 'few-shot', 'none', 'ctx=4k', 'sparse (BM25)'].includes(val);
-    slot.classList.toggle('highlight', !isNeutral && key !== 'instrumentation');
-  });
-}
-
-// ============================================================================
-// 12. RAG list (re-render with CSS slide-in)
-// ============================================================================
-
-function renderRag(items) {
-  const list = $('#rag-list');
-  list.innerHTML = '';
-  // force reflow to retrigger animation
-  void list.offsetWidth;
-  list.innerHTML = items.map(r => `
-    <div class="rag-item">
-      <span class="rag-score">${r.score.toFixed(2)}</span>${r.text}
-    </div>
-  `).join('');
-}
-
-// ============================================================================
-// 13. Module grid + figure hover-rotation + Lightbox
-// ============================================================================
-
-const moduleGrid = $('#module-grid');
-MODULES.forEach(m => {
-  const card = document.createElement('div');
-  card.className = `module-card cat-${m.cat}`;
-  // Use the headline figure as the small thumb
-  const thumbFig = m.figs[0];
-  const sigClass = m.sig.type === 'formula' ? 'formula' :
-                   m.sig.type === 'svg'      ? 'svg-illust' : 'snippet';
-  card.innerHTML = `
-    <div class="mc-head">
-      <div class="mc-thumb"><img src="assets/figures/${thumbFig}" alt=""></div>
-      <div class="mc-head-text">
-        <span class="mc-id">${m.id} · ${m.tag || 'Module'}</span>
-        <span class="mc-en">${m.en}</span>
-      </div>
-    </div>
-    <h4>${m.cn}</h4>
-    <div class="mc-sig ${sigClass}">${m.sig.html}</div>
-    <p class="mc-desc">${m.desc}</p>
-    <div class="mc-foot">
-      <div class="mc-figs">
-        ${m.figs.map((f, i) => `<span class="mini-fig" data-fig-idx="${i}" style="background-image:url('assets/figures/${f}')"></span>`).join('')}
-      </div>
-      <div class="mc-stat">
-        <span class="key">${m.stat}</span>
-        <span class="arrow">→</span>
-      </div>
-    </div>
-  `;
-
-  // mini-fig click opens lightbox jumping to that figure (still uses existing lightbox)
-  $$('.mini-fig', card).forEach((mf, idx) => {
-    mf.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openLightbox(m, idx);
-    });
-  });
-
-  card.addEventListener('click', () => openLightbox(m));
-  moduleGrid.appendChild(card);
-});
-
-const lb = $('#lightbox');
-const lbClose = $('#lightbox-close');
-const lbTitle = $('#lb-title');
-const lbDesc = $('#lb-desc');
-const lbFigs = $('#lb-figs');
-
-function openLightbox(m, focusIdx = -1) {
-  lbTitle.textContent = `${m.id} · ${m.cn} · ${m.en}`;
-  lbDesc.textContent = m.desc;
-  lbFigs.innerHTML = m.figs.map((f, i) =>
-    `<img src="assets/figures/${f}" alt="${f}" data-i="${i}" ${i === focusIdx ? 'style="outline:3px solid var(--seal); outline-offset:2px;"' : ''}>`).join('');
-  lb.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  if (focusIdx >= 0) {
-    setTimeout(() => {
-      const target = lbFigs.querySelector(`[data-i="${focusIdx}"]`);
-      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 100);
-  }
-}
-function closeLightbox() {
-  lb.classList.remove('open');
-  document.body.style.overflow = '';
-}
-lbClose.addEventListener('click', closeLightbox);
-lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
-window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
-
-// ============================================================================
-// 14. Pipeline step hover → highlight
-// ============================================================================
-
-$$('.pipe-step').forEach((s) => {
-  s.addEventListener('mouseenter', () => {
-    $$('.pipe-step').forEach(x => x.classList.remove('active'));
-    s.classList.add('active');
-  });
-});
-
-// ============================================================================
-// 15. Code transparency panel — live JSON state
-// ============================================================================
-
-const codePanel = $('#code-panel');
-const codeToggle = $('#code-panel-toggle');
-const codePre = $('#code-panel-pre');
-const codeCopy = $('#code-panel-copy');
-let codeTab = 'painting';
-
-codeToggle.addEventListener('click', () => {
-  codePanel.classList.toggle('expanded');
-});
-$$('.code-panel-tab').forEach(t => {
-  t.addEventListener('click', () => {
-    codeTab = t.dataset.tab;
-    $$('.code-panel-tab').forEach(x => x.classList.toggle('active', x === t));
-    refreshCodePanel();
-  });
-});
-codeCopy.addEventListener('click', () => {
-  navigator.clipboard.writeText(codePre.textContent).then(() => {
-    codeCopy.textContent = 'copied!';
-    setTimeout(() => codeCopy.textContent = 'copy', 1400);
-  });
-});
-
-function colorizeJson(obj) {
-  let s = JSON.stringify(obj, null, 2);
-  s = s.replace(/"([^"]+)"(\s*:)/g, '<span class="key">"$1"</span>$2');
-  s = s.replace(/:\s*"([^"]+)"/g, ': <span class="str">"$1"</span>');
-  s = s.replace(/:\s*(-?\d+\.?\d*)/g, ': <span class="num">$1</span>');
-  s = s.replace(/:\s*(true|false|null)/g, ': <span class="bool">$1</span>');
-  return s;
-}
-
-function refreshCodePanel() {
-  let data;
-  if (codeTab === 'painting') {
-    data = {
-      id: currentPainting.id,
-      question: currentPainting.title,
-      question_en: currentPainting.titleEn,
-      source: currentPainting.artist,
-      dynasty: currentPainting.dynasty,
-      tags: currentPainting.tags,
-      api_key: 'student_id (e.g. 2024XXXX)',
+  function createParticle() {
+    return {
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: -Math.random() * 0.8 - 0.2,
+      r: Math.random() * 2 + 0.5,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      alpha: Math.random() * 0.6 + 0.1,
+      life: 0,
+      maxLife: Math.random() * 300 + 200
     };
-  } else if (codeTab === 'va') {
-    data = {
-      inferential_score: parseFloat(currentVA[0].toFixed(3)),
-      multimodal_score: parseFloat(currentVA[1].toFixed(3)),
-      category: vaToWord(currentVA[0], currentVA[1]),
-      source: 'M2 ▸ MLP(q) ▸ tanh',
-      drift_from_preset: parseFloat(
-        Math.hypot(currentVA[0] - currentPainting.va[0], currentVA[1] - currentPainting.va[1]).toFixed(3)
-      ),
-    };
-  } else if (codeTab === 'descriptors') {
-    data = vaToDescriptors(currentVA[0], currentVA[1]);
-  } else {
-    data = currentPainting.rag;
   }
-  codePre.innerHTML = colorizeJson(data);
-}
 
-// ============================================================================
-// 16. Concert mode — auto-tour all 8 paintings
-// ============================================================================
+  for (let i = 0; i < 80; i++) particles.push(createParticle());
 
-const concertOverlay = $('#concert-overlay');
-const concertBtn = $('#btn-concert');
-const concertClose = $('#concert-close');
-const concertFill = $('#concert-fill');
-const concertIndex = $('#concert-index');
-const concertTitle = $('#concert-title');
-const concertSub = $('#concert-sub');
-const concertVA = $('#concert-va');
-const concertDesc = $('#concert-desc');
-const concertPin = $('#concert-pin');
-const concertImgStack = $('#concert-img-stack');
-
-// Build concert image stack — image-mode shows photo, text-mode shows scroll card
-PAINTINGS.forEach((p, i) => {
-  const layer = document.createElement('div');
-  layer.className = 'concert-img';
-  layer.style.position = 'absolute';
-  layer.style.inset = '0';
-  layer.style.opacity = '0';
-  layer.style.transition = 'opacity 1.2s ease';
-  if (p.mode === 'image') {
-    const img = document.createElement('img');
-    img.src = `assets/paintings/${p.file}`;
-    img.alt = p.title;
-    img.style.width = '100%';
-    img.style.height = '100%';
-    img.style.objectFit = 'cover';
-    layer.appendChild(img);
-  } else {
-    layer.classList.add('mode-text');
-    layer.innerHTML = `
-      <div class="text-scroll concert-scroll">
-        <div class="ts-mark">問</div>
-        <div class="ts-question">${p.title}</div>
-        <div class="ts-rule"></div>
-        <div class="ts-excerpt">${p.excerpt || ''}</div>
-        <div class="ts-source">${p.artist}</div>
-      </div>`;
-  }
-  if (i === 0) layer.classList.add('active');
-  concertImgStack.appendChild(layer);
-});
-
-let concertTimer = null;
-let concertStep = 0;
-const STEP_MS = 11000;
-
-function concertSetStep(idx) {
-  concertStep = idx;
-  const p = PAINTINGS[idx];
-  // image swap
-  $$('.concert-img', concertImgStack).forEach((img, i) => {
-    img.classList.toggle('active', i === idx);
-    img.style.opacity = i === idx ? '1' : '0';
-  });
-  // info
-  concertIndex.textContent = `题 · ${idx + 1} / ${PAINTINGS.length}`;
-  concertTitle.textContent = p.title;
-  concertSub.textContent = `${p.artist}`;
-  concertVA.innerHTML = `<span>infer = ${p.va[0].toFixed(2)}</span><span>multi = ${p.va[1].toFixed(2)}</span><span>→ ${vaToWord(p.va[0], p.va[1])}</span>`;
-  concertDesc.textContent = p.rag[0].text;
-  // pin
-  const x = p.va[0] * 100;
-  const y = -p.va[1] * 100;
-  concertPin.setAttribute('transform', `translate(${x},${y})`);
-  // progress bar reset
-  concertFill.style.transition = 'none';
-  concertFill.style.width = '0%';
-  void concertFill.offsetWidth;
-  concertFill.style.transition = `width ${STEP_MS}ms linear`;
-  concertFill.style.width = '100%';
-}
-
-function startConcert() {
-  concertOverlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  concertStep = 0;
-  concertSetStep(0);
-  concertTimer = setInterval(() => {
-    const next = (concertStep + 1) % PAINTINGS.length;
-    if (next === 0) {
-      stopConcert();
-    } else {
-      concertSetStep(next);
-    }
-  }, STEP_MS);
-}
-
-function stopConcert() {
-  clearInterval(concertTimer);
-  concertTimer = null;
-  concertOverlay.classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-concertBtn.addEventListener('click', startConcert);
-concertClose.addEventListener('click', stopConcert);
-concertOverlay.addEventListener('click', (e) => {
-  if (e.target === concertOverlay) stopConcert();
-});
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && concertOverlay.classList.contains('open')) stopConcert();
-});
-
-// ============================================================================
-// 17. Hero 3D parallax + ink-wash cursor trail
-// ============================================================================
-
-const heroEl = $('#hero');
-const heroArt = $('.hero-art');
-const scrollFrame = $('.hero-art .scroll-frame');
-const heroTrail = $('#hero-trail');
-const trailCtx = heroTrail.getContext('2d');
-
-function fitHeroTrail() {
-  const r = heroEl.getBoundingClientRect();
-  heroTrail.width  = Math.max(2, Math.floor(r.width  * devicePixelRatio));
-  heroTrail.height = Math.max(2, Math.floor(r.height * devicePixelRatio));
-}
-fitHeroTrail();
-window.addEventListener('resize', fitHeroTrail);
-
-// Tilt parallax on the scroll-frame (subtle 6deg max)
-heroArt.addEventListener('mousemove', (e) => {
-  const rect = heroArt.getBoundingClientRect();
-  const x = (e.clientX - rect.left) / rect.width  - 0.5;
-  const y = (e.clientY - rect.top)  / rect.height - 0.5;
-  heroArt.classList.add('parallaxing');
-  scrollFrame.style.transform =
-    `perspective(1100px) rotateY(${x * 7}deg) rotateX(${-y * 7}deg) translateZ(8px)`;
-});
-heroArt.addEventListener('mouseleave', () => {
-  heroArt.classList.remove('parallaxing');
-  scrollFrame.style.transform = 'perspective(1100px) rotateY(0deg) rotateX(0deg)';
-});
-
-// Ink-wash cursor trail (only inside hero) — write a soft blot, fade entire canvas each frame
-let lastBlot = { x: 0, y: 0, t: 0 };
-heroEl.addEventListener('mousemove', (e) => {
-  const rect = heroEl.getBoundingClientRect();
-  const x = (e.clientX - rect.left) * devicePixelRatio;
-  const y = (e.clientY - rect.top)  * devicePixelRatio;
-  const dx = x - lastBlot.x, dy = y - lastBlot.y;
-  const dist = Math.hypot(dx, dy);
-  // Density limit: don't over-paint
-  if (dist < 6) return;
-  // Multiple soft blots along the segment for smooth trail
-  const steps = Math.min(6, Math.max(1, Math.floor(dist / 14)));
-  for (let i = 0; i < steps; i++) {
-    const t = i / steps;
-    const bx = lastBlot.x + dx * t;
-    const by = lastBlot.y + dy * t;
-    const r = 10 + Math.random() * 20;
-    const grd = trailCtx.createRadialGradient(bx, by, 0, bx, by, r * devicePixelRatio);
-    grd.addColorStop(0, 'rgba(20,17,15,0.06)');
-    grd.addColorStop(1, 'rgba(20,17,15,0)');
-    trailCtx.fillStyle = grd;
-    trailCtx.beginPath();
-    trailCtx.arc(bx, by, r * devicePixelRatio, 0, Math.PI * 2);
-    trailCtx.fill();
-  }
-  lastBlot = { x, y, t: performance.now() };
-});
-
-// Continuous fade so the trail breathes
-function fadeTrail() {
-  trailCtx.fillStyle = 'rgba(245, 239, 226, 0.022)';
-  trailCtx.fillRect(0, 0, heroTrail.width, heroTrail.height);
-  requestAnimationFrame(fadeTrail);
-}
-fadeTrail();
-
-// ============================================================================
-// 18. Scroll progress
-// ============================================================================
-
-const scrollProg = $('#scroll-progress');
-window.addEventListener('scroll', () => {
-  const max = document.documentElement.scrollHeight - window.innerHeight;
-  const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
-  scrollProg.style.width = pct + '%';
-});
-
-// ============================================================================
-// 19. Paintings Atlas — render grid + click → Painting Detail modal
-// ============================================================================
-
-const atlasGrid = $('#atlas-grid');
-PAINTINGS.forEach((p) => {
-  const card = document.createElement('div');
-  card.className = 'atlas-card';
-  card.dataset.id = p.id;
-  const word = vaToWord(p.va[0], p.va[1]);
-  card.innerHTML = `
-    <div class="ac-frame">
-      <div class="ac-mini-va">
-        <svg viewBox="-110 -110 220 220" aria-hidden="true">
-          <circle r="100" fill="none" stroke="#2a2521" stroke-width="2"/>
-          <line x1="-100" y1="0" x2="100" y2="0" stroke="#a8a39e" stroke-width="0.8"/>
-          <line x1="0" y1="-100" x2="0" y2="100" stroke="#a8a39e" stroke-width="0.8"/>
-          <circle cx="${p.va[0] * 100}" cy="${-p.va[1] * 100}" r="14" fill="#b8302a"/>
-        </svg>
-      </div>
-      ${p.mode === 'image'
-        ? `<img src="assets/paintings/${p.file}" alt="${p.titleEn}">`
-        : `<div class="text-scroll ac-scroll">
-             <div class="ts-mark">問</div>
-             <div class="ts-question">${p.title}</div>
-             <div class="ts-rule"></div>
-             <div class="ts-excerpt">${p.excerpt || ''}</div>
-             <div class="ts-source">${p.artist}</div>
-           </div>`}
-      <div class="ac-seal"><span>史</span><span>鉴</span></div>
-      <div class="ac-overlay">${p.rag[0].text}</div>
-    </div>
-    <div class="ac-body">
-      <div class="ac-title">${p.title}</div>
-      <div class="ac-artist">${p.artist}</div>
-      <div class="ac-foot">
-        <span class="word">${word}</span>
-        <span>v=${p.va[0].toFixed(2)}</span>
-        <span>a=${p.va[1].toFixed(2)}</span>
-      </div>
-    </div>
-  `;
-  card.addEventListener('click', () => openPaintingDetail(p));
-  atlasGrid.appendChild(card);
-});
-
-// ============================================================================
-// 20. Modal management — generic open/close
-// ============================================================================
-
-function openModal(id) {
-  $('#' + id).classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeModal(id) {
-  $('#' + id).classList.remove('open');
-  document.body.style.overflow = '';
-}
-$$('[data-close]').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    closeModal(btn.dataset.close);
-  });
-});
-$$('.modal-overlay').forEach(m => {
-  m.addEventListener('click', (e) => { if (e.target === m) closeModal(m.id); });
-});
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') $$('.modal-overlay.open').forEach(m => closeModal(m.id));
-});
-
-// ============================================================================
-// 21. About modal — open from nav
-// ============================================================================
-
-$('#open-about').addEventListener('click', (e) => {
-  e.preventDefault();
-  openModal('about-modal');
-});
-
-$('#cite-copy').addEventListener('click', () => {
-  const txt = $('#bibtex-block').textContent;
-  navigator.clipboard.writeText(txt).then(() => {
-    $('#cite-copy').textContent = 'copied!';
-    setTimeout(() => $('#cite-copy').textContent = 'copy', 1400);
-  });
-});
-
-// ============================================================================
-// 22. Painting Detail modal
-// ============================================================================
-
-function openPaintingDetail(p) {
-  const d = vaToDescriptors(p.va[0], p.va[1]);
-  const word = vaToWord(p.va[0], p.va[1]);
-  const colorMap = {
-    '史实考据':'#b88f4e', '年代判定':'#b88f4e',
-    '因果推理':'#5e8466', '综合分析':'#5e8466', '综合评价':'#5e8466',
-    '图像识别':'#b8302a', '文物鉴定':'#b8302a',
-    '人物识别':'#2a6e96', '综合题':'#2a6e96',
-  };
-  const visualBlock = p.mode === 'image'
-    ? `<div class="pd-img-wrap" data-img="assets/paintings/${p.file}" data-cap="${p.title} · ${p.artist}">
-         <img src="assets/paintings/${p.file}" alt="${p.titleEn}">
-         <div class="pd-seal"><span>史</span><span>鉴</span></div>
-       </div>`
-    : `<div class="pd-img-wrap pd-text-mode">
-         <div class="text-scroll pd-scroll">
-           <div class="ts-mark">問</div>
-           <div class="ts-question">${p.title}</div>
-           <div class="ts-rule"></div>
-           <div class="ts-excerpt">${p.excerpt || ''}</div>
-           <div class="ts-source">${p.artist}</div>
-         </div>
-         <div class="pd-seal"><span>史</span><span>鉴</span></div>
-       </div>`;
-  $('#pd-body').innerHTML = `
-    ${visualBlock}
-    <div class="pd-info">
-      <h2>${p.title}</h2>
-      <div class="pd-en">${p.artist} · ${p.titleEn}</div>
-      <div class="pd-tags">
-        <span class="tag dyn">${p.dynasty}</span>
-        ${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}
-        <span class="tag">RAG-API · v1.0</span>
-      </div>
-      <div class="pd-section">
-        <h4>题型坐标 · Question Type</h4>
-        <div class="pd-va-row">
-          <svg viewBox="-110 -110 220 220">
-            <circle r="100" fill="none" stroke="#524841" stroke-width="1"/>
-            <line x1="-100" y1="0" x2="100" y2="0" stroke="#a8a39e" stroke-width="0.5"/>
-            <line x1="0" y1="-100" x2="0" y2="100" stroke="#a8a39e" stroke-width="0.5"/>
-            <path d="M0,0 L100,0 A100,100 0 0,1 0,100 Z" fill="#b88f4e" opacity="0.16" />
-            <path d="M0,0 L0,100 A100,100 0 0,1 -100,0 Z" fill="#2a6e96" opacity="0.16" />
-            <path d="M0,0 L-100,0 A100,100 0 0,1 0,-100 Z" fill="#b8302a" opacity="0.16" />
-            <path d="M0,0 L0,-100 A100,100 0 0,1 100,0 Z" fill="#5e8466" opacity="0.16" />
-            <circle cx="${p.va[0]*100}" cy="${-p.va[1]*100}" r="11" fill="${colorMap[word] || '#b8302a'}" opacity="0.3"/>
-            <circle cx="${p.va[0]*100}" cy="${-p.va[1]*100}" r="6" fill="${colorMap[word] || '#b8302a'}"/>
-          </svg>
-          <div class="pd-va-info">
-            <div class="pd-word" style="color: ${colorMap[word] || '#14110f'};">${word}</div>
-            <div class="pd-coord">infer = ${p.va[0].toFixed(2)}  ·  multi = ${p.va[1].toFixed(2)}</div>
-          </div>
-        </div>
-      </div>
-      <div class="pd-section">
-        <h4>生成参数 · M5/M6 ▸ 8-slot</h4>
-        <div class="pd-slots">
-          ${Object.entries(d).map(([k, v]) => `
-            <div class="pd-slot">
-              <div class="pd-slot-label">${k}</div>
-              <div class="pd-slot-value">${Array.isArray(v) ? v.join(' · ') : v}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-      <div class="pd-section">
-        <h4>检索到的历史史料 · M3 ▸ top-3 of 1129</h4>
-        <div class="pd-rag-list">
-          ${p.rag.map((r, i) => `
-            <div class="pd-rag-item" data-rag-idx="${i}">
-              <span class="pd-rag-score">${r.score.toFixed(2)}</span>${r.text}
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    </div>
-  `;
-
-  // Wire up RAG item clicks → RAG modal
-  $$('.pd-rag-item', $('#pd-body')).forEach(item => {
-    item.addEventListener('click', () => {
-      const idx = parseInt(item.dataset.ragIdx, 10);
-      openRagModal(p.rag[idx]);
-    });
+  let mouseX = -9999, mouseY = -9999;
+  canvas.addEventListener('mousemove', function(e) {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
   });
 
-  // Image zoom (only when there's an actual image)
-  if (p.mode === 'image') {
-    $('.pd-img-wrap', $('#pd-body')).addEventListener('click', (e) => {
-      const wrap = e.currentTarget;
-      openZoom(wrap.dataset.img, wrap.dataset.cap);
-    });
-  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
 
-  openModal('painting-detail-modal');
-}
-
-// ============================================================================
-// 23. Image zoom modal
-// ============================================================================
-
-const zoomImg = $('#zoom-img');
-const zoomCap = $('#zoom-caption');
-function openZoom(src, cap) {
-  zoomImg.src = src;
-  zoomImg.classList.remove('zoomed');
-  zoomCap.textContent = cap || '点击切换 1× / 1.6×';
-  openModal('zoom-modal');
-}
-zoomImg.addEventListener('click', () => zoomImg.classList.toggle('zoomed'));
-
-// case-banner image → zoom modal
-const caseImgWrap = $('#case-img-wrap');
-if (caseImgWrap) {
-  caseImgWrap.addEventListener('click', () => {
-    const img = $('img', caseImgWrap);
-    openZoom(img.src, '后母戊鼎 · 多模态题例 · 商');
-  });
-}
-
-// ============================================================================
-// 24. RAG modal
-// ============================================================================
-
-function openRagModal(r) {
-  $('#rag-modal-score').textContent = r.score.toFixed(2);
-  $('#rag-modal-src').textContent = `史料语料库 chunk · cosine ${r.score.toFixed(3)}`;
-  $('#rag-modal-text').textContent = r.text;
-  openModal('rag-modal');
-}
-
-// Wire up demo's RAG items: click → open modal
-$('#rag-list').addEventListener('click', (e) => {
-  const item = e.target.closest('.rag-item');
-  if (!item) return;
-  // Find index from siblings
-  const items = $$('.rag-item', $('#rag-list'));
-  const idx = items.indexOf(item);
-  if (idx >= 0 && currentPainting.rag[idx]) {
-    openRagModal(currentPainting.rag[idx]);
-  }
-});
-
-// Make demo rag items look clickable
-const ragListStyle = document.createElement('style');
-ragListStyle.textContent = `.rag-item { cursor: pointer; transition: background 200ms; }
-.rag-item:hover { background: rgba(42,110,150,0.08); }`;
-document.head.appendChild(ragListStyle);
-
-// ============================================================================
-// 25. Dataflow diagram — hover highlights connected edges + neighbour nodes
-// ============================================================================
-
-const dfSvg = $('#df-svg');
-if (dfSvg) {
-  const dfNodes = $$('.df-node', dfSvg);
-  const dfEdges = $$('.df-edge', dfSvg);
-  const dfLabels = $$('.df-edge-label', dfSvg);
-
-  function dfClear() {
-    dfSvg.classList.remove('has-active');
-    dfNodes.forEach(n => n.classList.remove('active'));
-    dfEdges.forEach(e => e.classList.remove('active'));
-    dfLabels.forEach(l => l.classList.remove('active'));
-  }
-
-  function dfHighlight(id) {
-    dfSvg.classList.add('has-active');
-    const neighbours = new Set([id]);
-    dfEdges.forEach((edge, idx) => {
-      const from = edge.dataset.from, to = edge.dataset.to;
-      const isMe = from === id || to === id;
-      edge.classList.toggle('active', isMe);
-      // matching label is the next sibling text element in the SVG;
-      // we just check label position; simpler: toggle all labels by index
-      if (isMe) {
-        neighbours.add(from === id ? to : from);
-        // Find the closest label by index
-        const lbl = edge.nextElementSibling;
-        if (lbl && lbl.classList && lbl.classList.contains('df-edge-label')) {
-          lbl.classList.add('active');
+    // Draw connecting lines
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 100) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = 'rgba(0,229,255,' + (1 - d / 100) * 0.08 + ')';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
         }
       }
-    });
-    dfNodes.forEach(n => n.classList.toggle('active', neighbours.has(n.dataset.id)));
-  }
+    }
 
-  dfNodes.forEach(n => {
-    n.addEventListener('mouseenter', () => dfHighlight(n.dataset.id));
-    n.addEventListener('mouseleave', dfClear);
-    n.addEventListener('focusin', () => dfHighlight(n.dataset.id));
-    n.addEventListener('focusout', dfClear);
-    // click → jump to corresponding module's lightbox if it's a real module
-    n.addEventListener('click', () => {
-      const id = n.dataset.id.toUpperCase();
-      const mod = MODULES.find(m => m.id === id);
-      if (mod) openLightbox(mod);
+    // Draw particles
+    particles.forEach(function(p, idx) {
+      p.life++;
+      if (p.life > p.maxLife) { particles[idx] = createParticle(); return; }
+
+      // Mouse repulsion
+      const dx = p.x - mouseX;
+      const dy = p.y - mouseY;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d < 80) {
+        p.vx += dx / d * 0.3;
+        p.vy += dy / d * 0.3;
+      }
+
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vx *= 0.99;
+      p.vy *= 0.99;
+
+      if (p.x < 0) p.x = W;
+      if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H;
+      if (p.y > H) p.y = 0;
+
+      const progress = p.life / p.maxLife;
+      const a = p.alpha * (progress < 0.1 ? progress * 10 : progress > 0.9 ? (1 - progress) * 10 : 1);
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color.replace(')', ',' + a + ')').replace('rgb', 'rgba').replace('#', 'rgba(').replace('rgba(', 'rgba(');
+      
+      // Hex color to rgba
+      const hex = p.color.replace('#', '');
+      const r = parseInt(hex.substr(0, 2), 16);
+      const g = parseInt(hex.substr(2, 2), 16);
+      const b = parseInt(hex.substr(4, 2), 16);
+      ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = p.r * 3;
+      ctx.fill();
+      ctx.shadowBlur = 0;
     });
-    // a11y
-    n.setAttribute('tabindex', '0');
-    n.setAttribute('role', 'button');
+
+    animId = requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ---- Hero Stat Counter ----
+(function initHeroStats() {
+  const stats = document.querySelectorAll('.stat-num[data-target]');
+  let done = false;
+  function countUp() {
+    if (done) return;
+    done = true;
+    stats.forEach(function(el) {
+      const target = parseFloat(el.dataset.target);
+      const isFloat = target % 1 !== 0;
+      let current = 0;
+      const duration = 1800;
+      const startTime = performance.now();
+      function update(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        current = target * eased;
+        el.textContent = isFloat ? current.toFixed(1) : Math.round(current).toLocaleString();
+        if (progress < 1) requestAnimationFrame(update);
+        else el.textContent = isFloat ? target.toFixed(1) : target.toLocaleString();
+      }
+      requestAnimationFrame(update);
+    });
+  }
+  // Start immediately on load
+  window.addEventListener('load', countUp);
+})();
+
+// ---- Scroll Counter for Numbers section ----
+(function initCounters() {
+  const counters = document.querySelectorAll('.count-num[data-target]');
+  const triggered = new Set();
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (!entry.isIntersecting || triggered.has(entry.target)) return;
+      triggered.add(entry.target);
+      const el = entry.target;
+      const target = parseFloat(el.dataset.target);
+      const decimals = parseInt(el.dataset.decimal || '0');
+      const duration = 2000;
+      const startTime = performance.now();
+      function update(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = target * eased;
+        el.textContent = current.toFixed(decimals);
+        if (progress < 1) requestAnimationFrame(update);
+        else el.textContent = target.toFixed(decimals);
+      }
+      requestAnimationFrame(update);
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(function(c) { observer.observe(c); });
+})();
+
+// ---- Scroll Reveal ----
+(function initReveal() {
+  const els = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        const idx = parseInt(e.target.dataset.index || '0');
+        setTimeout(function() { e.target.classList.add('visible'); }, idx * 80);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  els.forEach(function(el) { observer.observe(el); });
+})();
+
+// ---- Nav Scroll ----
+(function initNav() {
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', function() {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+  document.getElementById('nav-toggle').addEventListener('click', function() {
+    document.getElementById('nav-links').classList.toggle('open');
+  });
+  // Close nav on link click (mobile)
+  document.querySelectorAll('.nav-links a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      document.getElementById('nav-links').classList.remove('open');
+    });
+  });
+})();
+
+// ---- Demo Interactive ----
+(function initDemo() {
+  const PRODUCTS = {
+    strawberry: { name: '草莓', emoji: '🍓', region: '浙江·建德', desc: '高糖低酸，果香浓郁，现摘现发' },
+    apple:      { name: '苹果', emoji: '🍎', region: '陕西·洛川', desc: '高原苹果，日照充足，肉脆汁多' },
+    honey:      { name: '蜂蜜', emoji: '🍯', region: '云南·罗平', desc: '油菜花蜜，纯天然，无添加' },
+    yam:        { name: '山药', emoji: '🌿', region: '河南·焦作', desc: '铁棍山药，粉糯绵密，药食同源' },
+    orange:     { name: '橙子', emoji: '🍊', region: '四川·眉山', desc: '春见柑橘，皮薄多汁，甜度爆表' },
+    tea:        { name: '茶叶', emoji: '🍵', region: '云南·普洱', desc: '古树普洱，年份醇厚，口感层次丰富' },
+    rice:       { name: '大米', emoji: '🌾', region: '黑龙江·五常', desc: '五常大米，粒粒饱满，米香浓郁' },
+    chili:      { name: '辣椒', emoji: '🌶️', region: '湖南·邵阳', desc: '朝天椒，色泽红亮，香辣鲜爽' }
+  };
+
+  const STYLES = {
+    live:     { name: '带货直播', platform: '抖音直播' },
+    story:    { name: '种植故事', platform: '视频号' },
+    quality:  { name: '品质溯源', platform: '淘宝直播' },
+    festival: { name: '节日特卖', platform: '快手' }
+  };
+
+  const SCRIPTS = {
+    strawberry: {
+      live:     ['[开场] 宝宝们大家好！今天给大家带来的是浙江建德现摘草莓！', '[展示] 你看这颜色，红得发亮，果肉饱满——', '[促销] 直播间今天限量 500 单，现在下单直接享 8 折！', '[互动] 想要的宝宝扣 1，我们马上安排！'],
+      story:    ['[旁白] 清晨五点，建德草莓基地的灯亮了——', '[画面] 这片草莓已经种了三年，土壤是精心配比的有机土。', '[采摘] 每颗草莓都是人工挑选，只取最红最甜的那一批。', '[感言] 希望你吃到的每一口，都是大地最真诚的馈赠。'],
+      quality:  ['[溯源] 扫码可查：产地 · 采摘日期 · 农残检测报告', '[检测] 本批次农药残留检测：零检出', '[认证] 已通过绿色食品 A 级认证，放心吃！', '[发货] 冷链直发，48 小时内到达。'],
+      festival: ['[节日] 🎉 端午节特惠！草莓礼盒买二送一！', '[限时] 今晚 12 点截止，错过等明年！', '[礼盒] 精美礼盒包装，适合送礼自用！', '[下单] 直接点购物车，秒杀价等你！']
+    },
+    apple: {
+      live:     ['[开场] 老铁们好！今天直播间搬来了陕西洛川苹果！', '[展示] 海拔 1000 米以上的高原，日照 2600 小时！', '[卖点] 糖度 15 度以上，酸甜比完美——', '[促销] 5 斤装直播间价只要 29.9，快来抢！'],
+      story:    ['[旁白] 黄土高原的风，吹了一百年的苹果传奇。', '[画面] 每棵苹果树都有超过 20 年树龄，根扎黄土深处。', '[采收] 10 月霜降之后，才是最佳采摘时节。', '[心愿] 一个苹果，一份来自高原的心意。'],
+      quality:  ['[溯源] 洛川苹果 · 国家地理标志产品', '[土壤] 黄绵土，富含钾元素，造就独特口感', '[检测] SGS 国际认证，零农残，放心吃', '[包装] 单果独立包裹，防碰防压，新鲜到家'],
+      festival: ['[春节] 新年礼盒现货！洛川苹果 "平平安安" 大礼包', '[寓意] 苹果=平安，送长辈送朋友最有心！', '[规格] 5kg/10kg 两款可选，礼盒精美', '[速抢] 年货节限量，先到先得！']
+    },
+    honey: {
+      live:     ['[开场] 亲爱的们，今天给大家带来云南罗平油菜花蜜！', '[展示] 纯手工取蜜，零添加，看这浓稠度！', '[功效] 润肺止咳，助眠养颜，老少皆宜', '[价格] 500g 只要 49，两瓶包邮，心动就下单！'],
+      story:    ['[旁白] 每年三月，罗平的山坡上开满金色油菜花。', '[蜜蜂] 300 万只蜜蜂穿梭在花海中，采集最甜的精华。', '[取蜜] 老蜂农凌晨三点就开始割蜜，只为给你最新鲜的那一批。', '[匠心] 守一片花海，酿一罐好蜜，就是这么简单。'],
+      quality:  ['[成分] 100% 纯蜂蜜，不添加任何糖分和防腐剂', '[检测] 波美度 42 度以上，达到成熟蜜标准', '[认证] 有机认证 · 蜜源可溯源', '[保存] 密封避光，可保存 2 年以上'],
+      festival: ['[中秋] 中秋礼盒！蜂蜜+干花茶，送健康送品味', '[套装] 三瓶装礼盒，颜值超高，朋友圈必晒', '[限量] 仅剩 200 套，今晚 0 点恢复原价', '[下单] 备注收件人姓名，送专属贺卡！']
+    },
+    yam: {
+      live:     ['[开场] 大家好！今天带来的是焦作正宗铁棍山药！', '[对比] 你看这横截面，粉糯绵密，黏液丰富——', '[功效] 益肾健脾，增强免疫力，老人孩子都适合', '[价格] 5 斤装，产地直发，只要 35 元！'],
+      story:    ['[旁白] 黄河古道的沙质土壤，孕育了千年铁棍山药的传奇。', '[种植] 每年清明栽种，立冬收获，完整生长 8 个月。', '[匠人] 老农说：铁棍山药最怕急，慢工才出细活。', '[传承] 一根山药，承载着黄河儿女的饮食记忆。'],
+      quality:  ['[品质] 焦作四大怀药之首，国家地理标志', '[口感] 粉糯不烂，黏液足，蒸煮炒炸皆宜', '[检测] 土壤检测报告：铁、钙、锌含量超标准 3 倍', '[包装] 单根独立包装，防磕碰，新鲜直达'],
+      festival: ['[冬至] 冬至进补，山药羊肉汤最暖！', '[礼品] 铁棍山药礼盒，送长辈的养生好礼', '[套餐] 买山药送枸杞，搭配食用效果翻倍', '[抢购] 产地直发，今日下单明日出货！']
+    },
+    orange: {
+      live:     ['[开场] 宝宝们好！今天直播间来了四川春见！', '[外观] 你看这橙色，皮薄光亮，一剥就流汁！', '[口感] 甜度 14 度，酸度极低，吃完还想吃！', '[价格] 10 斤只要 39，邮费都我出，快下单！'],
+      story:    ['[旁白] 四川眉山，中国柑橘之乡的王牌——春见。', '[生长] 岷江流域温暖湿润的气候，让每颗春见都自带蜜味。', '[采摘] 霜降后，果农们用剪刀一颗一颗手工采收。', '[分享] 一口春见，就是四川盆地最甜的春天。'],
+      quality:  ['[品种] 春见 = 清见 × F2432 椪柑，混血精品', '[糖度] 糖度稳定 14 度以上，不打甜蜜素', '[检测] 农残检测报告：符合欧盟出口标准', '[保鲜] 冷链物流，新鲜保证，坏果包赔'],
+      festival: ['[年货] 新年橙子礼盒！吉祥如意，大吉大利！', '[礼盒] 精品礼盒 20 枚装，红色丝带包装', '[寓意] 橙子谐音 "成功"，送礼倍有面', '[现货] 限量 1000 箱，手慢无！']
+    },
+    tea: {
+      live:     ['[开场] 茶友们好！今天带来的是云南普洱古树茶！', '[展示] 这片叶子，来自 300 年以上的古茶树！', '[口感] 入口醇厚，回甘持久，越喝越上瘾', '[价格] 直播间专属价，买二送一，限今晚！'],
+      story:    ['[旁白] 云南西双版纳的古茶园，见证了三百年风雨。', '[茶树] 这棵古茶树，胸径超过 40cm，叶芽肥厚。', '[工艺] 手工杀青、石磨压制，传统工艺不打折扣。', '[岁月] 好茶如好友，越陈越香，值得等待。'],
+      quality:  ['[原料] 100% 古树春茶，拒绝台地茶混采', '[工艺] 晒青毛茶 → 拼配 → 蒸压 → 干仓存放', '[检测] 农残检测：零检出，符合有机标准', '[溯源] 扫码可见：茶园位置 + 采摘时间 + 制茶师姓名'],
+      festival: ['[父亲节] 送爸爸一饼好茶，比什么都强！', '[礼盒] 357g 经典圆饼，红木礼盒，倍显档次', '[收藏] 普洱越陈越值钱，买来喝更买来存', '[限量] 本次仅 50 饼，藏家必抢！']
+    },
+    rice: {
+      live:     ['[开场] 各位家人好！今天带来五常大米，米界爱马仕！', '[展示] 看这粒粒分明，颜色透亮，闻一下就香！', '[口感] 软糯弹牙，米香浓郁，不用配菜也能吃三碗！', '[价格] 5 斤直播价 49，现在下单今天发货！'],
+      story:    ['[旁白] 松花江畔，长白山脚下，这里是五常大米的故乡。', '[气候] 年均气温 3.5 度，昼夜温差 15 度，积累天然糖分。', '[种植] 一年只种一季，180 天生长期，充分积累营养。', '[承诺] 每一粒米，都是黑土地给你最诚实的答案。'],
+      quality:  ['[品种] 稻花香 2 号，原产地证明书认证', '[检测] 无农药、无化肥、无激素，三无保证', '[认证] 国家地理标志产品，正宗五常产地直发', '[溯源] 袋内附二维码，扫码查产地 + 检测报告'],
+      festival: ['[中秋] 中秋礼盒！五常大米 + 长白山杂粮组合装', '[年货] 过年送大米，寓意年年有余', '[规格] 5 斤/10 斤/25 斤三种规格可选', '[团购] 10 箱起拿团购价，批发超划算！']
+    },
+    chili: {
+      live:     ['[开场] 辣友们！今天带来湖南邵阳朝天椒！辣味正！', '[展示] 你看这颜色，红得发紫，干辣椒里的王者！', '[用途] 炒菜、做剁椒、卤味提色，样样拿手！', '[价格] 500g 只要 12.9，今天买三袋送一袋！'],
+      story:    ['[旁白] 湖南邵阳，中国最辣的地方之一。', '[品种] 朝天椒，果实向天生长，吸收最多阳光和热量。', '[晾晒] 秋收后自然风干 30 天，锁住最纯粹的辣味精华。', '[传承] 一把辣椒，是湖南人骨子里的倔强与热情。'],
+      quality:  ['[品种] 正宗朝天椒，辣度 5 万 SHU 以上', '[干燥] 自然风干，不添加色素，颜色纯天然', '[检测] 重金属及农残检测合格，放心入厨', '[产地] 邵阳本地直采，无中间商，品质把关'],
+      festival: ['[腊味节] 腊月备货！朝天椒 + 花椒组合套装', '[年货] 自家做腊肠，少不了一把好辣椒！', '[礼品] 辣椒礼盒，送给爱吃辣的朋友', '[秒杀] 今晚 8 点！辣椒买 3 送 1，手慢无！']
+    }
+  };
+
+  let currentProduct = 'strawberry';
+  let currentStyle = 'live';
+  let isGenerating = false;
+
+  // Product selection
+  document.querySelectorAll('.product-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.product-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentProduct = btn.dataset.product;
+      updateProductTag();
+    });
   });
 
-  // Observe to trigger the edge-drawing animation on scroll-in
-  const dfObs = new IntersectionObserver((es) => {
-    es.forEach(e => { if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      dfObs.unobserve(e.target);
-    }});
-  }, { threshold: 0.25 });
-  dfObs.observe($('.dataflow'));
-}
+  // Style selection
+  document.querySelectorAll('.style-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.style-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentStyle = btn.dataset.style;
+      updatePlatform();
+    });
+  });
 
-// ============================================================================
-// 26. Init
-// ============================================================================
+  // Param buttons
+  document.querySelectorAll('.param-btns').forEach(function(group) {
+    group.querySelectorAll('.param-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        group.querySelectorAll('.param-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+      });
+    });
+  });
 
-renderPaintingDots();
-selectPainting('p1');
-refreshCodePanel();
+  function updateProductTag() {
+    const p = PRODUCTS[currentProduct];
+    document.getElementById('product-tag-text').textContent = p.emoji + ' ' + p.name;
+  }
 
+  function updatePlatform() {
+    const s = STYLES[currentStyle];
+    document.getElementById('vp-platform').textContent = s.platform;
+  }
+
+  function setSubtitle(text) {
+    document.getElementById('subtitle-text').textContent = text;
+  }
+
+  function runGeneration() {
+    if (isGenerating) return;
+    isGenerating = true;
+    const btn = document.getElementById('btn-generate');
+    btn.disabled = true;
+    btn.textContent = '生成中...';
+
+    const progressEl = document.getElementById('vp-progress');
+    progressEl.style.display = 'flex';
+    const steps = document.querySelectorAll('.prog-step');
+    steps.forEach(function(s) {
+      s.classList.remove('active', 'done');
+      s.querySelector('.prog-status').textContent = '';
+    });
+
+    const delays = [600, 1200, 900, 1500, 800];
+    const labels = ['识别中...', '生成中...', '合成中...', '渲染中...', '完成！'];
+
+    let currentStep = 0;
+    function nextStep() {
+      if (currentStep >= steps.length) {
+        // Done
+        setTimeout(function() {
+          progressEl.style.display = 'none';
+          showScript();
+          isGenerating = false;
+          btn.disabled = false;
+          btn.innerHTML = '<svg viewBox="0 0 20 20" fill="none"><path d="M10 2 L12.5 7.5 L18 8.5 L14 12.5 L15 18 L10 15.5 L5 18 L6 12.5 L2 8.5 L7.5 7.5 Z" stroke="currentColor" stroke-width="1.5" fill="none"/></svg> 重新生成';
+        }, 500);
+        return;
+      }
+      steps[currentStep].classList.add('active');
+      steps[currentStep].querySelector('.prog-status').textContent = labels[currentStep];
+      setSubtitle(labels[currentStep]);
+      setTimeout(function() {
+        steps[currentStep].classList.remove('active');
+        steps[currentStep].classList.add('done');
+        steps[currentStep].querySelector('.prog-status').textContent = '\u2713';
+        currentStep++;
+        nextStep();
+      }, delays[currentStep]);
+    }
+    nextStep();
+  }
+
+  function showScript() {
+    const p = PRODUCTS[currentProduct];
+    const lines = (SCRIPTS[currentProduct] && SCRIPTS[currentProduct][currentStyle]) || ['[AI 正在学习该产品数据...]'];
+    const panel = document.getElementById('script-output');
+    panel.className = 'script-content';
+    
+    let html = '<div style="margin-bottom:0.8rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(0,229,255,0.15)">';
+    html += '<span style="color:#00e5ff;font-family:JetBrains Mono,monospace;font-size:0.72rem">// ' + p.emoji + ' ' + p.name + ' · ' + STYLES[currentStyle].name + ' · ' + STYLES[currentStyle].platform + '</span>';
+    html += '</div>';
+    
+    lines.forEach(function(line, i) {
+      const tag = line.match(/^\[(.+?)\]/);
+      if (tag) {
+        html += '<div class="script-line tag">' + line.substring(0, tag[0].length) + '</div>';
+        html += '<div class="script-line" style="padding-left:0.5rem;margin-bottom:0.8rem">' + line.substring(tag[0].length) + '</div>';
+      } else {
+        html += '<div class="script-line" style="margin-bottom:0.5rem">' + line + '</div>';
+      }
+    });
+
+    html += '<div style="margin-top:1rem;padding-top:0.5rem;border-top:1px solid rgba(0,229,255,0.1)">';
+    html += '<span style="color:#7a9cbf;font-size:0.72rem;font-family:JetBrains Mono,monospace">生成完成 · ' + p.region + ' · 字数约 ' + (lines.join('').length) + '字</span>';
+    html += '</div>';
+    panel.innerHTML = html;
+    setSubtitle(lines[0].replace(/^\[.+?\]\s*/, '').substring(0, 30) + '...');
+  }
+
+  document.getElementById('btn-generate').addEventListener('click', runGeneration);
+  document.getElementById('hero-demo-btn').addEventListener('click', function() {
+    document.getElementById('demo').scrollIntoView({ behavior: 'smooth' });
+  });
+  document.getElementById('btn-start').addEventListener('click', function() {
+    document.getElementById('demo').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  updateProductTag();
+  updatePlatform();
 })();
