@@ -1252,6 +1252,7 @@ const CHINA_RISK = {
   '\u4e0a\u6d77':  {v:0,lv:'safe', rk:'\u65e0\u660e\u663e\u98ce\u9669',cr:'\u852c\u83dc',          cf:96,wi:'\u2014',ac:'\u6b63\u5e38\u519c\u4e8b\u4f5c\u4e1a',            ar:'22\u4e07\u4ea9'},
   '\u6d59\u6c5f':  {v:1,lv:'low',  rk:'\u53f0\u98ce\u8fb9\u7f18',cr:'\u6c34\u7a3b/\u8336\u53f6',  cf:58,wi:'72h',ac:'\u5173\u6ce8\u53f0\u98ce\u52a8\u6001',            ar:'520\u4e07\u4ea9'},
   '\u798f\u5efa':  {v:1,lv:'low',  rk:'\u53f0\u98ce\u8fb9\u7f18',cr:'\u6c34\u7a3b/\u6c34\u679c',  cf:55,wi:'72h',ac:'\u5173\u6ce8\u53f0\u98ce\u52a8\u6001',            ar:'380\u4e07\u4ea9'},
+  '\u53f0\u6e7e':  {v:2,lv:'medium',rk:'\u53f0\u98ce\u6b63\u9762\u767b\u9646',cr:'\u6c34\u7a3b/\u718a\u679c/\u751f\u5434',cf:78,wi:'36h',ac:'\u54c1\u5b57\u578b\u9632\u98ce\uff0c\u786e\u4fdd\u6392\u6c34\u7545\u901a', ar:'80\u4e07\u4ea9'},
   '\u6c5f\u897f':  {v:2,lv:'medium',rk:'\u6301\u7eed\u66b4\u96e8',cr:'\u6c34\u7a3b',          cf:72,wi:'48h',ac:'\u53ca\u65f6\u6392\u6c34\u9632\u6e0d',            ar:'660\u4e07\u4ea9'},
   '\u6e56\u5317':  {v:2,lv:'medium',rk:'\u6301\u7eed\u964d\u96e8',cr:'\u6c34\u7a3b/\u6cb9\u83dc',  cf:70,wi:'48h',ac:'\u6392\u6c34\u9632\u6e0d',                  ar:'790\u4e07\u4ea9'},
   '\u6e56\u5357':  {v:3,lv:'high',  rk:'\u66b4\u96e8\u6d2a\u6d9d',cr:'\u6c34\u7a3b/\u68c9\u82b1',  cf:84,wi:'24h',ac:'\u7d27\u6025\u6392\u6c34\uff0c\u8f6c\u79fb\u7269\u8d44',  ar:'1,050\u4e07\u4ea9'},
@@ -1282,6 +1283,62 @@ const WP=[
   {x:48,y:76,k:'drought'},
   {x:68,y:38,k:'heat'},
 ];
+const DEEPSEEK_KEY='sk-5750000e7b6a4d2b85329028cc65ad0a';
+function approxRegion(x,y){
+  if(x<32)return y<50?'新疆':'西藏';
+  if(x<50){if(y<28)return '内蒙古西部/甘肃/宁夏';if(y<58)return '四川/云南/贵州/重庆';return '广西/云南南部';}
+  if(x<65){if(y<28)return '内蒙古/山西/陕西/河南';if(y<58)return '湖北/湖南/江西/安徽';return '广东/广西';}
+  if(x<78){if(y<28)return '黑龙江/内蒙古东部';if(y<55)return '辽宁/山东/江苏/上海';return '浙江/福建/粤东';}
+  return y<40?'黑龙江/吉林':y<65?'江苏/上海/浙江':'福建/广东';
+}
+const PIPE=[
+  {n:'01',label:'采集 Collector Agent',c:'#00e5cc',
+    prompt:(m)=>`你是穗安AI数据采集Agent。当前检测到气象灾害事件：${m.map(x=>`【${WT[x.k].t}】约位于${approxRegion(x.x,x.y)}`).join('；')}。请详细输出以下五个维度（每项1-2句）：
+① 采集状态：各事件数据覆盖率与延迟
+② 气象API：实时数据精度与更新频次
+③ 遥感影像：卫星过境时间、云遮挡情况
+④ 舆情流：社交媒体与农户上报数量及噪声比
+⑤ 数据融合质量：综合可信度评分与异常标记数`},
+  {n:'02',label:'分析 Analyst ×5',c:'#4488ff',
+    prompt:(m)=>`你是穗安AI五个并行分析Agent。气象事件：${m.map(x=>`${WT[x.k].t}(${approxRegion(x.x,x.y)})`).join('、')}。请按如下格式输出，每个Agent 2-3句，结合当地农业特点具体分析：
+气象Agent: （气象强度、持续时间、影响范围）
+作物Agent: （主要受害作物、关键生育期影响）
+地块Agent: （受灾面积估算、土壤/水分状况）
+病虫害Agent: （次生病虫害风险类型与概率）
+舆情Agent: （农户情绪指数、线上咨询量、媒体关注度）`},
+  {n:'03',label:'推演 Simulator',c:'#ffaa44',
+    prompt:(m)=>`你是穗安AI推演Agent。气象事件：${m.map(x=>`${WT[x.k].t}(${approxRegion(x.x,x.y)})`).join('、')}。请结合当地主要农作物，输出以下四项：
+① 不干预路径：各主要作物损失概率（具体%）及经济损失估算
+② 及时干预路径：干预后损失概率对比与挽回比例
+③ 最优干预窗口：具体时间节点与优先行动
+④ 置信度说明：本次推演的数据支撑与不确定因素`},
+  {n:'04',label:'决策 Decision Agent',c:'#cc8833',
+    prompt:(m)=>`你是穗安AI决策Agent。基于气象事件：${m.map(x=>`${WT[x.k].t}(${approxRegion(x.x,x.y)})`).join('、')}，结合当地主要农作物，只输出如下JSON，不要任何其他文字：
+{
+  "risk_level": "high/medium/low之一",
+  "affected_provinces": ["省份1","省份2"],
+  "affected_crops": ["作物1","作物2","作物3"],
+  "estimated_area_wan_mu": 数字,
+  "confidence": 数字,
+  "actions": ["行动1","行动2","行动3","行动4"],
+  "window": "干预窗口",
+  "economic_risk_yi_yuan": 数字,
+  "secondary_risk": "次生风险描述"
+}`},
+  {n:'05',label:'推送 Delivery Agent',c:'#3ab8ff',
+    prompt:(m)=>`你是穗安AI推送Agent。对${m.length}个气象灾害预警（${m.map(x=>WT[x.k].t).join('、')}），请详细输出以下推送情况：
+① 保险API：推送内容摘要与条数
+② 农村合作社短信：发送条数、覆盖农户数、核心预警语
+③ 地方政府简报：报告标题与主要建议
+④ 粮食企业月报：影响评估摘要
+⑤ 应急广播/小程序：推送渠道与触达人数估算`},
+  {n:'06',label:'Harness 进化 Agent',c:'#88aaff',
+    prompt:(m)=>`你是穗安AI Harness进化Agent。本轮推演处理了${m.length}个气象事件（${m.map(x=>WT[x.k].t).join('、')}）。请输出以下四项：
+① 归档：推演路径与关键决策节点已归档至向量知识库，新增向量数
+② Evaluator：Root Cause分析结论，各Agent表现评分（满分10分）
+③ Evolver：将哪些优化规则写回Agent资产文件，更新了哪些模型权重
+④ 精度展望：下一轮各维度预测精度预计提升幅度，以及待补充的数据缺口`},
+];
 function rlc(lv){
   const m={
     high:  {ar:'#2a0808',hv:'#ff3333',tx:'#ff6b6b',gw:'rgba(255,50,50,.70)', bg:'rgba(255,50,50,.13)', bd:'rgba(255,50,50,.42)'},
@@ -1292,10 +1349,57 @@ function rlc(lv){
   return m[lv]||m.safe;
 }
 function ChinaRiskMapSection(){
+  const [tab,setTab]=useState('demo');
   const mapRef=useRef(null);
+  const simMapRef=useRef(null);
   const [hovered,setHovered]=useState(null);
+  const [draggingType,setDraggingType]=useState(null);
+  const [simMarkers,setSimMarkers]=useState([]);
+  const [pipeStep,setPipeStep]=useState(-1);
+  const [pipeRunning,setPipeRunning]=useState(false);
+  const [pipeOutputs,setPipeOutputs]=useState(['','','','','','']);
+
+  const runPipeline=async()=>{
+    if(!simMarkers.length||pipeRunning)return;
+    setPipeStep(-1);setPipeRunning(true);setPipeOutputs(['','','','','','']);
+    for(let i=0;i<PIPE.length;i++){
+      setPipeStep(i);
+      try{
+        const resp=await fetch('https://api.deepseek.com/chat/completions',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':`Bearer ${DEEPSEEK_KEY}`},
+          body:JSON.stringify({model:'deepseek-chat',stream:true,max_tokens:550,temperature:0.75,
+            messages:[
+              {role:'system',content:'你是穗安AI农业风险预警多智能体系统的专业Agent。只输出要求内容，使用规范简体中文，不造词、不产生错别字。写入操作统一用"写回"，不使用"挝回"等错误表述。'},
+              {role:'user',content:PIPE[i].prompt(simMarkers)}
+            ]})
+        });
+        const reader=resp.body.getReader();
+        const dec=new TextDecoder();
+        let buf='';
+        while(true){
+          const{done,value}=await reader.read();
+          if(done)break;
+          buf+=dec.decode(value,{stream:true});
+          const lines=buf.split('\n');buf=lines.pop();
+          for(const line of lines){
+            if(!line.startsWith('data: '))continue;
+            const d=line.slice(6).trim();
+            if(d==='[DONE]')continue;
+            try{const tok=JSON.parse(d).choices?.[0]?.delta?.content;
+              if(tok)setPipeOutputs(prev=>{const n=[...prev];n[i]=(n[i]||'')+tok;return n;});
+            }catch(e){}
+          }
+        }
+      }catch(err){
+        setPipeOutputs(prev=>{const n=[...prev];n[i]='[错误] '+err.message;return n;});
+      }
+    }
+    setPipeRunning(false);
+  };
+
   useEffect(()=>{
-    if(!mapRef.current||!window.echarts)return;
+    if(tab!=='demo'||!mapRef.current||!window.echarts)return;
     const chart=window.echarts.init(mapRef.current,null,{renderer:'canvas'});
     const lvVal={safe:1,low:2,medium:3,high:4};
     const cdata=Object.entries(CHINA_RISK).map(([name,d])=>{
@@ -1319,9 +1423,9 @@ function ChinaRiskMapSection(){
       geo:{
         map:'china',aspectScale:0.75,
         left:'2%',right:'2%',top:'3%',bottom:'4%',
-        roam:true,silent:true,
+        roam:true,
         itemStyle:{areaColor:'transparent',borderColor:'transparent',borderWidth:0},
-        emphasis:{itemStyle:{areaColor:'transparent'}},
+        emphasis:{itemStyle:{areaColor:'transparent',borderColor:'transparent'}},
       },
       visualMap:{
         type:'continuous',min:1,max:4,show:true,seriesIndex:0,
@@ -1351,12 +1455,35 @@ function ChinaRiskMapSection(){
         },
       ],
     });
-    chart.on('mouseover',(p)=>{if(p.componentType==='series'&&p.name)setHovered(p.name);});
-    chart.on('mouseout',()=>setHovered(null));
+    chart.on('mouseover',(p)=>{if(p.name&&CHINA_RISK[p.name])setHovered(p.name);});
+    chart.on('mouseout',(p)=>{if(p.name&&CHINA_RISK[p.name])setHovered(null);});
     const onResize=()=>chart.resize();
     window.addEventListener('resize',onResize);
     return()=>{window.removeEventListener('resize',onResize);chart.dispose();};
-  },[]);
+  },[tab]);
+
+  useEffect(()=>{
+    if(tab!=='sim'||!simMapRef.current||!window.echarts)return;
+    const chart=window.echarts.init(simMapRef.current,null,{renderer:'canvas'});
+    const lvVal={safe:1,low:2,medium:3,high:4};
+    const cdata=Object.entries(CHINA_RISK).map(([name,d])=>({name,value:lvVal[d.lv]||1}));
+    chart.setOption({
+      backgroundColor:'transparent',
+      geo:{map:'china',aspectScale:0.75,left:'2%',right:'2%',top:'3%',bottom:'4%',roam:false,silent:true,
+        itemStyle:{areaColor:'transparent',borderColor:'transparent',borderWidth:0},
+        emphasis:{itemStyle:{areaColor:'transparent'}}},
+      visualMap:{type:'continuous',min:1,max:4,show:false,seriesIndex:0,
+        inRange:{color:['#041228','#082040','#0a3050','#153840','#406018','#904810','#701010']},
+        outOfRange:{color:'#040e1e'}},
+      series:[{type:'map',map:'china',geoIndex:0,
+        itemStyle:{borderColor:'rgba(0,200,255,0.2)',borderWidth:0.5},
+        label:{show:false},emphasis:{disabled:true},data:cdata}]
+    });
+    const onResize=()=>chart.resize();
+    window.addEventListener('resize',onResize);
+    return()=>{window.removeEventListener('resize',onResize);chart.dispose();};
+  },[tab]);
+
   const counts=Object.values(CHINA_RISK).reduce((a,d)=>{a[d.lv]=(a[d.lv]||0)+1;return a;},{});
   const info=hovered?CHINA_RISK[hovered]:null;
   const lc=info?rlc(info.lv):null;
@@ -1368,7 +1495,7 @@ function ChinaRiskMapSection(){
   return(
     <section id="chinamap" className="py-24" style={{background:'linear-gradient(180deg,transparent,rgba(4,14,30,0.06),transparent)'}}>
       <div className="max-w-7xl mx-auto px-6">
-        <div style={{textAlign:'center',marginBottom:'2.5rem'}}>
+        <div style={{textAlign:'center',marginBottom:'2rem'}}>
           <span className="section-label">NATIONAL RISK MAP &middot; &#x5168;&#x56FD;&#x98CE;&#x9669;&#x5730;&#x56FE;</span>
           <h2 style={{fontSize:'clamp(1.8rem,3.5vw,2.6rem)',fontWeight:700,marginTop:'1rem',color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}}>
             &#x5168;&#x56FD; 31 &#x4E2A;&#x7701;&#x533A;&#x4F5C;&#x7269;&#x98CE;&#x9669;&#xFF0C;<span className="text-g">&#x5B9E;&#x65F6;&#x5728;&#x7EBF;</span>
@@ -1378,7 +1505,18 @@ function ChinaRiskMapSection(){
           </svg>
           <p style={{color:'var(--ink-mid)',marginTop:'.5rem',fontSize:'.9rem'}}>&#x6C14;&#x8C61; &middot; &#x9065;&#x611F; &middot; &#x591A; Agent &#x878D;&#x5408; &mdash; &#x9F20;&#x6807;&#x60AC;&#x505C;&#x7701;&#x4EFD;&#x67E5;&#x770B;&#x5B9E;&#x65F6;&#x9884;&#x8B66;&#x8BE6;&#x60C5;</p>
         </div>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 295px',gap:'1rem',alignItems:'start'}}>
+        <div style={{display:'flex',justifyContent:'center',gap:8,marginBottom:'1.8rem'}}>
+          {[['demo','&#x6F14;&#x793A;&#x6A21;&#x5F0F;'],['sim','&#x6A21;&#x62DF;&#x63A8;&#x6F14;']].map(([k,l])=>(
+            <button key={k} onClick={()=>{setTab(k);setPipeStep(-1);setPipeRunning(false);setSimMarkers([]);setHovered(null);}}
+              style={{padding:'7px 22px',borderRadius:6,fontSize:'.78rem',fontFamily:'var(--mono)',letterSpacing:'.1em',cursor:'pointer',
+                background:tab===k?'rgba(0,229,204,0.12)':'transparent',
+                border:`1.5px solid ${tab===k?'#00e5cc':'rgba(0,200,255,0.25)'}`,
+                color:tab===k?'#00e5cc':'#5090a8',
+                boxShadow:tab===k?'0 0 14px rgba(0,229,204,0.22)':'none'}}
+              dangerouslySetInnerHTML={{__html:l}}/>
+          ))}
+        </div>
+        {tab==='demo'&&<div style={{display:'grid',gridTemplateColumns:'1fr 295px',gap:'1rem',alignItems:'start'}}>
           <div style={{borderRadius:16,overflow:'hidden',border:'1px solid rgba(0,200,255,0.25)',boxShadow:'0 0 48px rgba(0,200,255,0.10),inset 0 0 60px rgba(0,20,60,0.25)',background:mapBg}}>
             <div style={{padding:'9px 14px',borderBottom:'1px solid rgba(0,200,255,0.18)',display:'flex',alignItems:'center',justifyContent:'space-between',background:'rgba(0,20,50,0.75)'}}>
               <div style={{display:'flex',alignItems:'center',gap:8}}>
@@ -1452,7 +1590,89 @@ function ChinaRiskMapSection(){
               ))}
             </div>
           </div>
-        </div>
+        </div>}
+        {tab==='sim'&&(
+          <div>
+            <div style={{display:'flex',gap:6,marginBottom:'1.2rem',flexWrap:'wrap',alignItems:'center',padding:'10px 14px',borderRadius:10,background:'rgba(4,18,38,0.85)',border:'1px solid rgba(0,200,255,0.18)'}}>
+              <span style={{fontSize:'.6rem',fontFamily:'var(--mono)',color:'#5090a8',letterSpacing:'.12em',marginRight:6}}>拖拽天气事件到地图：</span>
+              {Object.entries(WT).map(([k,w])=>(
+                <div key={k} draggable onDragStart={()=>setDraggingType(k)}
+                  style={{display:'flex',alignItems:'center',gap:5,padding:'5px 10px',borderRadius:6,background:`${w.c}14`,border:`1.5px solid ${w.c}55`,cursor:'grab',userSelect:'none',boxShadow:`0 0 8px ${w.g}`}}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={w.c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d={w.p}/></svg>
+                  <span style={{fontSize:'.72rem',fontFamily:'var(--mono)',color:w.c,whiteSpace:'nowrap'}}>{w.t}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{borderRadius:16,overflow:'hidden',border:'1px solid rgba(0,200,255,0.25)',boxShadow:'0 0 48px rgba(0,200,255,0.10)',background:mapBg}}>
+              <div style={{padding:'9px 14px',borderBottom:'1px solid rgba(0,200,255,0.18)',display:'flex',alignItems:'center',justifyContent:'space-between',background:'rgba(0,20,50,0.75)'}}>
+                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                  <span style={{width:7,height:7,borderRadius:'50%',background:'#ffaa44',display:'inline-block',boxShadow:'0 0 6px #ffaa44'}}/>
+                  <span style={{fontSize:'.64rem',fontFamily:'var(--mono)',color:'#7ab8d0',letterSpacing:'.1em'}}>SIMULATION MODE &middot; 将天气事件拖拽到地图，然后点击运行推演</span>
+                </div>
+                <span style={{fontSize:'.64rem',fontFamily:'var(--mono)',color:'#ffaa44',letterSpacing:'.12em'}}>已放置 {simMarkers.length} 个事件</span>
+              </div>
+              <div style={{position:'relative'}}
+                onDragOver={e=>e.preventDefault()}
+                onDrop={e=>{e.preventDefault();const rect=e.currentTarget.getBoundingClientRect();const x=parseFloat(((e.clientX-rect.left)/rect.width*100).toFixed(1));const y=parseFloat(((e.clientY-rect.top)/rect.height*100).toFixed(1));if(draggingType)setSimMarkers(prev=>[...prev,{x,y,k:draggingType,id:Date.now()}]);}}>
+                <div ref={simMapRef} style={{width:'100%',height:460}}/>
+                <div style={{position:'absolute',inset:0,pointerEvents:'none',backgroundImage:'repeating-linear-gradient(0deg,transparent 0,transparent 24px,rgba(0,200,255,0.02) 24px,rgba(0,200,255,0.02) 25px),repeating-linear-gradient(90deg,transparent 0,transparent 24px,rgba(0,200,255,0.015) 24px,rgba(0,200,255,0.015) 25px)'}}/>
+                {simMarkers.length===0&&(
+                  <div style={{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'none'}}>
+                    <div style={{textAlign:'center',color:'rgba(0,200,255,0.22)',fontFamily:'var(--mono)',fontSize:'.85rem',lineHeight:2}}>
+                      <div style={{fontSize:'2.4rem'}}>☁</div>将上方天气图标拖拽到此处
+                    </div>
+                  </div>
+                )}
+                <div style={{position:'absolute',inset:0,pointerEvents:'none'}}>
+                  {simMarkers.map((m)=>{const w=WT[m.k];return(
+                    <div key={m.id} style={{position:'absolute',left:`${m.x}%`,top:`${m.y}%`,display:'flex',flexDirection:'column',alignItems:'center',gap:2,transform:'translate(-50%,-50%)'}}>
+                      <div style={{width:24,height:24,borderRadius:'50%',background:`${w.c}1a`,border:`1.5px solid ${w.c}`,display:'flex',alignItems:'center',justifyContent:'center',boxShadow:`0 0 12px ${w.g}`}}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={w.c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d={w.p}/></svg>
+                      </div>
+                      <span style={{fontSize:8,fontFamily:'var(--mono)',color:w.c,whiteSpace:'nowrap',textShadow:'0 1px 5px rgba(0,0,0,0.95)',lineHeight:1}}>{w.t}</span>
+                    </div>
+                  );})}
+                </div>
+              </div>
+              <div style={{padding:'10px 16px',borderTop:'1px solid rgba(0,200,255,0.18)',display:'flex',alignItems:'center',justifyContent:'space-between',background:'rgba(0,20,50,0.65)'}}>
+                <span style={{fontSize:'.7rem',fontFamily:'var(--mono)',color:'#5090a8'}}>已放置 {simMarkers.length} 个气象事件</span>
+                <div style={{display:'flex',gap:8}}>
+                  <button onClick={()=>{setSimMarkers([]);setPipeStep(-1);setPipeRunning(false);}}
+                    style={{padding:'5px 14px',borderRadius:5,fontSize:'.72rem',fontFamily:'var(--mono)',background:'rgba(255,50,50,0.1)',border:'1px solid rgba(255,50,50,0.3)',color:'#ff8888',cursor:'pointer'}}>
+                    清除
+                  </button>
+                  <button onClick={runPipeline} disabled={simMarkers.length===0||pipeRunning}
+                    style={{padding:'5px 18px',borderRadius:5,fontSize:'.72rem',fontFamily:'var(--mono)',
+                      background:simMarkers.length>0&&!pipeRunning?'rgba(0,229,204,0.15)':'rgba(0,200,255,0.05)',
+                      border:`1px solid ${simMarkers.length>0&&!pipeRunning?'#00e5cc':'rgba(0,200,255,0.2)'}`,
+                      color:simMarkers.length>0&&!pipeRunning?'#00e5cc':'#3a7a8a',
+                      cursor:simMarkers.length>0&&!pipeRunning?'pointer':'not-allowed',
+                      boxShadow:simMarkers.length>0&&!pipeRunning?'0 0 12px rgba(0,229,204,0.25)':'none'}}>
+                    {pipeRunning?'推演中 ...':'▶ 运行推演'}
+                  </button>
+                </div>
+              </div>
+            </div>
+            {pipeStep>=0&&(
+              <div style={{marginTop:'1.5rem',display:'flex',flexDirection:'column',gap:8}}>
+                <div style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'#00e5cc',letterSpacing:'.18em',marginBottom:4}}>PIPELINE EXECUTION &middot; 推演流水线</div>
+                {PIPE.map((step,i)=>i<=pipeStep&&(
+                  <div key={i} style={{borderRadius:10,padding:'14px 18px',background:'rgba(4,18,38,0.95)',border:`1px solid ${step.c}33`,boxShadow:`0 0 16px ${step.c}18`,display:'flex',gap:16,alignItems:'flex-start',animation:'fade-in-up .4s ease-out both'}}>
+                    <div style={{flexShrink:0,width:36,height:36,borderRadius:8,background:`${step.c}14`,border:`1.5px solid ${step.c}55`,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--mono)',fontSize:'.65rem',fontWeight:700,color:step.c}}>{step.n}</div>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{fontSize:'.72rem',fontFamily:'var(--mono)',color:step.c,fontWeight:700,marginBottom:6,letterSpacing:'.08em'}}>{step.label}</div>
+                      <pre style={{fontSize:'.7rem',fontFamily:'var(--mono)',color:'#7ab8d0',lineHeight:1.75,margin:0,whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{pipeOutputs[i]||'推演中...'}</pre>
+                    </div>
+                    {i===pipeStep&&pipeRunning
+                      ?<div style={{flexShrink:0,width:8,height:8,borderRadius:'50%',background:step.c,animation:'blink-dot 0.8s ease-in-out infinite',alignSelf:'center'}}/>
+                      :<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={step.c} strokeWidth="2.5" style={{flexShrink:0,alignSelf:'center'}}><polyline points="20 6 9 17 4 12"/></svg>
+                    }
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -1470,6 +1690,7 @@ function App() {
     <div>
       <NavBar/>
       <Hero/>
+      <ChinaRiskMapSection/>
       <PainPoints/>
       <RiskMapSection/>
       <SystemCapabilities/>
@@ -1477,7 +1698,6 @@ function App() {
       <PipelineSection/>
       <ScenarioDemo/>
       <DataFlywheel/>
-      <ChinaRiskMapSection/>
       <Footer/>
     </div>
   );
