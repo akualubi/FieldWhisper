@@ -2036,9 +2036,6 @@ function ChinaRiskMapSection(){
                   :<span style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'#3a6070'}}>点击地图选择</span>
                 }
               </div>
-              <span style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:btEvents.length?'#ffaa44':'#3a8070',marginLeft:'auto'}}>
-                {btEvents.length?`匹配 ${btEvents.length} 条真实事件`:'无匹配记录 · AI自由推理'}
-              </span>
               <button onClick={()=>{setBtProvince(null);setBtYear('2023');setBtPipeStep(-1);setBtRunning(false);setBtOutputs(['','','','','','']);setBtAnalystOutputs(['','','','','']);}}
                 style={{padding:'4px 12px',borderRadius:4,fontSize:'.68rem',fontFamily:'var(--mono)',background:'rgba(255,50,50,0.08)',border:'1px solid rgba(255,50,50,0.25)',color:'#ff8888',cursor:'pointer'}}>重置</button>
               {(()=>{const canRun=(btYear||btProvince)&&!btRunning;return(
@@ -2052,38 +2049,12 @@ function ChinaRiskMapSection(){
                 {btRunning?'回测中 ...':'▶ 运行回测'}
               </button>);})()}
             </div>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 300px',gap:'1rem',marginBottom:'1.5rem'}}>
+            <div style={{display:'grid',gridTemplateColumns:'1fr',gap:'1rem',marginBottom:'1.5rem'}}>
               <div style={{borderRadius:12,overflow:'hidden',border:'1px solid rgba(0,200,255,0.22)',background:'#040e1e',boxShadow:'0 0 32px rgba(0,200,255,0.08)'}}>
                 <div style={{padding:'7px 12px',borderBottom:'1px solid rgba(0,200,255,0.15)',background:'rgba(0,20,50,0.75)',fontSize:'.58rem',fontFamily:'var(--mono)',color:'#4a8098',letterSpacing:'.12em'}}>
                   CLICK PROVINCE TO SELECT · 点击省份选择历史事件
                 </div>
                 <div ref={btMapRef} style={{width:'100%',height:380}}/>
-              </div>
-              <div style={{borderRadius:12,border:'1px solid rgba(0,200,255,0.18)',background:'rgba(4,18,38,0.92)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
-                <div style={{padding:'7px 12px',borderBottom:'1px solid rgba(0,200,255,0.15)',background:'rgba(0,20,50,0.75)',fontSize:'.58rem',fontFamily:'var(--mono)',color:'#4a8098',letterSpacing:'.12em',flexShrink:0}}>
-                  MATCHED EVENTS · 历史事件记录
-                </div>
-                <div style={{flex:1,overflowY:'auto',padding:'8px',display:'flex',flexDirection:'column',gap:6}}>
-                  {btEvents.length===0
-                    ?<div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100%',color:'rgba(0,200,255,0.2)',fontFamily:'var(--mono)',fontSize:'.75rem',textAlign:'center',gap:8,padding:20}}>
-                      <div style={{fontSize:'2rem'}}>🗂</div>
-                      <div>输入年份并点击省份<br/>查询历史灾害记录</div>
-                      <div style={{fontSize:'.6rem',color:'rgba(0,200,255,0.12)',marginTop:4}}>数据来源：中国气象局 / 新华网</div>
-                    </div>
-                    :btEvents.map(e=>(
-                      <div key={e.id} style={{borderRadius:6,padding:'7px 9px',background:'rgba(0,30,60,0.6)',border:'1px solid rgba(0,200,255,0.14)',display:'flex',flexDirection:'column',gap:3}}>
-                        <div style={{display:'flex',alignItems:'center',gap:5,flexWrap:'wrap'}}>
-                          <span style={{fontSize:'.55rem',fontFamily:'var(--mono)',color:'#00e5cc',background:'rgba(0,229,204,0.1)',padding:'1px 5px',borderRadius:2,flexShrink:0}}>{e.weather_type}</span>
-                          <span style={{fontSize:'.55rem',fontFamily:'var(--mono)',color:'#4a8098'}}>{e.year_month}</span>
-                          <span style={{fontSize:'.55rem',fontFamily:'var(--mono)',color:'#7ab8d0'}}>{e.province}·{e.city_or_area}</span>
-                        </div>
-                        <div style={{fontSize:'.6rem',fontWeight:600,color:'#a0c8d8',fontFamily:'var(--mono)',lineHeight:1.4}}>{e.event_name}</div>
-                        <div style={{fontSize:'.56rem',color:'#4a7080',lineHeight:1.55,fontFamily:'var(--mono)'}}>{e.news_summary}</div>
-                        {e.source_org&&<div style={{fontSize:'.52rem',color:'#2a5060',fontFamily:'var(--mono)'}}>来源：{e.source_org}</div>}
-                      </div>
-                    ))
-                  }
-                </div>
               </div>
             </div>
             {btPipeStep>=0&&(
