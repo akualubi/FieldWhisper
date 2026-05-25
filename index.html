@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>穗安 AI &mdash; &#x519C;&#x4F5C;&#x7269;&#x707E;&#x5BB3;&#x9632;&#x63A7;&#x591A;&#x667A;&#x80FD;&#x4F53;&#x98CE;&#x9669;&#x9884;&#x8B66;&#x7CFB;&#x7EDF;</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&family=Ma+Shan+Zheng&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter','Noto Serif SC','serif'], serif: ['Noto Serif SC','serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root{
+      --paper:#edf4ec;--paper-soft:#f3f8f2;--paper-warm:#deeadd;--paper-deep:#c8d9c6;
+      --ink-dark:#14110f;--ink:#2a2521;--ink-soft:#524841;--ink-mid:#786c5f;--ink-light:#b5ab98;
+      --seal:#b8302a;--seal-deep:#8c1f1c;--seal-soft:#d96760;
+      --stone-blue:#2a6e96;--stone-blue-l:#5895b8;
+      --stone-green:#5e8466;--stone-green-l:#86a78a;
+      --gold:#b88f4e;--gold-soft:#d4b07a;
+      --serif-cjk:'Noto Serif SC',serif;
+      --serif-en:'Cormorant Garamond',Georgia,serif;
+      --brush-cjk:'Ma Shan Zheng',var(--serif-cjk);
+      --sans:'Inter','Helvetica Neue',sans-serif;
+      --mono:'JetBrains Mono','Menlo',monospace;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      background-color:var(--paper);
+      background-image:
+        radial-gradient(ellipse 1200px 600px at 75% -10%,rgba(94,132,102,0.07),transparent 60%),
+        radial-gradient(ellipse 900px 700px at -10% 110%,rgba(42,110,150,0.05),transparent 60%),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' seed='4'/><feColorMatrix values='0 0 0 0 0.34 0 0 0 0 0.44 0 0 0 0 0.35 0 0 0 0.042 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+      background-attachment:fixed;
+      color:var(--ink-dark);
+      font-family:var(--serif-cjk);
+      overflow-x:hidden;
+    }
+    body::before{
+      content:'';position:fixed;inset:0;pointer-events:none;
+      background-image:
+        repeating-linear-gradient(0deg,transparent 0,transparent 320px,rgba(20,17,15,0.012) 320px,rgba(20,17,15,0.012) 321px),
+        repeating-linear-gradient(0deg,transparent 0,transparent 640px,rgba(120,108,95,0.018) 640px,rgba(120,108,95,0.018) 641px);
+      z-index:0;
+    }
+    .field-grid{
+      background-image:
+        repeating-linear-gradient(30deg,transparent 0px,transparent 56px,rgba(94,132,102,0.05) 56px,rgba(94,132,102,0.05) 57px),
+        repeating-linear-gradient(-30deg,transparent 0px,transparent 80px,rgba(42,110,150,0.03) 80px,rgba(42,110,150,0.03) 81px);
+    }
+    .glass{
+      background:rgba(237,248,235,0.82);
+      backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      border:1px solid rgba(20,17,15,0.10);
+      box-shadow:0 2px 16px rgba(20,17,15,0.06);
+    }
+    .glass-green{
+      background:rgba(94,132,102,0.08);
+      backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      border:1px solid rgba(94,132,102,0.22);
+    }
+    .glass-cyan{
+      background:rgba(42,110,150,0.07);
+      backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      border:1px solid rgba(42,110,150,0.20);
+    }
+    .glow-green{box-shadow:0 4px 32px rgba(94,132,102,0.14),0 1px 4px rgba(20,17,15,0.06);}
+    .text-g{background:linear-gradient(135deg,var(--seal),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .text-g2{background:linear-gradient(135deg,var(--stone-green-l),var(--stone-green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    @keyframes float-up{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+    @keyframes radar-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes pulse-ring{0%{transform:scale(1);opacity:.5}100%{transform:scale(2.2);opacity:0}}
+    @keyframes fade-in-up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes blink-dot{0%,100%{opacity:1}50%{opacity:.3}}
+    @keyframes wpulse{0%,100%{opacity:.75;transform:translate(-50%,-50%) scale(0.95)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}}
+    @keyframes wring{0%{transform:translate(-50%,-50%) scale(1);opacity:.7}100%{transform:translate(-50%,-50%) scale(2.2);opacity:0}}
+    @keyframes data-stream{0%{stroke-dashoffset:200}100%{stroke-dashoffset:0}}
+    .float-card{animation:float-up 5s ease-in-out infinite;}
+    .pulse-ring1{animation:pulse-ring 2.2s ease-out infinite;}
+    .pulse-ring2{animation:pulse-ring 2.2s ease-out .8s infinite;}
+    .blink{animation:blink-dot 1.6s ease-in-out infinite;}
+    .fade-up{animation:fade-in-up .8s ease-out both;}
+    .card-hover{transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;}
+    .card-hover:hover{transform:translateY(-4px);box-shadow:0 20px 48px rgba(20,17,15,0.10);border-color:rgba(94,132,102,0.35)!important;}
+    .stream-line{stroke-dasharray:200;animation:data-stream 3s linear infinite;}
+    .section-label{font-size:.65rem;letter-spacing:.18em;font-family:var(--sans);text-transform:uppercase;color:var(--ink-mid);}
+    .timeline-line{background:linear-gradient(to bottom,var(--stone-green),var(--stone-blue),var(--stone-green));}
+    .sms-bubble{background:rgba(94,132,102,0.06);border:1px solid rgba(94,132,102,0.20);border-radius:14px;}
+    .flywheel-arrow{color:var(--stone-green);font-size:1.1rem;line-height:1;}
+    nav a{transition:color .2s;color:var(--ink-soft);}
+    nav a:hover{color:var(--seal)}
+    .btn-primary{background:linear-gradient(135deg,var(--seal),var(--seal-deep));transition:all .25s;}
+    .btn-primary:hover{background:linear-gradient(135deg,#c83d35,var(--seal));box-shadow:0 8px 28px rgba(184,48,42,.28);}
+    .btn-outline{border:1px solid rgba(20,17,15,0.18);transition:all .25s;color:var(--ink-soft);background:transparent;}
+    .btn-outline:hover{border-color:rgba(94,132,102,0.5);background:rgba(94,132,102,0.07);}
+    .timeline-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(94,132,102,0.35);background:rgba(94,132,102,0.08);flex-shrink:0;}
+    .risk-badge-red{background:rgba(184,48,42,.10);border:1px solid rgba(184,48,42,.25);color:var(--seal-deep);}
+    .risk-badge-orange{background:rgba(184,143,78,.10);border:1px solid rgba(184,143,78,.25);color:#7a5a14;}
+    .risk-badge-green{background:rgba(94,132,102,.10);border:1px solid rgba(94,132,102,.22);color:#3a5e44;}
+    .ink-splash{position:fixed;pointer-events:none;opacity:0.22;filter:blur(0.3px);z-index:0;user-select:none;}
+    .ink-splash.s1{top:18vh;left:-30px;transform:rotate(-12deg);width:140px;}
+    .ink-splash.s2{top:56vh;right:-40px;transform:rotate(28deg);width:180px;opacity:0.14;}
+    .ink-splash.s3{bottom:22vh;left:5vw;width:110px;opacity:0.12;transform:rotate(-6deg);}
+    .scroll-prog{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--seal),var(--gold));transform-origin:left;z-index:200;transform:scaleX(0);transition:transform .1s;}
+    /* override bright tailwind text classes */
+    .text-white{color:var(--ink-dark)!important;}
+    .text-green-400{color:var(--stone-green)!important;}
+    .bg-green-400{background:var(--stone-green)!important;}
+  </style>
+</head>
+<body>
+<div class="scroll-prog" id="scroll-prog"></div>
+<svg class="ink-splash s1" viewBox="0 0 200 200" aria-hidden="true">
+  <g fill="#2a2521"><path d="M40 100 C20 60,60 30,100 50 C140 65,160 50,170 80 C175 110,130 130,110 120 C80 105,60 130,40 100 Z"/>
+  <circle cx="62" cy="138" r="3"/><circle cx="76" cy="148" r="1.6"/><circle cx="158" cy="55" r="1.8"/></g>
+</svg>
+<svg class="ink-splash s2" viewBox="0 0 200 200" aria-hidden="true">
+  <g fill="#524841"><path d="M60 90 C40 50,100 30,120 70 C140 110,90 130,80 110 C70 92,75 100,60 90 Z"/>
+  <circle cx="30" cy="120" r="4"/><circle cx="146" cy="40" r="2.4"/></g>
+</svg>
+<svg class="ink-splash s3" viewBox="0 0 200 200" aria-hidden="true">
+  <g fill="#786c5f"><path d="M70 80 Q40 100 80 140 Q120 160 130 110 Q145 70 110 65 Q80 60 70 80 Z"/></g>
+</svg>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@4.9.0/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@4.9.0/map/js/china.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+
+const { useState, useEffect, useRef } = React;
+
+/* ─── ICONS ──────────────────────────────────────────────── */
+function Icon({ d, size = 18, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+         stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d={d}/>
+    </svg>
+  );
+}
+const ICONS = {
+  weather: "M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z",
+  crop:    "M12 2a7 7 0 0 0-7 7c0 3.87 3.13 7 7 7s7-3.13 7-7a7 7 0 0 0-7-7ZM12 22v-4M9 18l3 4 3-4",
+  bug:     "M12 12c0-3.31 2.69-6 6-6M12 12c0-3.31-2.69-6-6-6M12 12v10M4.93 4.93l4.24 4.24M19.07 4.93l-4.24 4.24",
+  farmer:  "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z",
+  resource:"M3 3h18v18H3zM9 9h6v6H9z",
+  loss:    "M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
+  map:     "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z M12 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z",
+  clock:   "M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10ZM12 6v6l4 2",
+  bell:    "M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0",
+  signal:  "M2 12h1M4.5 4.5l.7.7M12 2v1M19.5 4.5l-.7.7M22 12h-1M19.5 19.5l-.7-.7M12 22v-1M4.5 19.5l.7-.7",
+  shield:  "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z",
+  send:    "M22 2 11 13M22 2 15 22 11 13 2 9l20-7Z",
+  refresh: "M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15",
+  eye:     "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z",
+  zap:     "M13 2 3 14h9l-1 8 10-12h-9l1-8Z",
+  check:   "M20 6 9 17l-5-5",
+  camera:  "M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+  chat:    "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",
+  drone:   "M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0M3 3l4 4M21 3l-4 4M3 21l4-4M21 21l-4-4",
+};
+
+/* ─── FIELD RISK MAP (SVG) ────────────────────────────────── */
+function FieldRiskMap() {
+  return (
+    <svg viewBox="0 0 420 260" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <defs>
+        <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+          <stop offset="0%" stopColor="#0a2a10"/>
+          <stop offset="100%" stopColor="#040d18"/>
+        </radialGradient>
+        <radialGradient id="zoneRed" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#ef4444" stopOpacity="0.55"/>
+          <stop offset="100%" stopColor="#ef4444" stopOpacity="0"/>
+        </radialGradient>
+        <radialGradient id="zoneOrange" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.45"/>
+          <stop offset="100%" stopColor="#f59e0b" stopOpacity="0"/>
+        </radialGradient>
+        <radialGradient id="zoneYellow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#eab308" stopOpacity="0.38"/>
+          <stop offset="100%" stopColor="#eab308" stopOpacity="0"/>
+        </radialGradient>
+        <radialGradient id="zoneGreen1" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#22c55e" stopOpacity="0.3"/>
+          <stop offset="100%" stopColor="#22c55e" stopOpacity="0"/>
+        </radialGradient>
+        <radialGradient id="zoneGreen2" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.25"/>
+          <stop offset="100%" stopColor="#06b6d4" stopOpacity="0"/>
+        </radialGradient>
+        <linearGradient id="radarBeam" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#22c55e" stopOpacity="0.9"/>
+          <stop offset="100%" stopColor="#22c55e" stopOpacity="0"/>
+        </linearGradient>
+      </defs>
+
+      <rect width="420" height="260" fill="url(#bg)" rx="0"/>
+
+      {/* Field grid */}
+      <g stroke="#1a4a20" strokeWidth="0.7" opacity="0.7">
+        {[0,43,86,130,173,216,260].map(y=><line key={'h'+y} x1="0" y1={y} x2="420" y2={y}/>)}
+        {[0,52,104,157,210,262,315,367,420].map(x=><line key={'v'+x} x1={x} y1="0" x2={x} y2="260"/>)}
+      </g>
+
+      {/* Risk heat zones */}
+      <ellipse cx="210" cy="128" rx="82" ry="58" fill="url(#zoneRed)"/>
+      <ellipse cx="118" cy="78" rx="58" ry="42" fill="url(#zoneOrange)"/>
+      <ellipse cx="325" cy="175" rx="65" ry="48" fill="url(#zoneYellow)"/>
+      <ellipse cx="78" cy="190" rx="48" ry="36" fill="url(#zoneGreen1)"/>
+      <ellipse cx="360" cy="58" rx="44" ry="32" fill="url(#zoneGreen2)"/>
+
+      {/* Concentric radar rings */}
+      <circle cx="210" cy="128" r="50" fill="none" stroke="#22c55e" strokeWidth="0.5" opacity="0.18"/>
+      <circle cx="210" cy="128" r="90" fill="none" stroke="#22c55e" strokeWidth="0.5" opacity="0.12"/>
+      <circle cx="210" cy="128" r="130" fill="none" stroke="#22c55e" strokeWidth="0.5" opacity="0.08"/>
+
+      {/* Radar sweep */}
+      <g style={{transformOrigin:'210px 128px', animation:'radar-spin 5s linear infinite'}}>
+        <polygon points="210,128 210,20 230,28" fill="url(#radarBeam)" opacity="0.55"/>
+      </g>
+
+      {/* Pulse rings on high-risk zone */}
+      <circle className="pulse-ring1" cx="210" cy="128" r="18" fill="none" stroke="#ef4444" strokeWidth="1.2" opacity="0.6" style={{transformOrigin:'210px 128px'}}/>
+      <circle className="pulse-ring2" cx="210" cy="128" r="18" fill="none" stroke="#ef4444" strokeWidth="1.2" opacity="0.4" style={{transformOrigin:'210px 128px'}}/>
+
+      {/* Farm location dots */}
+      <g>
+        <circle cx="210" cy="128" r="4.5" fill="#ef4444" opacity="0.9"/>
+        <circle cx="210" cy="128" r="2.5" fill="white"/>
+        <circle cx="118" cy="78" r="3.5" fill="#f59e0b" opacity="0.9"/>
+        <circle cx="118" cy="78" r="2" fill="white"/>
+        <circle cx="325" cy="175" r="3.5" fill="#eab308" opacity="0.9"/>
+        <circle cx="325" cy="175" r="2" fill="white"/>
+        <circle cx="78" cy="190" r="3" fill="#22c55e" opacity="0.9"/>
+        <circle cx="360" cy="58" r="3" fill="#06b6d4" opacity="0.9"/>
+        <circle cx="165" cy="162" r="2.5" fill="white" opacity="0.7"/>
+        <circle cx="258" cy="96" r="2.5" fill="white" opacity="0.7"/>
+        <circle cx="290" cy="42" r="2.5" fill="white" opacity="0.6"/>
+      </g>
+
+      {/* Data stream lines */}
+      <line x1="210" y1="128" x2="118" y2="78" stroke="#f59e0b" strokeWidth="0.8" strokeDasharray="6 4" opacity="0.4"/>
+      <line x1="210" y1="128" x2="325" y2="175" stroke="#eab308" strokeWidth="0.8" strokeDasharray="6 4" opacity="0.4"/>
+
+      {/* Village labels */}
+      <text x="216" y="124" fontSize="7.5" fill="white" opacity="0.85" fontFamily="sans-serif"fontWeight="600">&#x524D;&#x8FDB;&#x6751;</text>
+      <text x="124" y="74" fontSize="7" fill="white" opacity="0.7" fontFamily="sans-serif">&#x65B0;&#x534E;&#x6751;</text>
+      <text x="330" y="171" fontSize="7" fill="white" opacity="0.7" fontFamily="sans-serif">&#x4E30;&#x6536;&#x9547;</text>
+
+      {/* Legend */}
+      <g>
+        <rect x="8" y="238" width="9" height="9" rx="2" fill="#ef4444" opacity="0.85"/>
+        <text x="21" y="246" fontSize="7" fill="#9ca3af" fontFamily="sans-serif">&#x9AD8;&#x98CE;&#x9669;</text>
+        <rect x="64" y="238" width="9" height="9" rx="2" fill="#f59e0b" opacity="0.85"/>
+        <text x="77" y="246" fontSize="7" fill="#9ca3af" fontFamily="sans-serif">&#x4E2D;&#x98CE;&#x9669;</text>
+        <rect x="120" y="238" width="9" height="9" rx="2" fill="#eab308" opacity="0.85"/>
+        <text x="133" y="246" fontSize="7" fill="#9ca3af" fontFamily="sans-serif">&#x4F4E;&#x98CE;&#x9669;</text>
+        <rect x="176" y="238" width="9" height="9" rx="2" fill="#22c55e" opacity="0.85"/>
+        <text x="189" y="246" fontSize="7" fill="#9ca3af" fontFamily="sans-serif">&#x5B89;&#x5168;</text>
+      </g>
+    </svg>
+  );
+}
+
+/* ─── NAV ─────────────────────────────────────────────────── */
+function NavBar() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const h = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', h);
+    return () => window.removeEventListener('scroll', h);
+  }, []);
+  return (
+    <nav style={{
+      backdropFilter:'blur(20px)',
+      background: scrolled ? 'rgba(245,239,226,0.94)':'rgba(245,239,226,0.72)',
+      borderBottom:'1px solid rgba(20,17,15,0.07)',
+      boxShadow: scrolled ? '0 1px 0 rgba(20,17,15,0.06)':'none',
+      transition:'background .3s,box-shadow .3s'
+    }} className="fixed top-0 left-0 right-0 z-50">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <img src="logo.png" alt="穗安" style={{width:34,height:34,objectFit:'contain',borderRadius:3}}/>
+          <div>
+            <div style={{fontFamily:'var(--serif-en)',fontWeight:600,fontSize:'1.05rem',color:'var(--ink-dark)',letterSpacing:'0.01em'}}>穗安 AI</div>
+            <div style={{fontSize:'.65rem',color:'var(--ink-mid)',letterSpacing:'.06em',fontFamily:'var(--sans)'}}>穗安 &middot; &#x519C;&#x4E1A;&#x98CE;&#x9669;&#x9884;&#x8B66;</div>
+          </div>
+        </div>
+        <div className="hidden md:flex items-center gap-7 text-sm">
+          <a href="#pain">&#x75DB;&#x70B9;</a>
+          <a href="#riskmap">&#x98CE;&#x9669;&#x5730;&#x56FE;</a>
+          <a href="#features">&#x7CFB;&#x7EDF;&#x80FD;&#x529B;</a>
+          <a href="#agents">&#x591A;&#x667A;&#x80FD;&#x4F53;</a>
+          <a href="#pipeline">&#x67B6;&#x6784;&#x94FE;&#x8DEF;</a>
+          <a href="#demo">&#x573A;&#x666F;&#x6F14;&#x793A;</a>
+          <a href="#flywheel">&#x95ED;&#x73AF;</a>
+          <a href="#chinamap">&#x5168;&#x56FD;&#x5730;&#x56FE;</a>
+          <button className="btn-primary px-5 py-2 rounded-lg text-sm" style={{color:'var(--paper-soft)'}}>
+            &#x7533;&#x8BF7;&#x4F53;&#x9A8C;
+          </button>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+/* ─── HERO ────────────────────────────────────────────────── */
+function Hero() {
+  return (
+    <section className="field-grid relative min-h-screen flex items-center pt-20 pb-16 overflow-hidden">
+      <div style={{position:'absolute',top:'20%',left:'10%',width:520,height:520,background:'radial-gradient(circle,rgba(184,143,78,0.06) 0%,transparent 70%)',pointerEvents:'none'}}/>
+      <div style={{position:'absolute',bottom:'25%',right:'8%',width:420,height:420,background:'radial-gradient(circle,rgba(42,110,150,0.05) 0%,transparent 70%)',pointerEvents:'none'}}/>
+      <div style={{position:'absolute',top:'60%',left:'50%',width:300,height:300,background:'radial-gradient(circle,rgba(94,132,102,0.04) 0%,transparent 70%)',pointerEvents:'none'}}/>
+      <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+
+        {/* LEFT */}
+        <div className="fade-up">
+          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 mb-7" style={{borderRadius:100,background:'rgba(94,132,102,0.09)',border:'1px solid rgba(94,132,102,0.22)',fontFamily:'var(--sans)',fontSize:'.62rem',letterSpacing:'.14em',textTransform:'uppercase',color:'var(--stone-green)'}}>
+            <span style={{width:6,height:6,borderRadius:'50%',background:'var(--stone-green)',display:'inline-block'}} className="blink"/>
+            MULTI-AGENT RISK INTELLIGENCE
+          </div>
+          <h1 style={{fontSize:'clamp(2.4rem,5vw,3.6rem)',fontWeight:700,lineHeight:1.12,marginBottom:'1.4rem',color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}}>
+            &#x8BA9; AI &#x542C;&#x89C1;<br/>
+            <span className="text-g">&#x7530;&#x91CE;&#x7684;&#x4F4E;&#x8BED;</span>
+          </h1>
+          <p style={{color:'var(--ink-soft)',fontSize:'1.05rem',lineHeight:1.85,maxWidth:500,marginBottom:'1rem'}}>
+            穗安 AI &#x5C06;&#x771F;&#x5B9E;&#x8206;&#x60C5;&#x3001;&#x6C14;&#x8C61;&#x9065;&#x611F;&#x4E0E;&#x591A;&#x667A;&#x80FD;&#x4F53;&#x6A21;&#x62DF;&#x878D;&#x5408;&#xFF0C;&#x628A;&#x672A;&#x6765;
+            24&ndash;72 &#x5C0F;&#x65F6;&#x7684;&#x519C;&#x4F5C;&#x7269;&#x98CE;&#x9669;&#xFF0C;&#x8F6C;&#x5316;&#x4E3A;&#x6BCF;&#x4E2A;&#x519C;&#x6237;&#x80FD;&#x6267;&#x884C;&#x7684;&#x4E00;&#x6761;&#x63D0;&#x9192;&#x3002;
+          </p>
+          <p style={{color:'var(--stone-green)',fontSize:'.92rem',fontStyle:'italic',fontFamily:'var(--serif-en)',marginBottom:'2.2rem',opacity:.8}}>
+            &ldquo;From field signals to timely action.&rdquo;
+          </p>
+          <div style={{display:'flex',flexWrap:'wrap',gap:'1rem',marginBottom:'3rem'}}>
+            <button className="btn-primary px-7 py-3 rounded-xl font-semibold text-sm" style={{color:'var(--paper-soft)'}}>
+              &#x67E5;&#x770B;&#x98CE;&#x9669;&#x5730;&#x56FE; &rarr;
+            </button>
+            <button className="btn-outline px-7 py-3 rounded-xl text-sm">
+              &#x4E86;&#x89E3;&#x591A;&#x667A;&#x80FD;&#x4F53;&#x7CFB;&#x7EDF;
+            </button>
+          </div>
+          <div style={{display:'flex',gap:'2.5rem',paddingTop:'1.8rem',borderTop:'1px solid rgba(20,17,15,0.08)'}}>
+            {[['6','&#x4E13;&#x9879; Agent'],['72h','&#x9884;&#x8B66;&#x65F6;&#x7A97;'],['5+','&#x63A8;&#x9001;&#x6E20;&#x9053;'],['82%','&#x7F6E;&#x4FE1;&#x5EA6;']].map(([n,l],i)=>(
+              <div key={i}>
+                <div style={{fontFamily:'var(--serif-en)',fontSize:'1.7rem',fontWeight:600,color:i%2===0?'var(--seal)':'var(--stone-blue)'}} dangerouslySetInnerHTML={{__html:n}}/>
+                <div style={{color:'var(--ink-mid)',fontSize:'.75rem',marginTop:2,fontFamily:'var(--sans)'}} dangerouslySetInnerHTML={{__html:l}}/>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* RIGHT: Risk Command Card */}
+        <div className="float-card">
+          <div className="glass rounded-2xl overflow-hidden glow-green" style={{maxWidth:520,margin:'0 auto'}}>
+            <div style={{padding:'10px 16px',borderBottom:'1px solid rgba(20,17,15,0.07)',display:'flex',alignItems:'center',justifyContent:'space-between',background:'rgba(208,232,206,0.5)'}}>
+              <div style={{display:'flex',alignItems:'center',gap:8}}>
+                <span className="blink" style={{width:8,height:8,borderRadius:'50%',background:'var(--seal)',display:'inline-block'}}/>
+                <span style={{fontSize:'.65rem',fontFamily:'var(--mono)',color:'var(--ink-mid)',letterSpacing:'.1em'}}>RISK COMMAND CENTER</span>
+              </div>
+              <div style={{display:'flex',alignItems:'center',gap:6}}>
+                <span className="blink" style={{width:6,height:6,borderRadius:'50%',background:'var(--stone-green)',display:'inline-block'}}/>
+                <span style={{fontSize:'.65rem',fontFamily:'var(--mono)',color:'var(--stone-green)'}}>LIVE</span>
+              </div>
+            </div>
+
+            <div style={{lineHeight:0}}>
+              <FieldRiskMap/>
+            </div>
+
+            <div style={{padding:'14px 16px',background:'rgba(94,132,102,0.04)',borderTop:'1px solid rgba(94,132,102,0.12)'}}>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:10}}>
+                {[
+                  {l:'Crop',v:'Corn',c:'var(--stone-green)'},
+                  {l:'Risk',v:'Strong Wind Lodging',c:'var(--seal)'},
+                  {l:'Window',v:'Next 36 Hours',c:'var(--gold)'},
+                  {l:'Confidence',v:'82%',c:'var(--stone-blue)'},
+                ].map((x,i)=>(
+                  <div key={i} style={{padding:'8px 12px',borderRadius:8,background:'rgba(245,239,226,0.7)',border:'1px solid rgba(20,17,15,0.08)'}}>
+                    <div style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'var(--ink-mid)',marginBottom:3}}>{x.l}</div>
+                    <div style={{fontSize:'.82rem',fontWeight:600,color:x.c}}>{x.v}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{padding:'8px 12px',borderRadius:8,background:'rgba(245,239,226,0.7)',border:'1px solid rgba(20,17,15,0.08)'}}>
+                <div style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'var(--ink-mid)',marginBottom:3}}>Action</div>
+                <div style={{fontSize:'.82rem',fontWeight:600,color:'var(--ink-dark)'}}>Drainage before 18:00</div>
+              </div>
+            </div>
+
+            <div style={{padding:'12px 16px',borderTop:'1px solid rgba(20,17,15,0.06)'}}>
+              <div className="sms-bubble" style={{padding:'10px 14px'}}>
+                <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:6,fontSize:'.65rem',fontFamily:'var(--mono)',color:'var(--stone-green)'}}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                  </svg>
+                  SMS ALERT &middot; &#x7530;&#x8BED; AI
+                </div>
+                <p style={{fontSize:'.78rem',color:'var(--ink-soft)',lineHeight:1.75}}>
+                  &#x3010;&#x7530;&#x8BED; AI&#x3011;&#x4F60;&#x5728;&#x524D;&#x8FDB;&#x6751;&#x7684; 320 &#x4EA9;&#x7389;&#x7C73;&#xFF0C;&#x672A;&#x6765; 36 &#x5C0F;&#x65F6;&#x5012;&#x4F0F;&#x98CE;&#x9669;&#x9AD8;&#x3002;&#x8BF7;&#x4ECA;&#x5929; 18 &#x70B9;&#x524D;&#x6E05;&#x6C9F;&#x6392;&#x6C34;&#xFF0C;&#x6682;&#x505C;&#x7078;&#x6C89;&#x8FFD;&#x80A5;&#x3002;
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Agricultural landscape silhouette ── */}
+      <div style={{position:'absolute',bottom:0,left:0,right:0,height:148,pointerEvents:'none',overflow:'hidden',zIndex:2}}>
+        <svg viewBox="0 0 1440 148" preserveAspectRatio="none" width="100%" height="148" xmlns="http://www.w3.org/2000/svg">
+          {/* Far rolling hills */}
+          <path d="M0,95 C160,58 320,78 480,65 S760,50 960,68 S1200,52 1440,62 L1440,148 L0,148 Z" fill="rgba(94,132,102,0.14)"/>
+          {/* Forest tree line */}
+          <g fill="rgba(42,37,33,0.20)">
+            <polygon points="118,74 132,96 104,96"/>
+            <polygon points="133,64 150,96 116,96"/>
+            <polygon points="150,70 163,96 137,96"/>
+            <polygon points="310,66 326,96 294,96"/>
+            <polygon points="328,58 345,96 311,96"/>
+            <polygon points="344,68 357,96 331,96"/>
+            <polygon points="488,70 502,96 474,96"/>
+            <polygon points="503,62 518,96 488,96"/>
+            <polygon points="760,62 776,97 744,97"/>
+            <polygon points="778,68 792,97 764,97"/>
+            <polygon points="935,68 950,96 920,96"/>
+            <polygon points="952,60 966,96 938,96"/>
+            <polygon points="1128,65 1143,96 1113,96"/>
+            <polygon points="1144,58 1160,96 1128,96"/>
+            <polygon points="1300,70 1314,97 1286,97"/>
+            <polygon points="1315,63 1330,97 1300,97"/>
+          </g>
+          {/* Mid hill layer */}
+          <path d="M0,108 C360,84 720,102 1080,92 S1300,100 1440,104 L1440,148 L0,148 Z" fill="rgba(20,17,15,0.10)"/>
+          {/* Wheat / grass stalks */}
+          <g stroke="rgba(94,132,102,0.35)" strokeWidth="1.1" fill="none">
+            <line x1="18" y1="145" x2="20" y2="131"/><line x1="55" y1="145" x2="53" y2="133"/>
+            <line x1="90" y1="145" x2="92" y2="129"/><line x1="130" y1="145" x2="128" y2="132"/>
+            <line x1="168" y1="145" x2="170" y2="130"/><line x1="208" y1="145" x2="206" y2="133"/>
+            <line x1="248" y1="145" x2="250" y2="128"/><line x1="292" y1="145" x2="290" y2="132"/>
+            <line x1="410" y1="145" x2="412" y2="130"/><line x1="455" y1="145" x2="453" y2="133"/>
+            <line x1="555" y1="145" x2="557" y2="129"/><line x1="635" y1="145" x2="633" y2="132"/>
+            <line x1="715" y1="145" x2="717" y2="130"/><line x1="795" y1="145" x2="793" y2="134"/>
+            <line x1="878" y1="145" x2="880" y2="128"/><line x1="998" y1="145" x2="996" y2="132"/>
+            <line x1="1075" y1="145" x2="1077" y2="130"/><line x1="1138" y1="145" x2="1136" y2="133"/>
+            <line x1="1238" y1="145" x2="1240" y2="129"/><line x1="1338" y1="145" x2="1336" y2="132"/>
+            <line x1="1400" y1="145" x2="1402" y2="130"/>
+          </g>
+          {/* Foreground ground band */}
+          <path d="M0,132 C480,120 960,130 1440,124 L1440,148 L0,148 Z" fill="rgba(20,17,15,0.12)"/>
+        </svg>
+      </div>
+    </section>
+  );
+}
+
+/* ─── PAIN POINTS ─────────────────────────────────────────── */
+function PainPoints() {
+  const items = [
+    {tag:'SPATIAL MISMATCH',title:'&#x533A;&#x57DF;&#x9884;&#x8B66;&#x592A;&#x7C97;',desc:'&#x53BF;&#x7EA7;&#x751A;&#x81F3;&#x7701;&#x7EA7;&#x9884;&#x8B66;&#x65E0;&#x6CD5;&#x544A;&#x8BC9;&#x519C;&#x6237;&#x81EA;&#x5DF1;&#x8FD9;&#x5757;&#x5730;&#x662F;&#x5426;&#x53D7;&#x5F71;&#x54CD;&#xFF0C;&#x5927;&#x8303;&#x56F4;&#x8B66;&#x62A5;&#x5BFC;&#x81F4;&#x7EDD;&#x5927;&#x591A;&#x6570;&#x4EBA;&#x5FFD;&#x89C6;&#x3002;',icon:ICONS.map,c:'#f87171'},
+    {tag:'NARROW WINDOW',title:'&#x519C;&#x4E8B;&#x7A97;&#x53E3;&#x592A;&#x77ED;',desc:'&#x4E00;&#x65E6;&#x9519;&#x8FC7; 48 &#x5C0F;&#x65F6;&#x5173;&#x952E;&#x7A97;&#x53E3;&#xFF0C;&#x635F;&#x5931;&#x5F80;&#x5F80;&#x65E0;&#x6CD5;&#x632D;&#x56DE;&#x3002;&#x4F20;&#x7EDF;&#x9884;&#x8B66;&#x4F20;&#x8FBE;&#x94FE;&#x8DEF;&#x592A;&#x957F;&#x3001;&#x54CD;&#x5E94;&#x592A;&#x6162;&#x3002;',icon:ICONS.clock,c:'#fb923c'},
+    {tag:'FRAGMENTED SIGNALS',title:'&#x4FE1;&#x606F;&#x6765;&#x6E90;&#x5206;&#x6563;',desc:'&#x65B0;&#x95FB;&#x3001;&#x653F;&#x5E9C;&#x516C;&#x544A;&#x3001;&#x77ED;&#x89C6;&#x9891;&#x3001;&#x6C14;&#x8C61;&#x3001;&#x519C;&#x6237;&#x53CD;&#x9988;&#x5206;&#x6563;&#x4E8E;&#x4E0D;&#x540C;&#x5E73;&#x53F0;&#xFF0C;&#x7F3A;&#x4E4F;&#x7EDF;&#x4E00;&#x5206;&#x6790;&#x548C;&#x878D;&#x5408;&#x5224;&#x65AD;&#x3002;',icon:ICONS.signal,c:'#a78bfa'},
+    {tag:'VAGUE ADVICE',title:'&#x5EFA;&#x8BAE;&#x4E0D;&#x53EF;&#x6267;&#x884C;',desc:'&#x5927;&#x591A;&#x6570;&#x9884;&#x8B66;&#x53EA;&#x544A;&#x8BC9;&#x201C;&#x6709;&#x98CE;&#x9669;&#x201D;&#xFF0C;&#x5374;&#x4E0D;&#x8BF4;&#x8BE5;&#x505A;&#x4EC0;&#x4E48;&#x3001;&#x627E;&#x8C01;&#x505A;&#x3001;&#x4EE3;&#x4EF7;&#x591A;&#x5C11;&#x3001;&#x5024;&#x4E0D;&#x5024;&#x5F97;&#x505A;&#x3002;',icon:ICONS.bell,c:'#38bdf8'},
+  ];
+  return (
+    <section id="pain" className="py-24 field-grid">
+      <div className="max-w-7xl mx-auto px-6">
+        <div style={{textAlign:'center',marginBottom:'4rem'}}>
+          <span className="section-label">THE PROBLEM &middot; &#x75DB;&#x70B9;</span>
+          <h2 style={{fontSize:'clamp(1.8rem,3.5vw,2.6rem)',fontWeight:700,marginTop:'1rem',lineHeight:1.25,color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}}>
+            &#x519C;&#x4E1A;&#x98CE;&#x9669;&#x4E0D;&#x662F;&#x6CA1;&#x6709;&#x9884;&#x8B66;&#xFF0C;<br/>
+            &#x800C;&#x662F;<span className="text-g">&#x6CA1;&#x6709;&#x5230;&#x8FBE;&#x5177;&#x4F53;&#x7684;&#x4EBA;</span>&#x3002;
+          </h2>
+          <svg style={{display:'block',margin:'16px auto 0',width:88,height:14}} viewBox="0 0 88 14" aria-hidden="true">
+            <path d="M3 7 Q 25 2 44 8 Q 63 14 85 5" fill="none" stroke="var(--seal)" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(250px,1fr))',gap:'1.25rem'}}>
+          {items.map((x,i)=>(
+            <div key={i} className="card-hover" style={{borderRadius:12,padding:'1.75rem',cursor:'default',background:'rgba(237,248,235,0.80)',border:'1px solid rgba(20,17,15,0.10)',boxShadow:'0 2px 12px rgba(20,17,15,0.05)'}}>
+              <div style={{marginBottom:'1.1rem'}}>
+                <span style={{fontSize:'.62rem',letterSpacing:'.16em',fontFamily:'var(--sans)',textTransform:'uppercase',color:'var(--ink-mid)'}}>{x.tag}</span>
+              </div>
+              <div style={{width:42,height:42,borderRadius:10,background:'rgba(20,17,15,0.05)',border:'1px solid rgba(20,17,15,0.08)',display:'flex',alignItems:'center',justifyContent:'center',marginBottom:'1rem'}}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--seal)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <path d={x.icon}/>
+                </svg>
+              </div>
+              <h3 style={{fontWeight:700,fontSize:'1.05rem',marginBottom:'.6rem',color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}} dangerouslySetInnerHTML={{__html:x.title}}/>
+              <p style={{color:'var(--ink-mid)',fontSize:'.88rem',lineHeight:1.75}} dangerouslySetInnerHTML={{__html:x.desc}}/>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── RISK MAP ────────────────────────────────────────────── */
+function RiskMapSVG() {
+  return (
+    <svg viewBox="0 0 700 440" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="rmBg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#d8ebd6"/>
+          <stop offset="50%" stopColor="#e3ede1"/>
+          <stop offset="100%" stopColor="#cce0ca"/>
+        </linearGradient>
+        <radialGradient id="rmRed" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#b8302a" stopOpacity="0.32"/>
+          <stop offset="100%" stopColor="#b8302a" stopOpacity="0"/>
+        </radialGradient>
+        <radialGradient id="rmOrange" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#b88f4e" stopOpacity="0.28"/>
+          <stop offset="100%" stopColor="#b88f4e" stopOpacity="0"/>
+        </radialGradient>
+        <radialGradient id="rmYellow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#8a8020" stopOpacity="0.24"/>
+          <stop offset="100%" stopColor="#8a8020" stopOpacity="0"/>
+        </radialGradient>
+        <radialGradient id="rmGreen" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#5e8466" stopOpacity="0.20"/>
+          <stop offset="100%" stopColor="#5e8466" stopOpacity="0"/>
+        </radialGradient>
+        <linearGradient id="rmRadar" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5e8466" stopOpacity="0.55"/>
+          <stop offset="100%" stopColor="#5e8466" stopOpacity="0"/>
+        </linearGradient>
+      </defs>
+      <rect width="700" height="440" fill="url(#rmBg)"/>
+      <g stroke="rgba(20,17,15,0.12)" strokeWidth="0.5" opacity="0.8">
+        {[0,44,88,132,176,220,264,308,352,396,440].map(y=><line key={'mh'+y} x1="0" y1={y} x2="700" y2={y}/>)}
+        {[0,50,100,150,200,250,300,350,400,450,500,550,600,650,700].map(x=><line key={'mv'+x} x1={x} y1="0" x2={x} y2="440"/>)}
+      </g>
+      <g stroke="rgba(20,17,15,0.06)" strokeWidth="0.5" opacity="0.8">
+        <line x1="0" y1="80" x2="700" y2="360"/>
+        <line x1="100" y1="0" x2="700" y2="300"/>
+        <line x1="0" y1="180" x2="600" y2="440"/>
+        <line x1="250" y1="0" x2="700" y2="220"/>
+        <line x1="0" y1="300" x2="450" y2="440"/>
+        <line x1="420" y1="0" x2="700" y2="140"/>
+      </g>
+      <polygon points="235,68 335,58 368,120 345,162 252,168 215,118" fill="#b8302a" fillOpacity="0.14" stroke="#b8302a" strokeWidth="1" strokeOpacity="0.35"/>
+      <polygon points="398,75 478,66 498,130 468,155 388,140" fill="#b8302a" fillOpacity="0.12" stroke="#b8302a" strokeWidth="1" strokeOpacity="0.30"/>
+      <polygon points="68,98 158,88 175,148 148,178 65,162" fill="#b88f4e" fillOpacity="0.14" stroke="#b88f4e" strokeWidth="1" strokeOpacity="0.30"/>
+      <polygon points="488,148 568,138 582,198 555,218 480,208" fill="#b88f4e" fillOpacity="0.12" stroke="#b88f4e" strokeWidth="1" strokeOpacity="0.25"/>
+      <polygon points="205,192 302,184 318,248 288,272 202,265" fill="#8a8020" fillOpacity="0.12" stroke="#8a8020" strokeWidth="1" strokeOpacity="0.25"/>
+      <polygon points="88,268 175,256 188,312 158,338 82,325" fill="#8a8020" fillOpacity="0.10" stroke="#8a8020" strokeWidth="1" strokeOpacity="0.20"/>
+      <polygon points="22,178 92,170 105,222 80,250 18,238" fill="#5e8466" fillOpacity="0.12" stroke="#5e8466" strokeWidth="1" strokeOpacity="0.22"/>
+      <polygon points="318,280 398,270 412,325 380,348 310,338" fill="#5e8466" fillOpacity="0.10" stroke="#5e8466" strokeWidth="1" strokeOpacity="0.20"/>
+      <polygon points="35,55 118,46 128,98 102,118 28,108" fill="#5e8466" fillOpacity="0.10" stroke="#5e8466" strokeWidth="1" strokeOpacity="0.18"/>
+      <polygon points="522,52 595,44 605,95 578,112 515,100" fill="#2a6e96" fillOpacity="0.10" stroke="#2a6e96" strokeWidth="1" strokeOpacity="0.18"/>
+      <ellipse cx="288" cy="112" rx="78" ry="54" fill="url(#rmRed)" opacity="0.7"/>
+      <ellipse cx="440" cy="106" rx="56" ry="40" fill="url(#rmRed)" opacity="0.6"/>
+      <ellipse cx="108" cy="132" rx="58" ry="44" fill="url(#rmOrange)" opacity="0.6"/>
+      <ellipse cx="532" cy="178" rx="52" ry="38" fill="url(#rmOrange)" opacity="0.5"/>
+      <ellipse cx="255" cy="228" rx="62" ry="46" fill="url(#rmYellow)" opacity="0.5"/>
+      <path d="M0,215 Q180,195 350,215 T700,205" stroke="#786c5f" strokeWidth="1.5" fill="none" opacity="0.4"/>
+      <path d="M355,0 Q345,150 355,215 T342,440" stroke="#786c5f" strokeWidth="1.5" fill="none" opacity="0.4"/>
+      <path d="M0,388 C120,370 240,395 360,375 S520,368 620,382 T700,372" stroke="#2a6e96" strokeWidth="2" fill="none" opacity="0.45"/>
+      <g style={{transformOrigin:'350px 218px',animation:'radar-spin 6s linear infinite'}}>
+        <polygon points="350,218 350,48 378,58" fill="url(#rmRadar)" opacity="0.5"/>
+      </g>
+      <circle cx="350" cy="218" r="85" fill="none" stroke="#5e8466" strokeWidth="0.6" opacity="0.20"/>
+      <circle cx="350" cy="218" r="155" fill="none" stroke="#5e8466" strokeWidth="0.6" opacity="0.12"/>
+      <circle cx="350" cy="218" r="225" fill="none" stroke="#5e8466" strokeWidth="0.6" opacity="0.08"/>
+      <circle cx="288" cy="112" r="5" fill="#b8302a" opacity="0.88"/><circle cx="288" cy="112" r="2.8" fill="#faf6ec"/>
+      <circle cx="440" cy="106" r="4.8" fill="#b8302a" opacity="0.85"/><circle cx="440" cy="106" r="2.5" fill="#faf6ec"/>
+      <circle cx="108" cy="132" r="4.5" fill="#b88f4e" opacity="0.88"/><circle cx="108" cy="132" r="2.4" fill="#faf6ec"/>
+      <circle cx="532" cy="178" r="4.5" fill="#b88f4e" opacity="0.85"/><circle cx="532" cy="178" r="2.4" fill="#faf6ec"/>
+      <circle cx="255" cy="228" r="4.2" fill="#8a8020" opacity="0.85"/><circle cx="255" cy="228" r="2.2" fill="#faf6ec"/>
+      <circle cx="55" cy="208" r="3.8" fill="#5e8466" opacity="0.82"/><circle cx="55" cy="208" r="2" fill="#faf6ec"/>
+      <circle cx="356" cy="308" r="4" fill="#5e8466" opacity="0.80"/><circle cx="356" cy="308" r="2" fill="#faf6ec"/>
+      <circle cx="132" cy="292" r="4" fill="#8a8020" opacity="0.82"/><circle cx="132" cy="292" r="2" fill="#faf6ec"/>
+      <circle cx="558" cy="72" r="3.5" fill="#2a6e96" opacity="0.78"/>
+      <circle cx="79" cy="80" r="3.5" fill="#5e8466" opacity="0.78"/>
+      <circle className="pulse-ring1" cx="288" cy="112" r="14" fill="none" stroke="#b8302a" strokeWidth="1.2" opacity="0.5" style={{transformOrigin:'288px 112px'}}/>
+      <circle className="pulse-ring2" cx="288" cy="112" r="14" fill="none" stroke="#b8302a" strokeWidth="1.2" opacity="0.3" style={{transformOrigin:'288px 112px'}}/>
+      <circle className="pulse-ring1" cx="440" cy="106" r="12" fill="none" stroke="#b8302a" strokeWidth="1" opacity="0.4" style={{transformOrigin:'440px 106px',animationDelay:'.4s'}}/>
+      <text x="295" y="108" fontSize="8.5" fill="#14110f" opacity="0.85" fontFamily="serif" fontWeight="600">&#x524D;&#x8FDB;&#x6751;</text>
+      <text x="448" y="102" fontSize="8.5" fill="#14110f" opacity="0.82" fontFamily="serif" fontWeight="600">&#x4E1C;&#x5347;&#x6751;</text>
+      <text x="115" y="128" fontSize="8" fill="#2a2521" opacity="0.75" fontFamily="serif">&#x65B0;&#x534E;&#x6751;</text>
+      <text x="542" y="174" fontSize="8" fill="#2a2521" opacity="0.72" fontFamily="serif">&#x5B89;&#x548C;&#x4E61;</text>
+      <text x="262" y="224" fontSize="8" fill="#2a2521" opacity="0.70" fontFamily="serif">&#x4E30;&#x6536;&#x9547;</text>
+      <text x="62" y="204" fontSize="8" fill="#2a2521" opacity="0.66" fontFamily="serif">&#x7EA2;&#x661F;&#x6751;</text>
+      <g fontSize="7" fill="#786c5f" fontFamily="monospace" opacity="0.70">
+        <text x="4" y="14">30&#xB0;N</text><text x="4" y="102">29.8&#xB0;N</text>
+        <text x="4" y="214">29.5&#xB0;N</text><text x="4" y="322">29.2&#xB0;N</text>
+        <text x="4" y="432">29&#xB0;N</text>
+        <text x="8" y="432">105&#xB0;E</text><text x="162" y="432">106&#xB0;E</text>
+        <text x="318" y="432">107&#xB0;E</text><text x="472" y="432">108&#xB0;E</text>
+        <text x="622" y="432">109&#xB0;E</text>
+      </g>
+      <g opacity="0.65">
+        <line x1="610" y1="418" x2="695" y2="418" stroke="#786c5f" strokeWidth="1.5"/>
+        <line x1="610" y1="413" x2="610" y2="423" stroke="#786c5f" strokeWidth="1.5"/>
+        <line x1="695" y1="413" x2="695" y2="423" stroke="#786c5f" strokeWidth="1.5"/>
+        <text x="636" y="412" fontSize="7" fill="#786c5f" fontFamily="monospace">50 km</text>
+        <polygon points="658,22 653,44 658,38 663,44" fill="#b8302a"/>
+        <text x="655" y="52" fontSize="7" fill="#b8302a" fontFamily="monospace">N</text>
+      </g>
+      <g>
+        <rect x="6" y="420" width="9" height="9" rx="2" fill="#b8302a" opacity="0.85"/>
+        <text x="19" y="428" fontSize="7" fill="#786c5f" fontFamily="serif">&#x9AD8;&#x98CE;&#x9669;</text>
+        <rect x="68" y="420" width="9" height="9" rx="2" fill="#b88f4e" opacity="0.85"/>
+        <text x="81" y="428" fontSize="7" fill="#786c5f" fontFamily="serif">&#x4E2D;&#x98CE;&#x9669;</text>
+        <rect x="130" y="420" width="9" height="9" rx="2" fill="#8a8020" opacity="0.85"/>
+        <text x="143" y="428" fontSize="7" fill="#786c5f" fontFamily="serif">&#x4F4E;&#x98CE;&#x9669;</text>
+        <rect x="192" y="420" width="9" height="9" rx="2" fill="#5e8466" opacity="0.85"/>
+        <text x="205" y="428" fontSize="7" fill="#786c5f" fontFamily="serif">&#x5B89;&#x5168;</text>
+        <line x1="255" y1="420" x2="265" y2="420" stroke="#786c5f" strokeWidth="2.5" opacity="0.6"/>
+        <text x="268" y="428" fontSize="7" fill="#786c5f" fontFamily="serif">&#x9053;&#x8DEF;</text>
+        <path d="M310,424 Q318,420 326,424" stroke="#2a6e96" strokeWidth="2" fill="none" opacity="0.6"/>
+        <text x="329" y="428" fontSize="7" fill="#786c5f" fontFamily="serif">&#x6C34;&#x7CFB;</text>
+      </g>
+    </svg>
+  );
+}
+
+function RiskMapSection() {
+  const [activeRegion, setActiveRegion] = useState('all');
+  const [activeTime, setActiveTime] = useState('48h');
+  const alerts = [
+    {id:1,village:'&#x524D;&#x8FDB;&#x6751;',crop:'&#x7389;&#x7C73;',risk:'&#x5927;&#x98CE;&#x5012;&#x4F0F;',level:'high',conf:82,window:'36h',action:'&#x6E05;&#x6C9F;&#x6392;&#x6C34;&#xFF0C;&#x6682;&#x505C;&#x7078;&#x6C89;&#x8FFD;&#x80A5;',area:'320&#x4EA9;'},
+    {id:2,village:'&#x4E1C;&#x5347;&#x6751;',crop:'&#x6C34;&#x7A3B;',risk:'&#x5F3A;&#x98CE;&#x5012;&#x4F0F;',level:'high',conf:76,window:'48h',action:'&#x6392;&#x6C34;&#x964D;&#x6E0D;&#xFF0C;&#x52A0;&#x56FA;&#x652F;&#x6491;',area:'180&#x4EA9;'},
+    {id:3,village:'&#x65B0;&#x534E;&#x6751;',crop:'&#x7389;&#x7C73;',risk:'&#x66B4;&#x96E8;&#x6E0D;&#x6D9D;',level:'medium',conf:68,window:'60h',action:'&#x758F;&#x901A;&#x6392;&#x6C34;&#x6E20;',area:'240&#x4EA9;'},
+    {id:4,village:'&#x4E30;&#x6536;&#x9547;',crop:'&#x5C0F;&#x9EA6;',risk:'&#x8D64;&#x9709;&#x75C5;&#x98CE;&#x9669;',level:'low',conf:54,window:'72h',action:'&#x63D0;&#x524D;&#x55B7;&#x65BD;&#x6210;&#x6548;&#x8BCA;&#x65AD;&#x836F;',area:'560&#x4EA9;'},
+  ];
+  const LC = {
+    high:  {bg:'rgba(184,48,42,.07)',  bd:'rgba(184,48,42,.22)',  tx:'#8c1f1c', badge:'rgba(184,48,42,.10)'},
+    medium:{bg:'rgba(184,143,78,.07)', bd:'rgba(184,143,78,.22)', tx:'#7a5a14', badge:'rgba(184,143,78,.12)'},
+    low:   {bg:'rgba(138,128,32,.06)', bd:'rgba(138,128,32,.18)', tx:'#5a5014', badge:'rgba(138,128,32,.10)'},
+  };
+  const regions = ['&#x5168;&#x90E8;&#x533A;&#x57DF;','&#x4E1C;&#x5317;&#x4EA7;&#x533A;','&#x534E;&#x5317;&#x5E73;&#x539F;','&#x957F;&#x4E09;&#x89D2;','&#x897F;&#x5357;&#x5C71;&#x533A;'];
+  const crops   = ['&#x5168;&#x90E8;&#x4F5C;&#x7269;','&#x7389;&#x7C73;','&#x6C34;&#x7A3B;','&#x5C0F;&#x9EA6;','&#x5927;&#x8C46;'];
+  return (
+    <section id="riskmap" className="py-24 field-grid">
+      <div className="max-w-7xl mx-auto px-6">
+        <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',flexWrap:'wrap',gap:'1rem',marginBottom:'2.5rem'}}>
+          <div>
+            <span className="section-label">RISK MAP &middot; &#x5B9E;&#x65F6;&#x98CE;&#x9669;&#x5730;&#x56FE;</span>
+            <h2 style={{fontSize:'clamp(1.8rem,3vw,2.4rem)',fontWeight:700,marginTop:'.75rem',color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}}>
+              &#x6BCF;&#x4E00;&#x5757;&#x5730;&#x7684;&#x98CE;&#x9669;&#xFF0C;<span className="text-g">&#x4E00;&#x773C;&#x770B;&#x6E05;</span>
+            </h2>
+          </div>
+          <div style={{display:'flex',gap:'1rem',flexWrap:'wrap'}}>
+            {[['3,248','&#x76D1;&#x6D4B;&#x519C;&#x6237;','var(--stone-green)'],['2','&#x9AD8;&#x98CE;&#x9669;&#x9884;&#x8B66;','var(--seal)'],['2','&#x4E2D;&#x4F4E;&#x98CE;&#x9669;&#x9884;&#x8B66;','var(--gold)'],['4.7&#x4E07;&#x4EA9;','&#x8986;&#x76D6;&#x519C;&#x7530;','var(--stone-blue)']].map(([n,l,c],i)=>(
+              <div key={i} style={{borderRadius:10,padding:'10px 18px',textAlign:'center',background:'rgba(237,248,235,0.8)',border:'1px solid rgba(20,17,15,0.08)'}}>
+                <div style={{fontSize:'1.15rem',fontWeight:600,color:c,fontFamily:'var(--serif-en)'}} dangerouslySetInnerHTML={{__html:n}}/>
+                <div style={{fontSize:'.68rem',color:'var(--ink-mid)',marginTop:2,fontFamily:'var(--sans)'}} dangerouslySetInnerHTML={{__html:l}}/>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'170px 1fr 275px',gap:'1rem',alignItems:'start'}}>
+          <div style={{display:'flex',flexDirection:'column',gap:'.75rem'}}>
+            <div className="glass" style={{borderRadius:12,padding:'1rem'}}>
+              <div style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'var(--ink-mid)',letterSpacing:'.12em',marginBottom:'.6rem'}}>REGION</div>
+              {regions.map((r,i)=>(
+                <button key={i} onClick={()=>setActiveRegion(i===0?'all':r)}
+                  style={{display:'block',width:'100%',textAlign:'left',padding:'5px 9px',borderRadius:6,fontSize:'.78rem',marginBottom:3,
+                    fontFamily:'var(--serif-cjk)',
+                    background:activeRegion===(i===0?'all':r)?'rgba(184,48,42,.08)':'transparent',
+                    border:activeRegion===(i===0?'all':r)?'1px solid rgba(184,48,42,.25)':'1px solid transparent',
+                    color:activeRegion===(i===0?'all':r)?'var(--seal)':'var(--ink-mid)',cursor:'pointer',transition:'all .2s'}}
+                  dangerouslySetInnerHTML={{__html:r}}/>
+              ))}
+            </div>
+            <div className="glass" style={{borderRadius:12,padding:'1rem'}}>
+              <div style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'var(--ink-mid)',letterSpacing:'.12em',marginBottom:'.6rem'}}>CROP TYPE</div>
+              {crops.map((c,i)=>(
+                <button key={i} style={{display:'block',width:'100%',textAlign:'left',padding:'5px 9px',borderRadius:6,fontSize:'.78rem',marginBottom:3,fontFamily:'var(--serif-cjk)',background:'transparent',border:'1px solid transparent',color:'var(--ink-mid)',cursor:'pointer',transition:'all .2s'}}
+                  dangerouslySetInnerHTML={{__html:c}}/>
+              ))}
+            </div>
+            <div className="glass" style={{borderRadius:12,padding:'1rem'}}>
+              <div style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'var(--ink-mid)',letterSpacing:'.12em',marginBottom:'.6rem'}}>TIME WINDOW</div>
+              <div style={{display:'flex',gap:5}}>
+                {['24h','48h','72h'].map(t=>(
+                  <button key={t} onClick={()=>setActiveTime(t)}
+                    style={{flex:1,padding:'5px 0',borderRadius:6,fontSize:'.75rem',fontFamily:'var(--mono)',
+                      background:activeTime===t?'rgba(184,48,42,.08)':'transparent',
+                      border:activeTime===t?'1px solid rgba(184,48,42,.28)':'1px solid rgba(20,17,15,.12)',
+                      color:activeTime===t?'var(--seal)':'var(--ink-mid)',cursor:'pointer',transition:'all .2s'}}>
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="glass" style={{borderRadius:16,overflow:'hidden'}}>
+            <div style={{padding:'9px 14px',borderBottom:'1px solid rgba(20,17,15,.07)',display:'flex',alignItems:'center',justifyContent:'space-between',background:'rgba(208,232,206,0.4)'}}>
+              <div style={{display:'flex',alignItems:'center',gap:8}}>
+                <span className="blink" style={{width:7,height:7,borderRadius:'50%',background:'var(--seal)',display:'inline-block'}}/>
+                <span style={{fontSize:'.65rem',fontFamily:'var(--mono)',color:'var(--ink-mid)',letterSpacing:'.1em'}}>LIVE MONITORING &middot; {activeTime} FORECAST</span>
+              </div>
+              <div style={{display:'flex',gap:5}}>
+                {['&#x70ED;&#x529B;&#x56FE;','&#x536B;&#x661F;','&#x5730;&#x5F62;'].map((m,i)=>(
+                  <button key={i} style={{padding:'3px 10px',borderRadius:5,fontSize:'.65rem',fontFamily:'var(--mono)',
+                    background:i===0?'rgba(184,48,42,.08)':'transparent',
+                    border:i===0?'1px solid rgba(184,48,42,.25)':'1px solid rgba(20,17,15,.10)',
+                    color:i===0?'var(--seal)':'var(--ink-mid)',cursor:'pointer'}} dangerouslySetInnerHTML={{__html:m}}/>
+                ))}
+              </div>
+            </div>
+            <div style={{lineHeight:0}}><RiskMapSVG/></div>
+            <div style={{padding:'7px 14px',borderTop:'1px solid rgba(20,17,15,.06)',display:'flex',justifyContent:'space-between',background:'rgba(208,232,206,0.3)'}}>
+              <span style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'var(--ink-light)'}}>LAST UPDATE: 2026-05-25 10:48 CST &middot; AUTO-REFRESH 5min</span>
+              <span style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'var(--ink-light)'}}>CRS: WGS84 &middot; SCALE 1:250000</span>
+            </div>
+          </div>
+          <div style={{display:'flex',flexDirection:'column',gap:'.75rem'}}>
+            <div style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'var(--ink-mid)',letterSpacing:'.12em',padding:'0 4px'}}>ACTIVE ALERTS &middot; {alerts.length}</div>
+            {alerts.map(a=>{
+              const lc=LC[a.level];
+              return (
+                <div key={a.id} className="card-hover" style={{borderRadius:12,padding:'1rem',cursor:'pointer',background:lc.bg,border:`1px solid ${lc.bd}`}}>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'.5rem'}}>
+                    <div>
+                      <div style={{fontWeight:700,fontSize:'.9rem',color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}} dangerouslySetInnerHTML={{__html:a.village}}/>
+                      <div style={{fontSize:'.72rem',color:'var(--ink-mid)',marginTop:1}} dangerouslySetInnerHTML={{__html:a.crop+' &middot; '+a.area}}/>
+                    </div>
+                    <span style={{fontSize:'.6rem',fontFamily:'var(--mono)',padding:'2px 7px',borderRadius:4,background:lc.badge,color:lc.tx,fontWeight:600}}>
+                      {a.level==='high'?'HIGH':a.level==='medium'?'MED':'LOW'}
+                    </span>
+                  </div>
+                  <div style={{fontSize:'.84rem',color:lc.tx,fontWeight:600,marginBottom:'.4rem'}} dangerouslySetInnerHTML={{__html:a.risk}}/>
+                  <div style={{display:'flex',gap:'.75rem',marginBottom:'.5rem'}}>
+                    <span style={{fontSize:'.66rem',fontFamily:'var(--mono)',color:'var(--ink-mid)'}}>WINDOW {a.window}</span>
+                    <span style={{fontSize:'.66rem',fontFamily:'var(--mono)',color:'var(--ink-mid)'}}>CONF {a.conf}%</span>
+                  </div>
+                  <div style={{fontSize:'.75rem',padding:'5px 9px',borderRadius:6,background:'rgba(20,17,15,.04)',color:'var(--ink-soft)'}} dangerouslySetInnerHTML={{__html:'&rarr; '+a.action}}/>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── SYSTEM CAPABILITIES ─────────────────────────────────── */
+function SystemCapabilities() {
+  const col1 = [
+    {icon:ICONS.weather,t:'&#x6C14;&#x8C61;&#x9884;&#x8B66;',s:'Meteorological Warning'},
+    {icon:ICONS.eye,t:'&#x9065;&#x611F;&#x5F02;&#x5E38;',s:'Remote Sensing Anomaly'},
+    {icon:ICONS.shield,t:'&#x653F;&#x5E9C;&#x516C;&#x544A;',s:'Gov. Bulletin'},
+    {icon:ICONS.chat,t:'&#x65B0;&#x95FB;&#x8206;&#x60C5;',s:'News & Social'},
+    {icon:ICONS.farmer,t:'&#x519C;&#x6237;&#x53CD;&#x9988;',s:'Farmer Feedback'},
+    {icon:ICONS.drone,t:'&#x77ED;&#x89C6;&#x9891;&#x4FE1;&#x53F7;',s:'Short Video Signal'},
+  ];
+  const col2 = [
+    {t:'Weather Hazard Agent',s:'&#x6C14;&#x8C61;&#x707E;&#x5BB3;&#x5206;&#x6790;'},
+    {t:'Crop Growth Agent',s:'&#x4F5C;&#x7269;&#x751F;&#x80B2;&#x671F;&#x5EFA;&#x6A21;'},
+    {t:'Pest & Disease Agent',s:'&#x75C5;&#x866B;&#x5BB3;&#x6269;&#x6563;&#x6A21;&#x62DF;'},
+    {t:'Farmer Behavior Agent',s:'&#x519C;&#x6237;&#x884C;&#x4E3A;&#x9884;&#x6D4B;'},
+    {t:'Resource Dispatch Agent',s:'&#x8D44;&#x6E90;&#x8C03;&#x5EA6;&#x5339;&#x914D;'},
+    {t:'Economic Loss Agent',s:'&#x7ECF;&#x6D4E;&#x635F;&#x5931;&#x4F30;&#x7B97;'},
+  ];
+  const col3 = [
+    {icon:ICONS.chat,t:'&#x77ED;&#x4FE1;&#x63A8;&#x9001;',s:'SMS'},
+    {icon:ICONS.send,t:'&#x5FAE;&#x4FE1;&#x901A;&#x77E5;',s:'WeChat'},
+    {icon:ICONS.bell,t:'&#x8BED;&#x97F3;&#x7535;&#x8BDD;',s:'Voice Call'},
+    {icon:ICONS.resource,t:'&#x5408;&#x4F5C;&#x793E;&#x6E05;&#x5355;',s:'Cooperative List'},
+    {icon:ICONS.eye,t:'&#x653F;&#x5E9C;&#x65E5;&#x62A5;',s:'Gov. Daily Report'},
+    {icon:ICONS.shield,t:'&#x4FDD;&#x9669;&#x98CE;&#x63A7;&#x62A5;&#x544A;',s:'Insurance Risk Report'},
+  ];
+  const ColCard = ({title,tag,children,accentColor}) => (
+    <div style={{borderRadius:12,overflow:'hidden',flex:1,background:'rgba(237,248,235,0.82)',border:'1px solid rgba(20,17,15,0.10)',boxShadow:'0 2px 12px rgba(20,17,15,0.05)'}}>
+      <div style={{padding:'1rem 1.4rem',borderBottom:'1px solid rgba(20,17,15,0.07)',background:'rgba(208,232,206,0.5)'}}>
+        <span style={{fontSize:'.58rem',letterSpacing:'.16em',fontFamily:'var(--sans)',textTransform:'uppercase',color:'var(--ink-mid)'}}>{tag}</span>
+        <h4 style={{fontWeight:700,marginTop:4,fontSize:'1rem',color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}} dangerouslySetInnerHTML={{__html:title}}/>
+      </div>
+      <div style={{padding:'1.2rem'}}>{children}</div>
+    </div>
+  );
+  return (
+    <section id="features" className="py-24" style={{background:'linear-gradient(180deg,transparent 0%,rgba(94,132,102,0.03) 50%,transparent 100%)'}}>
+      <div className="max-w-7xl mx-auto px-6">
+        <div style={{textAlign:'center',marginBottom:'4rem'}}>
+          <span className="section-label">SYSTEM ARCHITECTURE</span>
+          <h2 style={{fontSize:'clamp(1.8rem,3.5vw,2.6rem)',fontWeight:700,marginTop:'1rem',color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}}>
+            &#x771F;&#x5B9E;&#x4FE1;&#x53F7; + &#x591A; Agent &#x6A21;&#x62DF; + <span className="text-g">&#x519C;&#x6237;&#x753B;&#x50CF;</span>
+          </h2>
+          <svg style={{display:'block',margin:'16px auto 0',width:88,height:14}} viewBox="0 0 88 14" aria-hidden="true">
+            <path d="M3 7 Q 25 2 44 8 Q 63 14 85 5" fill="none" stroke="var(--seal)" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </div>
+        <div style={{display:'flex',gap:'1rem',alignItems:'stretch',flexWrap:'wrap'}}>
+          <ColCard title="&#x771F;&#x5B9E;&#x6765;&#x6E90;" tag="DATA INGESTION" accentColor="#06b6d4">
+            {col1.map((x,i)=>(
+              <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'7px 0',borderBottom:i<col1.length-1?'1px solid rgba(20,17,15,0.06)':'none'}}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2a6e96" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d={x.icon}/></svg>
+                <div>
+                  <div style={{fontSize:'.82rem',fontWeight:500,color:'var(--ink-dark)'}} dangerouslySetInnerHTML={{__html:x.t}}/>
+                  <div style={{fontSize:'.65rem',color:'var(--ink-mid)',fontFamily:'var(--mono)'}}>{x.s}</div>
+                </div>
+              </div>
+            ))}
+          </ColCard>
+
+          <div style={{display:'flex',alignItems:'center',justifyContent:'center',padding:'0 .5rem',flexShrink:0}}>
+            <svg width="28" height="60" viewBox="0 0 28 60">
+              <defs><linearGradient id="arrG" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#2a6e96"/><stop offset="100%" stopColor="#5e8466"/></linearGradient></defs>
+              <path d="M4 30 L24 30" stroke="url(#arrG)" strokeWidth="1.5" strokeDasharray="4 3"/>
+              <polygon points="20,26 28,30 20,34" fill="#5e8466"/>
+            </svg>
+          </div>
+
+          <ColCard title="&#x591A; Agent &#x6A21;&#x62DF;" tag="MULTI-AGENT SIMULATION" accentColor="#22c55e">
+            {col2.map((x,i)=>(
+              <div key={i} style={{padding:'7px 0',borderBottom:i<col2.length-1?'1px solid rgba(20,17,15,0.06)':'none'}}>
+                <div style={{fontSize:'.8rem',fontWeight:600,color:'var(--stone-green)',fontFamily:'var(--mono)'}}>{x.t}</div>
+                <div style={{fontSize:'.72rem',color:'var(--ink-mid)',marginTop:1}} dangerouslySetInnerHTML={{__html:x.s}}/>
+              </div>
+            ))}
+          </ColCard>
+
+          <div style={{display:'flex',alignItems:'center',justifyContent:'center',padding:'0 .5rem',flexShrink:0}}>
+            <svg width="28" height="60" viewBox="0 0 28 60">
+              <defs><linearGradient id="arrG2" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#5e8466"/><stop offset="100%" stopColor="#b88f4e"/></linearGradient></defs>
+              <path d="M4 30 L24 30" stroke="url(#arrG2)" strokeWidth="1.5" strokeDasharray="4 3"/>
+              <polygon points="20,26 28,30 20,34" fill="#b88f4e"/>
+            </svg>
+          </div>
+
+          <ColCard title="&#x4E2A;&#x6027;&#x5316;&#x63A8;&#x9001;" tag="PERSONALIZED DELIVERY" accentColor="#a78bfa">
+            {col3.map((x,i)=>(
+              <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'7px 0',borderBottom:i<col3.length-1?'1px solid rgba(20,17,15,0.06)':'none'}}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b88f4e" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d={x.icon}/></svg>
+                <div>
+                  <div style={{fontSize:'.82rem',fontWeight:500,color:'var(--ink-dark)'}} dangerouslySetInnerHTML={{__html:x.t}}/>
+                  <div style={{fontSize:'.65rem',color:'var(--ink-mid)',fontFamily:'var(--mono)'}}>{x.s}</div>
+                </div>
+              </div>
+            ))}
+          </ColCard>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── MULTI-AGENTS ────────────────────────────────────────── */
+function MultiAgents() {
+  const agents = [
+    {en:'Weather Hazard Agent',zh:'&#x6C14;&#x8C61;&#x707E;&#x5BB3; Agent',desc:'&#x8BC6;&#x522B;&#x5927;&#x98CE;&#x3001;&#x66B4;&#x96E8;&#x3001;&#x51B0;&#x96F9;&#x3001;&#x9AD8;&#x6E29;&#x3001;&#x5E72;&#x65F1;&#x7B49;&#x6781;&#x7AEF;&#x6C14;&#x8C61;&#x98CE;&#x9669;&#xFF0C;&#x7ED3;&#x5408;&#x6C14;&#x8C61;&#x6A21;&#x5F0F;&#x4E0E;&#x5730;&#x5F62;&#x5BF9;&#x5C40;&#x90E8;&#x5C0F;&#x6C14;&#x5019;&#x5F71;&#x54CD;&#x8FDB;&#x884C;&#x4FEE;&#x6B63;&#x3002;',icon:ICONS.weather,c:'#2a6e96',tag:'METEOROLOGY'},
+    {en:'Crop Vulnerability Agent',zh:'&#x4F5C;&#x7269;&#x811A;&#x5F31;&#x6027; Agent',desc:'&#x7ED3;&#x5408;&#x751F;&#x80B2;&#x671F;&#x3001;&#x54C1;&#x79CD;&#x3001;&#x957F;&#x52BF;&#x5224;&#x65AD;&#x4F5C;&#x7269;&#x627F;&#x707E;&#x80FD;&#x529B;&#xFF0C;&#x8BC4;&#x4F30;&#x4E0D;&#x540C;&#x751F;&#x80B2;&#x9636;&#x6BB5;&#x7684;&#x98CE;&#x9669;&#x654F;&#x611F;&#x6027;&#x7CFB;&#x6570;&#x3002;',icon:ICONS.crop,c:'#5e8466',tag:'AGRONOMY'},
+    {en:'Pest & Disease Agent',zh:'&#x75C5;&#x866B;&#x5BB3;&#x6269;&#x6563; Agent',desc:'&#x6A21;&#x62DF;&#x9AD8;&#x6E7F;&#x3001;&#x53F0;&#x98CE;&#x3001;&#x75C5;&#x6E90;&#x4F20;&#x64AD;&#x540E;&#x7684;&#x75C5;&#x866B;&#x5BB3;&#x6269;&#x6563;&#x8DEF;&#x5F84;&#x548C;&#x5230;&#x8FBE;&#x65F6;&#x95F4;&#xFF0C;&#x8F93;&#x51FA;&#x9632;&#x6CBB;&#x65F6;&#x95F4;&#x7A97;&#x53E3;&#x5EFA;&#x8BAE;&#x3002;',icon:ICONS.bug,c:'#b88f4e',tag:'PHYTOPATHOLOGY'},
+    {en:'Farmer Behavior Agent',zh:'&#x519C;&#x6237;&#x884C;&#x4E3A; Agent',desc:'&#x5224;&#x65AD;&#x519C;&#x6237;&#x80FD;&#x5426;&#x6536;&#x5230;&#x3001;&#x770B;&#x61C2;&#x5E76;&#x6267;&#x884C;&#x5EFA;&#x8BAE;&#xFF0C;&#x7ED3;&#x5408;&#x5386;&#x53F2;&#x54CD;&#x5E94;&#x6A21;&#x5F0F;&#x548C;&#x5F53;&#x524D;&#x8D44;&#x6E90;&#x72B6;&#x6001;&#x8F93;&#x51FA;&#x53EF;&#x6267;&#x884C;&#x5EA6;&#x5F97;&#x5206;&#x3002;',icon:ICONS.farmer,c:'#b8302a',tag:'BEHAVIORAL MODEL'},
+    {en:'Resource Dispatch Agent',zh:'&#x8D44;&#x6E90;&#x8C03;&#x5EA6; Agent',desc:'&#x5339;&#x914D;&#x9644;&#x8FD1;&#x98DE;&#x9632;&#x961F;&#x3001;&#x519C;&#x8D44;&#x3001;&#x519C;&#x673A;&#x548C;&#x6700;&#x4F73;&#x4F5C;&#x4E1A;&#x7A97;&#x53E3;&#xFF0C;&#x8BF4;&#x660E;&#x5230;&#x8FBE;&#x65F6;&#x95F4;&#x3001;&#x8D39;&#x7528;&#x4F30;&#x7B97;&#x548C;&#x8054;&#x7CFB;&#x65B9;&#x5F0F;&#x3002;',icon:ICONS.resource,c:'#86a78a',tag:'LOGISTICS'},
+    {en:'Economic Loss Agent',zh:'&#x7ECF;&#x6D4E;&#x635F;&#x5931; Agent',desc:'&#x4F30;&#x7B97;&#x4E0D;&#x884C;&#x52A8;&#x635F;&#x5931;&#x4E0E;&#x91C7;&#x53D6;&#x884C;&#x52A8;&#x540E;&#x53EF;&#x631D;&#x56DE;&#x6536;&#x76CA;&#xFF0C;&#x4E3A;&#x519C;&#x6237;&#x548C;&#x4FDD;&#x9669;&#x516C;&#x53F8;&#x63D0;&#x4F9B;&#x6C7D;&#x6E05;&#x7684;&#x51B3;&#x7B56;&#x4F9D;&#x636E;&#x3002;',icon:ICONS.loss,c:'#b88f4e',tag:'ECONOMICS'},
+  ];
+  return (
+    <section id="agents" className="py-24 field-grid">
+      <div className="max-w-7xl mx-auto px-6">
+        <div style={{textAlign:'center',marginBottom:'4rem'}}>
+          <span className="section-label">AGENT ARCHITECTURE</span>
+          <h2 style={{fontSize:'clamp(1.8rem,3.5vw,2.6rem)',fontWeight:700,marginTop:'1rem',color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}}>
+            &#x6BCF;&#x4E00;&#x4E2A; Agent&#xFF0C;&#x6A21;&#x62DF;&#x98CE;&#x9669;&#x94FE;&#x6761;&#x4E2D;&#x7684;<span className="text-g">&#x4E00;&#x4E2A;&#x5173;&#x952E;&#x73AF;&#x8282;</span>&#x3002;
+          </h2>
+          <svg style={{display:'block',margin:'16px auto 0',width:88,height:14}} viewBox="0 0 88 14" aria-hidden="true">
+            <path d="M3 7 Q 25 2 44 8 Q 63 14 85 5" fill="none" stroke="var(--seal)" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))',gap:'1.25rem'}}>
+          {agents.map((a,i)=>(
+            <div key={i} className="card-hover" style={{borderRadius:12,padding:'1.75rem',cursor:'default',background:'rgba(250,246,236,0.82)',border:'1px solid rgba(20,17,15,0.10)',boxShadow:'0 2px 12px rgba(20,17,15,0.05)'}}>
+              <div style={{display:'flex',alignItems:'flex-start',gap:14,marginBottom:'1rem'}}>
+                <div style={{width:46,height:46,borderRadius:10,background:'rgba(20,17,15,0.05)',border:`1px solid ${a.c}44`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={a.c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d={a.icon}/>
+                  </svg>
+                </div>
+                <div>
+                  <div style={{fontSize:'.62rem',fontFamily:'var(--sans)',color:'var(--ink-mid)',letterSpacing:'.1em',marginBottom:3,textTransform:'uppercase'}}>{a.tag}</div>
+                  <div style={{fontSize:'.82rem',fontWeight:600,color:a.c,fontFamily:'var(--mono)'}}>{a.en}</div>
+                  <div style={{fontSize:'.88rem',fontWeight:600,marginTop:2,color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}} dangerouslySetInnerHTML={{__html:a.zh}}/>
+                </div>
+              </div>
+              <p style={{color:'var(--ink-mid)',fontSize:'.85rem',lineHeight:1.75}} dangerouslySetInnerHTML={{__html:a.desc}}/>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── PIPELINE ────────────────────────────────────────────── */
+function PipelineSection(){
+  const Arrow=()=>(
+    <div style={{display:'flex',flexDirection:'column',alignItems:'center',padding:'4px 0',userSelect:'none'}}>
+      <div style={{width:1,height:18,background:'linear-gradient(180deg,rgba(94,132,102,0.25),rgba(94,132,102,0.55))'}}/>
+      <svg width="10" height="7" viewBox="0 0 10 7"><path d="M0 0 L5 7 L10 0" fill="rgba(94,132,102,0.6)"/></svg>
+    </div>
+  );
+  const Badge=({n,c})=>(
+    <span style={{display:'inline-flex',alignItems:'center',justifyContent:'center',width:22,height:22,borderRadius:'50%',background:c,color:'#fff',fontSize:'.65rem',fontWeight:700,fontFamily:'var(--mono)',flexShrink:0,boxShadow:`0 0 0 3px ${c}22`}}>{n}</span>
+  );
+  const Chip=({label,sub,c='var(--ink-mid)'})=>(
+    <div style={{padding:'5px 10px',borderRadius:6,background:'rgba(20,17,15,0.04)',border:'1px solid rgba(20,17,15,0.08)',display:'flex',flexDirection:'column',gap:2,minWidth:88}}>
+      <span style={{fontSize:'.7rem',color:c,fontFamily:'var(--mono)',fontWeight:600}}>{label}</span>
+      {sub&&<span style={{fontSize:'.6rem',color:'var(--ink-light)',fontFamily:'var(--mono)'}}>{sub}</span>}
+    </div>
+  );
+  const Block=({badge,badgeColor,title,sub,children,borderColor,accent})=>(
+    <div style={{borderRadius:14,border:`1.5px solid ${borderColor||'rgba(20,17,15,0.10)'}`,overflow:'hidden',background:'rgba(237,248,235,0.72)',boxShadow:`0 2px 18px ${borderColor||'rgba(0,0,0,0.04)'}22`}}>
+      <div style={{padding:'10px 16px',borderBottom:`1px solid ${borderColor||'rgba(20,17,15,0.08)'}`,display:'flex',alignItems:'center',gap:9,background:`${accent||'rgba(237,248,235,0.9)'}`}}>
+        <Badge n={badge} c={badgeColor}/>
+        <div>
+          <div style={{fontWeight:700,fontSize:'.92rem',color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}}>{title}</div>
+          {sub&&<div style={{fontSize:'.65rem',color:'var(--ink-mid)',fontFamily:'var(--mono)',marginTop:1}}>{sub}</div>}
+        </div>
+      </div>
+      <div style={{padding:'14px 16px'}}>{children}</div>
+    </div>
+  );
+  return(
+    <section id="pipeline" className="py-24 field-grid">
+      <div className="max-w-4xl mx-auto px-6">
+        <div style={{textAlign:'center',marginBottom:'3rem'}}>
+          <span className="section-label">SYSTEM PIPELINE · 系统架构</span>
+          <h2 style={{fontSize:'clamp(1.8rem,3.5vw,2.6rem)',fontWeight:700,marginTop:'1rem',color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}}>
+            六阶段多智能体<span className="text-g">推演链路</span>
+          </h2>
+          <svg style={{display:'block',margin:'16px auto 8px',width:88,height:14}} viewBox="0 0 88 14" aria-hidden="true">
+            <path d="M3 7 Q 25 2 44 8 Q 63 14 85 5" fill="none" stroke="var(--seal)" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+          <p style={{color:'var(--ink-mid)',fontSize:'.9rem'}}>从原始信号到可执行建议，端到端自动推演</p>
+        </div>
+
+        <div style={{display:'flex',flexDirection:'column',alignItems:'stretch',gap:0}}>
+
+          {/* 外部数据源 */}
+          <div style={{borderRadius:12,border:'1px dashed rgba(42,110,150,0.35)',padding:'14px 20px',background:'rgba(42,110,150,0.04)',textAlign:'center'}}>
+            <div style={{fontSize:'.6rem',fontFamily:'var(--mono)',color:'var(--stone-blue)',letterSpacing:'.14em',marginBottom:8}}>EXTERNAL DATA SOURCES · 外部数据源</div>
+            <div style={{display:'flex',flexWrap:'wrap',gap:6,justifyContent:'center'}}>
+              {['气象 API','遥感卫星','农业新闻','病虫害通报','政府通知','农户舆情','田间影像','历史样本'].map(s=>(
+                <span key={s} style={{fontSize:'.7rem',fontFamily:'var(--mono)',padding:'3px 10px',borderRadius:20,background:'rgba(42,110,150,0.08)',border:'1px solid rgba(42,110,150,0.18)',color:'var(--stone-blue)'}}>{s}</span>
+              ))}
+            </div>
+          </div>
+
+          <Arrow/>
+
+          {/* ① Collector */}
+          <Block badge="①" badgeColor="var(--stone-blue)" title="采集 Collector Agent" sub="只搬不判 · 多源并行拉取 → 清洗 → 标准化" borderColor="rgba(42,110,150,0.28)" accent="rgba(42,110,150,0.06)">
+            <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:12}}>
+              {['气象源','遥感源','通报源','舆情源','影像源'].map(s=><Chip key={s} label={s} c="var(--stone-blue)"/>)}
+              <Chip label="……" c="var(--ink-light)"/>
+            </div>
+            <div style={{borderRadius:8,border:'1px dashed rgba(184,48,42,0.3)',padding:'8px 12px',background:'rgba(184,48,42,0.03)',display:'flex',alignItems:'flex-start',gap:8}}>
+              <span style={{fontSize:'.85rem'}}>🎤</span>
+              <div>
+                <div style={{fontSize:'.72rem',fontWeight:600,color:'var(--seal)',fontFamily:'var(--mono)',marginBottom:2}}>Manual Injection — Demo 通道</div>
+                <div style={{fontSize:'.68rem',color:'var(--ink-mid)',fontFamily:'var(--sans)'}}>演讲者 / 用户手动注入一条 DataItem · 自由 JSON · 预设场景一键触发</div>
+              </div>
+            </div>
+            <div style={{marginTop:10,padding:'8px 12px',borderRadius:8,background:'rgba(20,17,15,0.03)',border:'1px solid rgba(20,17,15,0.07)'}}>
+              <span style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'var(--ink-mid)',letterSpacing:'.1em'}}>OUTPUT → </span>
+              <span style={{fontSize:'.68rem',fontFamily:'var(--mono)',color:'var(--stone-blue)'}}>DataPool (DataItem)</span>
+              <span style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'var(--ink-light)',marginLeft:8}}>{'{source, type, ts, geo, payload, injected_by?}'}</span>
+            </div>
+          </Block>
+
+          <Arrow/>
+
+          {/* ② Analyst */}
+          <Block badge="②" badgeColor="var(--stone-green)" title="分析 Analyst Agents" sub="并行运行 · 每个 Analyst 只看自己领域的 DataItem" borderColor="rgba(94,132,102,0.28)" accent="rgba(94,132,102,0.06)">
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(130px,1fr))',gap:8,marginBottom:12}}>
+              {[['气象 Analyst','触发条件?'],['作物 Analyst','生育期脆弱?'],['地块 Analyst','地势/排水?'],['病虫害 Analyst','扩散路径?'],['舆情 Analyst','早期异常?']].map(([t,s])=>(
+                <div key={t} style={{borderRadius:8,padding:'8px 10px',background:'rgba(94,132,102,0.05)',border:'1px solid rgba(94,132,102,0.18)'}}>
+                  <div style={{fontSize:'.74rem',fontWeight:600,color:'var(--stone-green)',fontFamily:'var(--mono)'}}>{t}</div>
+                  <div style={{fontSize:'.64rem',color:'var(--ink-mid)',marginTop:2}}>{s}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{padding:'8px 12px',borderRadius:8,background:'rgba(20,17,15,0.03)',border:'1px solid rgba(20,17,15,0.07)'}}>
+              <span style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'var(--ink-mid)',letterSpacing:'.1em'}}>OUTPUT → </span>
+              <span style={{fontSize:'.68rem',fontFamily:'var(--mono)',color:'var(--stone-green)'}}>RiskJudgment[]</span>
+              <span style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'var(--ink-light)',marginLeft:8}}>{'{agent, level, type, evidence, confidence, raw_refs}'}</span>
+            </div>
+          </Block>
+
+          <Arrow/>
+
+          {/* ③ Simulator */}
+          <Block badge="③" badgeColor="var(--gold)" title="推演 Simulator Agent" sub="综合所有 RiskJudgment，推演灾害演化轨迹" borderColor="rgba(184,143,78,0.28)" accent="rgba(184,143,78,0.06)">
+            <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+              <div style={{flex:1,borderRadius:8,padding:'8px 12px',background:'rgba(184,48,42,0.05)',border:'1px solid rgba(184,48,42,0.18)'}}>
+                <div style={{fontSize:'.68rem',fontWeight:600,color:'var(--seal)',fontFamily:'var(--mono)',marginBottom:3}}>不干预路径</div>
+                <div style={{fontSize:'.72rem',color:'var(--ink-soft)'}}>如果不干预 → 48h 后概率 <strong>X%</strong></div>
+              </div>
+              <div style={{flex:1,borderRadius:8,padding:'8px 12px',background:'rgba(94,132,102,0.05)',border:'1px solid rgba(94,132,102,0.18)'}}>
+                <div style={{fontSize:'.68rem',fontWeight:600,color:'var(--stone-green)',fontFamily:'var(--mono)',marginBottom:3}}>干预路径</div>
+                <div style={{fontSize:'.72rem',color:'var(--ink-soft)'}}>如果采取建议 → 损失降低 <strong>Y%</strong></div>
+              </div>
+            </div>
+          </Block>
+
+          <Arrow/>
+
+          {/* ④ Decision */}
+          <Block badge="④" badgeColor="var(--seal)" title="决策 Decision Agent" sub="整合 Judgments + Trajectory → 输出结构化预警 JSON" borderColor="rgba(184,48,42,0.28)" accent="rgba(184,48,42,0.05)">
+            <pre style={{margin:0,fontSize:'.68rem',fontFamily:'var(--mono)',color:'var(--ink-soft)',lineHeight:1.75,background:'rgba(20,17,15,0.03)',borderRadius:8,padding:'10px 14px',overflow:'auto',border:'1px solid rgba(20,17,15,0.07)'}}>
+{`{
+  "plot_id": "BJ-CP-001",
+  "crop": "玉米",  "stage": "抽雄期",
+  "risk_level": "高",  "risk_type": "高温热害",
+  "actions": ["清晨喷灌降温", "叶面喷磷酸二氢钾"],
+  "best_window": "未来 48 小时",
+  "confidence": 0.87,
+  "evidence": [judgment_ids...],
+  "data_sources": [...]
+}`}
+            </pre>
+          </Block>
+
+          <Arrow/>
+
+          {/* ⑤ Delivery */}
+          <Block badge="⑤" badgeColor="var(--stone-green)" title="推送 Delivery Agent" sub="多渠道精准触达" borderColor="rgba(94,132,102,0.28)" accent="rgba(94,132,102,0.06)">
+            <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+              {['保险公司 API','合作社控制台 + 短信','政府 PDF 简报','粮企月报','农资推荐'].map(s=>(
+                <span key={s} style={{fontSize:'.7rem',fontFamily:'var(--mono)',padding:'4px 12px',borderRadius:20,background:'rgba(94,132,102,0.07)',border:'1px solid rgba(94,132,102,0.20)',color:'var(--stone-green)'}}>{s}</span>
+              ))}
+            </div>
+          </Block>
+
+          <Arrow/>
+
+          {/* B端反馈 */}
+          <div style={{borderRadius:12,border:'1px dashed rgba(184,143,78,0.35)',padding:'14px 20px',background:'rgba(184,143,78,0.04)',textAlign:'center'}}>
+            <div style={{fontSize:'.6rem',fontFamily:'var(--mono)',color:'var(--gold)',letterSpacing:'.14em',marginBottom:8}}>B 端真实反馈</div>
+            <div style={{display:'flex',flexWrap:'wrap',gap:8,justifyContent:'center'}}>
+              {['风险是否真的发生?','预警是否准确?','建议是否被采纳?','实际损失多少?'].map(s=>(
+                <span key={s} style={{fontSize:'.72rem',fontFamily:'var(--sans)',padding:'3px 12px',borderRadius:20,background:'rgba(184,143,78,0.10)',border:'1px solid rgba(184,143,78,0.22)',color:'var(--gold)'}}>{s}</span>
+              ))}
+            </div>
+          </div>
+
+          <Arrow/>
+
+          {/* ⑥ Harness */}
+          <Block badge="⑥" badgeColor="var(--stone-blue)" title="Harness 进化 Agent" sub="持续自我进化 · 写回 Agent 资产文件" borderColor="rgba(42,110,150,0.28)" accent="rgba(42,110,150,0.06)">
+            <div style={{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap',marginBottom:12}}>
+              {[['Evaluator','打分 误/漏/准'],['Root Cause','归因到具体 Agent + 资产'],['Evolver','写回 Agent 资产文件']].map(([t,s],i,arr)=>(
+                <React.Fragment key={t}>
+                  <div style={{borderRadius:8,padding:'8px 12px',background:'rgba(42,110,150,0.06)',border:'1px solid rgba(42,110,150,0.20)',flex:1,minWidth:100}}>
+                    <div style={{fontSize:'.72rem',fontWeight:600,color:'var(--stone-blue)',fontFamily:'var(--mono)'}}>{t}</div>
+                    <div style={{fontSize:'.62rem',color:'var(--ink-mid)',marginTop:2}}>{s}</div>
+                  </div>
+                  {i<arr.length-1&&<span style={{color:'rgba(42,110,150,0.5)',fontSize:'1rem',fontWeight:300}}>→</span>}
+                </React.Fragment>
+              ))}
+            </div>
+            <div style={{borderRadius:8,padding:'8px 12px',background:'rgba(20,17,15,0.03)',border:'1px solid rgba(20,17,15,0.07)',fontFamily:'var(--mono)',fontSize:'.64rem',color:'var(--ink-mid)'}}>
+              📁 backend/knowledge/&lt;agent&gt;/<span style={{color:'var(--stone-blue)'}}>experience.md · rules.yaml · weights.json · prompt.md</span>
+            </div>
+            <div style={{marginTop:10,display:'flex',alignItems:'center',gap:6,padding:'6px 12px',borderRadius:8,background:'rgba(94,132,102,0.05)',border:'1px solid rgba(94,132,102,0.15)'}}>
+              <span style={{fontSize:'.85rem'}}>♻️</span>
+              <span style={{fontSize:'.7rem',color:'var(--stone-green)',fontFamily:'var(--mono)'}}>下一轮 Agent 加载时直接读到更新后的资产</span>
+              <span style={{marginLeft:'auto',fontSize:'.65rem',color:'var(--ink-light)',fontFamily:'var(--mono)'}}>→ 回到 ①</span>
+            </div>
+          </Block>
+
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── SCENARIO DEMO ───────────────────────────────────────── */
+function ScenarioDemo() {
+  const steps = [
+    {t:'T-72h',badge:'&#x6C14;&#x8C61;&#x68C0;&#x6D4B;',title:'&#x6C14;&#x8C61; Agent &#x53D1;&#x73B0;&#x5F3A;&#x98CE;&#x4FE1;&#x53F7;',desc:'&#x5A39;&#x6D77;&#x9AD8;&#x538B;&#x52BF;&#x529B;&#x5F62;&#x621B;&#x53D8;&#xFF0C;&#x5F3A;&#x98CE;&#x60B9;&#x8D85;&#x8FC7;&#x9608;&#x503C;&#x6307;&#x6807;&#x3002;&#x6C14;&#x8C61; Agent &#x53D1;&#x51FA;&#x521D;&#x7EA7;&#x9884;&#x8B66;&#x4FE1;&#x53F7;&#x3002;',c:'#2a6e96',icon:ICONS.weather},
+    {t:'T-48h',badge:'&#x4F5C;&#x7269;&#x5206;&#x6790;',title:'&#x4F5C;&#x7269; Agent &#x5224;&#x65AD;&#x7389;&#x7C73;&#x5904;&#x4E8E;&#x6297;&#x9A91;&#x671F;',desc:'&#x4F5C;&#x7269;&#x5904;&#x4E8E;&#x6291;&#x82B1;&#x7A42;&#x6297;&#x9A91;&#x671F;&#xFF0C;&#x6B64;&#x9636;&#x6BB5;&#x5BF9;&#x5927;&#x98CE;&#x8131;&#x843D;&#x6781;&#x4E3A;&#x654F;&#x611F;&#x3002;&#x5012;&#x4F0F;&#x811A;&#x5F31;&#x6027;&#x6307;&#x6570;&#x5347;&#x81F3; 0.91&#x3002;',c:'#5e8466',icon:ICONS.crop},
+    {t:'T-36h',badge:'&#x98CE;&#x9669;&#x878D;&#x5408;',title:'&#x98CE;&#x9669;&#x878D;&#x5408; Agent &#x98CE;&#x9669;&#x5347;&#x7EA7;',desc:'&#x7EC4;&#x5408;&#x571F;&#x58E4;&#x6E7F;&#x5EA6; 78%&#x3001;&#x5386;&#x53F2;&#x5012;&#x4F0F;&#x8BB0;&#x5F55;&#x548C;&#x5730;&#x5F62;&#x4FBF;&#x968F;&#x6570;&#x636E;&#xFF0C;&#x7EC3;&#x5347;&#x4E3A;&#x9AD8;&#x98CE;&#x9669;&#xFF0C;&#x7F6E;&#x4FE1;&#x5EA6; 82%&#x3002;',c:'#b8302a',icon:ICONS.zap},
+    {t:'T-24h',badge:'&#x8D44;&#x6E90;&#x8C03;&#x5EA6;',title:'&#x8D44;&#x6E90;&#x8C03;&#x5EA6; Agent &#x5339;&#x914D;&#x4E2A;&#x6027;&#x8D44;&#x6E90;',desc:'&#x786C;&#x5316;&#x8D22;&#x9053;&#x8BE5;&#x5730;&#x5757;&#x9644;&#x8FD1;&#x53EF;&#x7528;&#x519C;&#x673A;&#x4E24;&#x53F0;&#x3001;&#x519C;&#x6280;&#x5458;&#x4E00;&#x4F4D;&#xFF0C;&#x6392;&#x6C34;&#x5EFA;&#x8BAE;&#x53EF;&#x4E8E;&#x4ECA;&#x65E5; 18 &#x70B9;&#x524D;&#x5B8C;&#x6210;&#x3002;',c:'#86a78a',icon:ICONS.resource},
+    {t:'T-12h',badge:'&#x63A8;&#x9001;&#x9884;&#x8B66;',title:'&#x77ED;&#x4FE1; Agent &#x5411;&#x5BF9;&#x5E94;&#x519C;&#x6237;&#x63A8;&#x9001;&#x4E2A;&#x6027;&#x5316;&#x5EFA;&#x8BAE;',desc:'&#x4E2A;&#x6027;&#x5316;&#x77ED;&#x4FE1;&#x63A8;&#x9001;&#x81F3; 320 &#x4EA9;&#x7389;&#x7C73;&#x5730;&#x5757;&#x519C;&#x6237;&#xFF0C;&#x5305;&#x542B;&#x5177;&#x4F53;&#x884C;&#x52A8;&#x6307;&#x5357;&#x3001;&#x5B8C;&#x6210;&#x65F6;&#x95F4;&#x548C;&#x62A5;&#x9519;&#x63A5;&#x53E3;&#x3002;',c:'#786c5f',icon:ICONS.send},
+    {t:'T+24h',badge:'&#x53CD;&#x9988;&#x66F4;&#x65B0;',title:'&#x519C;&#x6237;&#x53CD;&#x9988;&#x7167;&#x7247;&#xFF0C;&#x7CFB;&#x7EDF;&#x66F4;&#x65B0;&#x6A21;&#x578B;',desc:'&#x519C;&#x6237;&#x4E0A;&#x4F20;&#x73B0;&#x573A;&#x7167;&#x7247;&#x5E76;&#x8BED;&#x97F3;&#x53CD;&#x9988;&#xFF0C;&#x7CFB;&#x7EDF;&#x8BC4;&#x4F30;&#x884C;&#x52A8;&#x6548;&#x679C;&#x5E76;&#x66F4;&#x65B0;&#x5730;&#x5757;&#x98CE;&#x9669;&#x6A21;&#x578B;&#x53C2;&#x6570;&#x3002;',c:'#b88f4e',icon:ICONS.refresh},
+  ];
+  return (
+    <section id="demo" className="py-24" style={{background:'linear-gradient(180deg,transparent,rgba(42,110,150,0.03),transparent)'}}>
+      <div className="max-w-7xl mx-auto px-6">
+        <div style={{textAlign:'center',marginBottom:'4rem'}}>
+          <span className="section-label">SCENARIO PLAYBOOK</span>
+          <h2 style={{fontSize:'clamp(1.8rem,3.5vw,2.6rem)',fontWeight:700,marginTop:'1rem',color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}}>
+            &#x4ECE;&#x4E00;&#x6B21;&#x5927;&#x98CE;&#xFF0C;&#x5230;&#x4E00;&#x6761;<span className="text-g">&#x80FD;&#x631D;&#x56DE;&#x6536;&#x6210;&#x7684;&#x77ED;&#x4FE1;</span>&#x3002;
+          </h2>
+          <svg style={{display:'block',margin:'16px auto 0',width:88,height:14}} viewBox="0 0 88 14" aria-hidden="true">
+            <path d="M3 7 Q 25 2 44 8 Q 63 14 85 5" fill="none" stroke="var(--seal)" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </div>
+        <div style={{position:'relative'}}>
+          <div style={{position:'absolute',left:'50%',top:0,bottom:0,width:2,transform:'translateX(-50%)',background:'linear-gradient(to bottom,var(--stone-green),var(--stone-blue),var(--stone-green))',opacity:.18}} className="hidden lg:block"/>
+          <div style={{display:'flex',flexDirection:'column',gap:'1.5rem'}}>
+            {steps.map((s,i)=>(
+              <div key={i} style={{display:'flex',alignItems:'flex-start',gap:'1.5rem',flexDirection:i%2===0?'row':'row'}}>
+                <div className="card-hover" style={{borderRadius:12,padding:'1.5rem',flex:1,cursor:'default',background:'rgba(250,246,236,0.82)',border:'1px solid rgba(20,17,15,0.10)',borderLeft:`3px solid ${s.c}`,boxShadow:'0 2px 12px rgba(20,17,15,0.05)'}}>
+                  <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:'.8rem'}}>
+                    <div style={{background:`${s.c}18`,border:`1px solid ${s.c}40`,borderRadius:6,padding:'4px 10px',fontSize:'.72rem',fontFamily:'var(--mono)',fontWeight:700,color:s.c}}>{s.t}</div>
+                    <div style={{fontSize:'.68rem',color:'var(--ink-mid)',fontFamily:'var(--sans)',letterSpacing:'.08em'}} dangerouslySetInnerHTML={{__html:s.badge}}/>
+                  </div>
+                  <div style={{display:'flex',alignItems:'flex-start',gap:12}}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={s.c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,marginTop:2}}>
+                      <path d={s.icon}/>
+                    </svg>
+                    <div>
+                      <h4 style={{fontWeight:700,marginBottom:'.4rem',fontSize:'.95rem',color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}} dangerouslySetInnerHTML={{__html:s.title}}/>
+                      <p style={{color:'var(--ink-mid)',fontSize:'.85rem',lineHeight:1.7}} dangerouslySetInnerHTML={{__html:s.desc}}/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── DATA FLYWHEEL ───────────────────────────────────────── */
+function DataFlywheel() {
+  const steps = [
+    {t:'&#x9884;&#x8B66;&#x751F;&#x6210;',s:'Risk Alert Generated',c:'#b8302a',icon:ICONS.zap},
+    {t:'&#x519C;&#x6237;&#x63A5;&#x6536;',s:'Farmer Receives Alert',c:'#5e8466',icon:ICONS.bell},
+    {t:'&#x884C;&#x52A8;&#x4F5C;&#x4E1A;',s:'Action Taken',c:'#86a78a',icon:ICONS.check},
+    {t:'&#x7167;&#x7247;/&#x8BED;&#x97F3;&#x53CD;&#x9988;',s:'Photo / Voice Feedback',c:'#2a6e96',icon:ICONS.camera},
+    {t:'&#x707E;&#x540E;&#x8BC4;&#x4F30;',s:'Post-disaster Assessment',c:'#5895b8',icon:ICONS.eye},
+    {t:'&#x6A21;&#x578B;&#x66F4;&#x65B0;',s:'Model Updated',c:'#b88f4e',icon:ICONS.refresh},
+  ];
+  return (
+    <section id="flywheel" className="py-24 field-grid">
+      <div className="max-w-6xl mx-auto px-6">
+        <div style={{textAlign:'center',marginBottom:'4rem'}}>
+          <span className="section-label">DATA FLYWHEEL</span>
+          <h2 style={{fontSize:'clamp(1.8rem,3.5vw,2.6rem)',fontWeight:700,marginTop:'1rem',color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}}>
+            &#x6BCF;&#x4E00;&#x6B21;&#x53CD;&#x9988;&#xFF0C;&#x90FD;&#x8BA9;<span className="text-g">&#x4E0B;&#x4E00;&#x6B21;&#x9884;&#x8B66;&#x66F4;&#x51C6;&#x786E;</span>&#x3002;
+          </h2>
+          <svg style={{display:'block',margin:'16px auto 0',width:88,height:14}} viewBox="0 0 88 14" aria-hidden="true">
+            <path d="M3 7 Q 25 2 44 8 Q 63 14 85 5" fill="none" stroke="var(--seal)" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </div>
+        <div style={{display:'flex',flexWrap:'wrap',alignItems:'center',justifyContent:'center',gap:'.5rem'}}>
+          {steps.map((s,i)=>(
+            <React.Fragment key={i}>
+              <div className="card-hover" style={{borderRadius:10,padding:'1.25rem 1.4rem',textAlign:'center',minWidth:130,cursor:'default',background:'rgba(250,246,236,0.82)',border:'1px solid rgba(20,17,15,0.10)',borderTop:`2px solid ${s.c}`,boxShadow:'0 2px 8px rgba(20,17,15,0.04)'}}>
+                <div style={{width:40,height:40,borderRadius:10,background:`${s.c}15`,border:`1px solid ${s.c}35`,display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto .75rem'}}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={s.c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d={s.icon}/>
+                  </svg>
+                </div>
+                <div style={{fontWeight:700,fontSize:'.9rem',marginBottom:3,color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}} dangerouslySetInnerHTML={{__html:s.t}}/>
+                <div style={{color:'var(--ink-mid)',fontSize:'.65rem',fontFamily:'var(--mono)'}}>{s.s}</div>
+              </div>
+              {i < steps.length-1 && (
+                <div style={{color:'var(--ink-light)',fontSize:'1.2rem',opacity:.7,lineHeight:1}}>&#x2192;</div>
+              )}
+              {i === steps.length-1 && (
+                <div style={{color:'var(--stone-green)',fontSize:'1rem',opacity:.6,display:'flex',alignItems:'center',gap:4}}>
+                  <span style={{fontSize:'.68rem',fontFamily:'var(--mono)'}}>&#x5FAA;&#x73AF;&#x8FED;&#x4EE3;</span>&#x21BA;
+                </div>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+        <div style={{borderRadius:12,padding:'1.4rem 2rem',marginTop:'2.5rem',display:'flex',alignItems:'center',gap:'1.5rem',flexWrap:'wrap',background:'rgba(94,132,102,0.06)',border:'1px solid rgba(94,132,102,0.18)'}}>
+          <div style={{flex:'0 0 auto'}}>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--stone-green)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d={ICONS.refresh}/>
+            </svg>
+          </div>
+          <div style={{flex:1}}>
+            <div style={{fontWeight:700,marginBottom:4,color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}}>&#x6BCF;&#x6B21;&#x53CD;&#x9988;&#x90FD;&#x5728;&#x8BAD;&#x7EC3;&#x6A21;&#x578B;</div>
+            <div style={{color:'var(--ink-mid)',fontSize:'.88rem',lineHeight:1.7}}>
+              &#x7CFB;&#x7EDF;&#x901A;&#x8FC7;&#x519C;&#x6237;&#x7684;&#x771F;&#x5B9E;&#x884C;&#x52A8;&#x53CD;&#x9988;&#x548C;&#x707E;&#x540E;&#x5851;&#x5BA1;&#xFF0C;&#x6301;&#x7EED;&#x4F18;&#x5316;&#x5404; Agent &#x7684;&#x8BC4;&#x4F30;&#x6A21;&#x578B;&#x3002;&#x8986;&#x76D6;&#x519C;&#x6237;&#x8D8A;&#x591A;&#x3001;&#x6570;&#x636E;&#x8D8A;&#x4E30;&#x5BCC;&#xFF0C;&#x9884;&#x8B66;&#x7CBE;&#x5EA6;&#x5C31;&#x8D8A;&#x9AD8;&#x2014;&#x2014;&#x8FD9;&#x5C31;&#x662F;&#x7A57;&#x5B89; AI &#x7684;&#x6570;&#x636E;&#x98DE;&#x8F6E;&#x3002;
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── FOOTER / CTA ────────────────────────────────────────── */
+function Footer() {
+  return (
+    <footer style={{background:'linear-gradient(180deg,rgba(208,232,206,0.0),rgba(208,232,206,0.55) 40%,rgba(180,220,178,0.7))',borderTop:'1px solid rgba(20,17,15,0.08)',paddingTop:'5rem',paddingBottom:'3rem',textAlign:'center'}}>
+      <div className="max-w-3xl mx-auto px-6">
+        <div style={{marginBottom:'1.5rem'}}>
+          <img src="logo.png" alt="穗安" style={{width:34,height:34,objectFit:'contain',borderRadius:3,margin:'0 auto 1.5rem',display:'block'}}/>
+          <span className="section-label">GET STARTED &middot; &#x5F00;&#x59CB;&#x4F53;&#x9A8C;</span>
+        </div>
+        <h2 style={{fontSize:'clamp(1.8rem,4vw,3rem)',fontWeight:700,lineHeight:1.2,marginBottom:'1.5rem',color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}}>
+          &#x5728;&#x98CE;&#x96E8;&#x5230;&#x6765;&#x4E4B;&#x524D;&#xFF0C;<br/>
+          &#x628A;&#x6B63;&#x786E;&#x7684;&#x5EFA;&#x8BAE;&#x53D1;&#x7ED9;<span className="text-g">&#x6B63;&#x786E;&#x7684;&#x4EBA;</span>&#x3002;
+        </h2>
+        <p style={{color:'var(--ink-soft)',fontSize:'1rem',lineHeight:1.85,marginBottom:'2.5rem'}}>
+          &#x7A57;&#x5B89; AI &#x5C06;&#x771F;&#x5B9E;&#x4FE1;&#x53F7;&#x3001;&#x591A;&#x667A;&#x80FD;&#x4F53;&#x6A21;&#x62DF;&#x4E0E;&#x519C;&#x6237;&#x753B;&#x50CF;&#x878D;&#x4E3A;&#x4E00;&#x4F53;&#xFF0C;&#x70B9;&#x4EAE;&#x519C;&#x4E1A;&#x98CE;&#x9669;&#x9884;&#x8B66;&#x7684;&ldquo;&#x6700;&#x540E;&#x4E00;&#x516C;&#x91CC;&rdquo;&#x3002;
+        </p>
+        <div style={{display:'flex',justifyContent:'center',gap:'1rem',flexWrap:'wrap',marginBottom:'4rem'}}>
+          <button className="btn-primary px-9 py-3.5 rounded-xl font-bold text-base" style={{color:'var(--paper-soft)'}}>
+            &#x542F;&#x52A8;&#x6F14;&#x793A; &rarr;
+          </button>
+          <button className="btn-outline px-9 py-3.5 rounded-xl text-base">
+            &#x8054;&#x7CFB;&#x6211;&#x4EEC;
+          </button>
+        </div>
+        <div style={{borderTop:'1px solid rgba(20,17,15,0.08)',paddingTop:'2rem',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:'.5rem',color:'var(--ink-light)',fontSize:'.75rem',fontFamily:'var(--mono)'}}>
+          <span>&#x7A57;&#x5B89; AI &copy; 2026</span>
+          <span>Multi-Agent &middot; RAG &middot; Qwen2.5-VL &middot; CosyVoice &middot; DashVector</span>
+          <span>&#x9759;&#x6001; Demo &middot; &#x96F6;&#x540E;&#x7AEF; &middot; &#x96F6;&#x4F9D;&#x8D56;</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ─── CHINA RISK MAP ──────────────────────────────────────── */
+const CHINA_RISK = {
+  '\u9ed1\u9f99\u6c5f':{v:3,lv:'high',  rk:'\u66b4\u96ea\u4f4e\u6e29',cr:'\u5927\u8c46/\u7389\u7c73',  cf:88,wi:'48h',ac:'\u9632\u5bd2\u8986\u76d6\uff0c\u6682\u505c\u65bd\u80a5',    ar:'1,240\u4e07\u4ea9'},
+  '\u5409\u6797':  {v:3,lv:'high',  rk:'\u4f4e\u6e29\u51b7\u5bb3',cr:'\u6c34\u7a3b/\u7389\u7c73',  cf:82,wi:'48h',ac:'\u704c\u6c89\u589e\u6e29\uff0c\u52a0\u5f3a\u9632\u5bd2',  ar:'890\u4e07\u4ea9'},
+  '\u8fbd\u5b81':  {v:2,lv:'medium',rk:'\u5f3a\u98ce\u5012\u4f0f',cr:'\u7389\u7c73',          cf:72,wi:'60h',ac:'\u52a0\u56fa\u652f\u6491\uff0c\u6e05\u6c9f\u6392\u6c34',    ar:'560\u4e07\u4ea9'},
+  '\u5185\u8499\u53e4':{v:1,lv:'low',  rk:'\u5e72\u65f1\u98ce\u9669',cr:'\u5c0f\u9ea6/\u7389\u7c73',  cf:55,wi:'72h',ac:'\u76d1\u6d4b\u571f\u58e4\u6e7f\u5ea6\uff0c\u9002\u91cf\u704c\u6c89',ar:'2,100\u4e07\u4ea9'},
+  '\u65b0\u7586':  {v:1,lv:'low',  rk:'\u5927\u98ce\u6c99\u5c18',cr:'\u68c9\u82b1/\u5c0f\u9ea6',  cf:60,wi:'72h',ac:'\u9632\u6c99\u52a0\u56fa\uff0c\u9002\u65f6\u704c\u6c89',    ar:'3,200\u4e07\u4ea9'},
+  '\u897f\u85cf':  {v:0,lv:'safe', rk:'\u65e0\u660e\u663e\u98ce\u9669',cr:'\u9752\u7a1e',          cf:92,wi:'\u2014',ac:'\u6b63\u5e38\u519c\u4e8b\u4f5c\u4e1a',            ar:'180\u4e07\u4ea9'},
+  '\u9752\u6d77':  {v:0,lv:'safe', rk:'\u65e0\u660e\u663e\u98ce\u9669',cr:'\u5c0f\u9ea6',          cf:90,wi:'\u2014',ac:'\u6b63\u5e38\u519c\u4e8b\u4f5c\u4e1a',            ar:'210\u4e07\u4ea9'},
+  '\u7518\u8083':  {v:1,lv:'low',  rk:'\u5e72\u65f1',         cr:'\u5c0f\u9ea6/\u9a6c\u9716\u85af',cf:58,wi:'72h',ac:'\u8282\u6c34\u704c\u6c89\u4e3a\u4e3b',              ar:'680\u4e07\u4ea9'},
+  '\u5b81\u590f':  {v:1,lv:'low',  rk:'\u5e72\u65f1',         cr:'\u7389\u7c73/\u679d\u6749',    cf:52,wi:'72h',ac:'\u6ef4\u704c\u8865\u6c34',                  ar:'320\u4e07\u4ea9'},
+  '\u9655\u897f':  {v:2,lv:'medium',rk:'\u66b4\u96e8\u6e0d\u6d9d',cr:'\u5c0f\u9ea6/\u82f9\u679c',  cf:70,wi:'48h',ac:'\u758f\u901a\u6392\u6c34\u6e20\u9053',            ar:'750\u4e07\u4ea9'},
+  '\u5c71\u897f':  {v:1,lv:'low',  rk:'\u8f7b\u5ea6\u5e72\u65f1',cr:'\u9ad8\u7cb1/\u7389\u7c73',  cf:55,wi:'72h',ac:'\u9002\u91cf\u704c\u6c89\u8865\u6c34',            ar:'480\u4e07\u4ea9'},
+  '\u6cb3\u5317':  {v:2,lv:'medium',rk:'\u51b0\u96f9',         cr:'\u5c0f\u9ea6/\u7389\u7c73',  cf:68,wi:'36h',ac:'\u5b89\u88c5\u9632\u96f9\u7f51\uff0c\u63d0\u524d\u9632\u62a4',ar:'920\u4e07\u4ea9'},
+  '\u5317\u4eac':  {v:0,lv:'safe', rk:'\u65e0\u660e\u663e\u98ce\u9669',cr:'\u852c\u83dc',          cf:95,wi:'\u2014',ac:'\u6b63\u5e38\u519c\u4e8b\u4f5c\u4e1a',            ar:'45\u4e07\u4ea9'},
+  '\u5929\u6d25':  {v:0,lv:'safe', rk:'\u65e0\u660e\u663e\u98ce\u9669',cr:'\u5c0f\u9ea6',          cf:94,wi:'\u2014',ac:'\u6b63\u5e38\u519c\u4e8b\u4f5c\u4e1a',            ar:'38\u4e07\u4ea9'},
+  '\u5c71\u4e1c':  {v:2,lv:'medium',rk:'\u5f3a\u98ce\u5012\u4f0f',cr:'\u5c0f\u9ea6/\u7389\u7c73',  cf:75,wi:'48h',ac:'\u6392\u6c34\u964d\u6e7f\uff0c\u9002\u65f6\u6536\u5272',  ar:'1,450\u4e07\u4ea9'},
+  '\u6cb3\u5357':  {v:3,lv:'high',  rk:'\u66b4\u96e8\u6d2a\u6d9d',cr:'\u5c0f\u9ea6/\u5927\u8c46',  cf:86,wi:'36h',ac:'\u7d27\u6025\u6392\u6c34\uff0c\u7981\u6b62\u8ffd\u80a5',  ar:'1,680\u4e07\u4ea9'},
+  '\u6c5f\u82cf':  {v:1,lv:'low',  rk:'\u9ad8\u6e29\u70ed\u6d6a',cr:'\u6c34\u7a3b',          cf:60,wi:'72h',ac:'\u704c\u6c89\u964d\u6e29',                  ar:'1,100\u4e07\u4ea9'},
+  '\u5b89\u5fbd':  {v:2,lv:'medium',rk:'\u66b4\u96e8\u6d2a\u6d9d',cr:'\u6c34\u7a3b/\u5c0f\u9ea6',  cf:74,wi:'48h',ac:'\u52a0\u5f3a\u6392\u6c34\uff0c\u9884\u9632\u5012\u4f0f',  ar:'880\u4e07\u4ea9'},
+  '\u4e0a\u6d77':  {v:0,lv:'safe', rk:'\u65e0\u660e\u663e\u98ce\u9669',cr:'\u852c\u83dc',          cf:96,wi:'\u2014',ac:'\u6b63\u5e38\u519c\u4e8b\u4f5c\u4e1a',            ar:'22\u4e07\u4ea9'},
+  '\u6d59\u6c5f':  {v:1,lv:'low',  rk:'\u53f0\u98ce\u8fb9\u7f18',cr:'\u6c34\u7a3b/\u8336\u53f6',  cf:58,wi:'72h',ac:'\u5173\u6ce8\u53f0\u98ce\u52a8\u6001',            ar:'520\u4e07\u4ea9'},
+  '\u798f\u5efa':  {v:1,lv:'low',  rk:'\u53f0\u98ce\u8fb9\u7f18',cr:'\u6c34\u7a3b/\u6c34\u679c',  cf:55,wi:'72h',ac:'\u5173\u6ce8\u53f0\u98ce\u52a8\u6001',            ar:'380\u4e07\u4ea9'},
+  '\u53f0\u6e7e':  {v:2,lv:'medium',rk:'\u53f0\u98ce\u6b63\u9762\u767b\u9646',cr:'\u6c34\u7a3b/\u718a\u679c/\u751f\u5434',cf:78,wi:'36h',ac:'\u54c1\u5b57\u578b\u9632\u98ce\uff0c\u786e\u4fdd\u6392\u6c34\u7545\u901a', ar:'80\u4e07\u4ea9'},
+  '\u6c5f\u897f':  {v:2,lv:'medium',rk:'\u6301\u7eed\u66b4\u96e8',cr:'\u6c34\u7a3b',          cf:72,wi:'48h',ac:'\u53ca\u65f6\u6392\u6c34\u9632\u6e0d',            ar:'660\u4e07\u4ea9'},
+  '\u6e56\u5317':  {v:2,lv:'medium',rk:'\u6301\u7eed\u964d\u96e8',cr:'\u6c34\u7a3b/\u6cb9\u83dc',  cf:70,wi:'48h',ac:'\u6392\u6c34\u9632\u6e0d',                  ar:'790\u4e07\u4ea9'},
+  '\u6e56\u5357':  {v:3,lv:'high',  rk:'\u66b4\u96e8\u6d2a\u6d9d',cr:'\u6c34\u7a3b/\u68c9\u82b1',  cf:84,wi:'24h',ac:'\u7d27\u6025\u6392\u6c34\uff0c\u8f6c\u79fb\u7269\u8d44',  ar:'1,050\u4e07\u4ea9'},
+  '\u5e7f\u4e1c':  {v:1,lv:'low',  rk:'\u53f0\u98ce\u76d1\u6d4b',cr:'\u6c34\u7a3b/\u8354\u679d',  cf:62,wi:'72h',ac:'\u5173\u6ce8\u53f0\u98ce\u8def\u5f84',            ar:'870\u4e07\u4ea9'},
+  '\u5e7f\u897f':  {v:2,lv:'medium',rk:'\u66b4\u96e8\u6e0d\u6d9d',cr:'\u7518\u8517/\u6c34\u7a3b',  cf:68,wi:'48h',ac:'\u6392\u6c34\u9632\u6d9d',                  ar:'920\u4e07\u4ea9'},
+  '\u6d77\u5357':  {v:1,lv:'low',  rk:'\u53f0\u98ce\u76d1\u6d4b',cr:'\u6c34\u7a3b/\u6930\u5b50',  cf:58,wi:'72h',ac:'\u5173\u6ce8\u53f0\u98ce\u8def\u5f84',            ar:'290\u4e07\u4ea9'},
+  '\u56db\u5ddd':  {v:2,lv:'medium',rk:'\u8fde\u9634\u96e8',    cr:'\u6c34\u7a3b/\u7389\u7c73',  cf:66,wi:'60h',ac:'\u6392\u6c34\u964d\u6e7f',                  ar:'1,200\u4e07\u4ea9'},
+  '\u91cd\u5e86':  {v:1,lv:'low',  rk:'\u9634\u96e8\u5929\u6c14',cr:'\u7389\u7c73',          cf:54,wi:'72h',ac:'\u52a0\u5f3a\u901a\u98ce\u6392\u6e7f',            ar:'380\u4e07\u4ea9'},
+  '\u8d35\u5dde':  {v:1,lv:'low',  rk:'\u4f4e\u6e29\u971c\u51bb',cr:'\u6c34\u7a3b/\u7389\u7c73',  cf:52,wi:'72h',ac:'\u9632\u971c\u4fdd\u6e29',                  ar:'420\u4e07\u4ea9'},
+  '\u4e91\u5357':  {v:1,lv:'low',  rk:'\u5e72\u65f1\u76d1\u6d4b',cr:'\u7518\u8517/\u7389\u7c73',  cf:55,wi:'72h',ac:'\u76d1\u6d4b\u571f\u58e4\u6e7f\u5ea6',            ar:'860\u4e07\u4ea9'},
+};
+const WT={
+  typhoon:{c:'#00e5cc',g:'rgba(0,229,204,.55)',t:'台风',p:'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0M3.6 9A9 9 0 0 1 20.4 15M20.4 9A9 9 0 0 1 3.6 15'},
+  snow:   {c:'#88ccff',g:'rgba(136,204,255,.55)',t:'暴雪',p:'M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07'},
+  rain:   {c:'#4488ff',g:'rgba(68,136,255,.55)',t:'暴雨',p:'M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25M8 19v2M12 17v4M16 19v2'},
+  heat:   {c:'#ff7733',g:'rgba(255,119,51,.55)',t:'高温',p:'M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0'},
+  sand:   {c:'#e8a830',g:'rgba(232,168,48,.55)',t:'沙尘暴',p:'M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2M9.6 4.6A2 2 0 1 1 11 8H2m10.6 11.4A2 2 0 1 0 14 16H2'},
+  flood:  {c:'#3ab8ff',g:'rgba(58,184,255,.55)',t:'洪涝',p:'M2 12c1.5-2 3.5-2 5 0s3.5 2 5 0 3.5-2 5 0M2 17c1.5-2 3.5-2 5 0s3.5 2 5 0 3.5-2 5 0M12 2v6M9 5l3-3 3 3'},
+  drought:{c:'#cc8833',g:'rgba(204,136,51,.55)',t:'干旱',p:'M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41M12 8a4 4 0 1 0 0 8'},
+  wind:   {c:'#aaccff',g:'rgba(170,204,255,.55)',t:'大风',p:'M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2'},
+};
+const WP=[
+  {x:63,y:80,k:'typhoon'},{x:74,y:72,k:'typhoon'},
+  {x:82,y:22,k:'snow'},
+  {x:60,y:35,k:'sand'},{x:27,y:28,k:'wind'},
+  {x:64,y:50,k:'rain'},{x:62,y:67,k:'rain'},
+  {x:50,y:62,k:'flood'},
+  {x:48,y:76,k:'drought'},
+  {x:68,y:38,k:'heat'},
+];
+const DEEPSEEK_KEY='sk-5750000e7b6a4d2b85329028cc65ad0a';
+function approxRegion(x,y){
+  if(x<32)return y<50?'新疆':'西藏';
+  if(x<50){if(y<28)return '内蒙古西部/甘肃/宁夏';if(y<58)return '四川/云南/贵州/重庆';return '广西/云南南部';}
+  if(x<65){if(y<28)return '内蒙古/山西/陕西/河南';if(y<58)return '湖北/湖南/江西/安徽';return '广东/广西';}
+  if(x<78){if(y<28)return '黑龙江/内蒙古东部';if(y<55)return '辽宁/山东/江苏/上海';return '浙江/福建/粤东';}
+  return y<40?'黑龙江/吉林':y<65?'江苏/上海/浙江':'福建/广东';
+}
+const PIPE=[
+  {n:'01',label:'采集 Collector Agent',c:'#00e5cc',
+    prompt:(m)=>`你是穗安AI数据采集Agent。当前检测到气象灾害事件：${m.map(x=>`【${WT[x.k].t}】约位于${approxRegion(x.x,x.y)}`).join('；')}。请详细输出以下五个维度（每项1-2句）：
+① 采集状态：各事件数据覆盖率与延迟
+② 气象API：实时数据精度与更新频次
+③ 遥感影像：卫星过境时间、云遮挡情况
+④ 舆情流：社交媒体与农户上报数量及噪声比
+⑤ 数据融合质量：综合可信度评分与异常标记数`},
+  {n:'02',label:'分析 Analyst ×5',c:'#4488ff',
+    prompt:(m)=>`你是穗安AI五个并行分析Agent。气象事件：${m.map(x=>`${WT[x.k].t}(${approxRegion(x.x,x.y)})`).join('、')}。请按如下格式输出，每个Agent 2-3句，结合当地农业特点具体分析：
+气象Agent: （气象强度、持续时间、影响范围）
+作物Agent: （主要受害作物、关键生育期影响）
+地块Agent: （受灾面积估算、土壤/水分状况）
+病虫害Agent: （次生病虫害风险类型与概率）
+舆情Agent: （农户情绪指数、线上咨询量、媒体关注度）`},
+  {n:'03',label:'推演 Simulator',c:'#ffaa44',
+    prompt:(m)=>`你是穗安AI推演Agent。气象事件：${m.map(x=>`${WT[x.k].t}(${approxRegion(x.x,x.y)})`).join('、')}。请结合当地主要农作物，输出以下四项：
+① 不干预路径：各主要作物损失概率（具体%）及经济损失估算
+② 及时干预路径：干预后损失概率对比与挽回比例
+③ 最优干预窗口：具体时间节点与优先行动
+④ 置信度说明：本次推演的数据支撑与不确定因素`},
+  {n:'04',label:'决策 Decision Agent',c:'#cc8833',
+    prompt:(m)=>`你是穗安AI决策Agent。基于气象事件：${m.map(x=>`${WT[x.k].t}(${approxRegion(x.x,x.y)})`).join('、')}，结合当地主要农作物，只输出如下JSON，不要任何其他文字：
+{
+  "risk_level": "high/medium/low之一",
+  "affected_provinces": ["省份1","省份2"],
+  "affected_crops": ["作物1","作物2","作物3"],
+  "estimated_area_wan_mu": 数字,
+  "confidence": 数字,
+  "actions": ["行动1","行动2","行动3","行动4"],
+  "window": "干预窗口",
+  "economic_risk_yi_yuan": 数字,
+  "secondary_risk": "次生风险描述"
+}`},
+  {n:'05',label:'推送 Delivery Agent',c:'#3ab8ff',
+    prompt:(m)=>`你是穗安AI推送Agent。对${m.length}个气象灾害预警（${m.map(x=>WT[x.k].t).join('、')}），请详细输出以下推送情况：
+① 保险API：推送内容摘要与条数
+② 农村合作社短信：发送条数、覆盖农户数、核心预警语
+③ 地方政府简报：报告标题与主要建议
+④ 粮食企业月报：影响评估摘要
+⑤ 应急广播/小程序：推送渠道与触达人数估算`},
+  {n:'06',label:'Harness 进化 Agent',c:'#88aaff',
+    prompt:(m)=>`你是穗安AI Harness进化Agent。本轮推演处理了${m.length}个气象事件（${m.map(x=>WT[x.k].t).join('、')}）。请输出以下四项：
+① 归档：推演路径与关键决策节点已归档至向量知识库，新增向量数
+② Evaluator：Root Cause分析结论，各Agent表现评分（满分10分）
+③ Evolver：将哪些优化规则写回Agent资产文件，更新了哪些模型权重
+④ 精度展望：下一轮各维度预测精度预计提升幅度，以及待补充的数据缺口`},
+];
+function rlc(lv){
+  const m={
+    high:  {ar:'#2a0808',hv:'#ff3333',tx:'#ff6b6b',gw:'rgba(255,50,50,.70)', bg:'rgba(255,50,50,.13)', bd:'rgba(255,50,50,.42)'},
+    medium:{ar:'#2a1408',hv:'#ff8c00',tx:'#ffaa44',gw:'rgba(255,140,0,.62)',bg:'rgba(255,140,0,.11)',bd:'rgba(255,140,0,.36)'},
+    low:   {ar:'#1a2208',hv:'#aadd00',tx:'#ccff33',gw:'rgba(170,221,0,.58)', bg:'rgba(170,221,0,.09)', bd:'rgba(170,221,0,.32)'},
+    safe:  {ar:'#062230',hv:'#00e5cc',tx:'#33ffee',gw:'rgba(0,229,204,.58)',bg:'rgba(0,229,204,.11)',bd:'rgba(0,229,204,.32)'},
+  };
+  return m[lv]||m.safe;
+}
+function ChinaRiskMapSection(){
+  const [tab,setTab]=useState('demo');
+  const mapRef=useRef(null);
+  const simMapRef=useRef(null);
+  const [hovered,setHovered]=useState(null);
+  const [draggingType,setDraggingType]=useState(null);
+  const [simMarkers,setSimMarkers]=useState([]);
+  const [pipeStep,setPipeStep]=useState(-1);
+  const [pipeRunning,setPipeRunning]=useState(false);
+  const [pipeOutputs,setPipeOutputs]=useState(['','','','','','']);
+
+  const runPipeline=async()=>{
+    if(!simMarkers.length||pipeRunning)return;
+    setPipeStep(-1);setPipeRunning(true);setPipeOutputs(['','','','','','']);
+    for(let i=0;i<PIPE.length;i++){
+      setPipeStep(i);
+      try{
+        const resp=await fetch('https://api.deepseek.com/chat/completions',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':`Bearer ${DEEPSEEK_KEY}`},
+          body:JSON.stringify({model:'deepseek-chat',stream:true,max_tokens:550,temperature:0.75,
+            messages:[
+              {role:'system',content:'你是穗安AI农业风险预警多智能体系统的专业Agent。只输出要求内容，使用规范简体中文，不造词、不产生错别字。写入操作统一用"写回"，不使用"挝回"等错误表述。'},
+              {role:'user',content:PIPE[i].prompt(simMarkers)}
+            ]})
+        });
+        const reader=resp.body.getReader();
+        const dec=new TextDecoder();
+        let buf='';
+        while(true){
+          const{done,value}=await reader.read();
+          if(done)break;
+          buf+=dec.decode(value,{stream:true});
+          const lines=buf.split('\n');buf=lines.pop();
+          for(const line of lines){
+            if(!line.startsWith('data: '))continue;
+            const d=line.slice(6).trim();
+            if(d==='[DONE]')continue;
+            try{const tok=JSON.parse(d).choices?.[0]?.delta?.content;
+              if(tok)setPipeOutputs(prev=>{const n=[...prev];n[i]=(n[i]||'')+tok;return n;});
+            }catch(e){}
+          }
+        }
+      }catch(err){
+        setPipeOutputs(prev=>{const n=[...prev];n[i]='[错误] '+err.message;return n;});
+      }
+    }
+    setPipeRunning(false);
+  };
+
+  useEffect(()=>{
+    if(tab!=='demo'||!mapRef.current||!window.echarts)return;
+    const chart=window.echarts.init(mapRef.current,null,{renderer:'canvas'});
+    const lvVal={safe:1,low:2,medium:3,high:4};
+    const cdata=Object.entries(CHINA_RISK).map(([name,d])=>{
+      const c=rlc(d.lv);
+      return{name,value:lvVal[d.lv]||1,
+        emphasis:{itemStyle:{shadowBlur:28,shadowColor:c.gw,borderWidth:2,borderColor:c.hv}}};
+    });
+    const wdata=[
+      {name:'台风',value:[113.3,23.1],k:'typhoon'},{name:'台风',value:[119.3,26.1],k:'typhoon'},
+      {name:'暴雪',value:[126.6,45.7],k:'snow'},
+      {name:'沙尘暴',value:[111.7,40.8],k:'sand'},{name:'大风',value:[87.6,43.8],k:'wind'},
+      {name:'暴雨',value:[113.5,34.7],k:'rain'},{name:'暴雨',value:[112.0,28.3],k:'rain'},
+      {name:'洪涝',value:[104.1,30.6],k:'flood'},
+      {name:'干旱',value:[102.7,25.0],k:'drought'},
+      {name:'高温',value:[116.4,39.9],k:'heat'},
+    ].map(d=>({name:d.name,value:d.value,symbol:`path://${WT[d.k].p}`,itemStyle:{color:WT[d.k].c},
+      label:{color:WT[d.k].c}}));
+    chart.setOption({
+      backgroundColor:'transparent',
+      tooltip:{show:false},
+      geo:{
+        map:'china',aspectScale:0.75,
+        left:'2%',right:'2%',top:'3%',bottom:'4%',
+        roam:true,
+        itemStyle:{areaColor:'transparent',borderColor:'transparent',borderWidth:0},
+        emphasis:{itemStyle:{areaColor:'transparent',borderColor:'transparent'}},
+      },
+      visualMap:{
+        type:'continuous',min:1,max:4,show:true,seriesIndex:0,
+        orient:'vertical',left:10,bottom:20,
+        itemWidth:12,itemHeight:80,
+        textStyle:{color:'#5090a8',fontSize:10,fontFamily:'JetBrains Mono,monospace'},
+        text:['高风险','安全'],textGap:8,
+        inRange:{color:['#062230','#0a3d5c','#0d7a6e','#3ab86e','#c8d830','#e87818','#cc1818']},
+        outOfRange:{color:'#0b1e38'},
+      },
+      series:[
+        {
+          type:'map',map:'china',geoIndex:0,
+          itemStyle:{borderColor:'rgba(0,200,255,0.35)',borderWidth:0.7},
+          label:{show:false},
+          emphasis:{label:{show:true,color:'#00f0ff',fontSize:11,fontWeight:'bold',fontFamily:'JetBrains Mono,monospace',textShadowBlur:10,textShadowColor:'rgba(0,240,255,0.9)'}},
+          data:cdata,
+        },
+        {
+          type:'effectScatter',coordinateSystem:'geo',zlevel:2,
+          symbolSize:18,
+          rippleEffect:{brushType:'stroke',scale:2.8,period:3},
+          label:{show:true,position:'bottom',formatter:'{b}',fontSize:9,
+            fontFamily:'JetBrains Mono,monospace',
+            textShadowBlur:5,textShadowColor:'rgba(0,0,0,0.95)'},
+          data:wdata,
+        },
+      ],
+    });
+    chart.on('mouseover',(p)=>{if(p.name&&CHINA_RISK[p.name])setHovered(p.name);});
+    chart.on('mouseout',(p)=>{if(p.name&&CHINA_RISK[p.name])setHovered(null);});
+    const onResize=()=>chart.resize();
+    window.addEventListener('resize',onResize);
+    return()=>{window.removeEventListener('resize',onResize);chart.dispose();};
+  },[tab]);
+
+  useEffect(()=>{
+    if(tab!=='sim'||!simMapRef.current||!window.echarts)return;
+    const chart=window.echarts.init(simMapRef.current,null,{renderer:'canvas'});
+    const lvVal={safe:1,low:2,medium:3,high:4};
+    const cdata=Object.entries(CHINA_RISK).map(([name,d])=>({name,value:lvVal[d.lv]||1}));
+    chart.setOption({
+      backgroundColor:'transparent',
+      geo:{map:'china',aspectScale:0.75,left:'2%',right:'2%',top:'3%',bottom:'4%',roam:false,silent:true,
+        itemStyle:{areaColor:'transparent',borderColor:'transparent',borderWidth:0},
+        emphasis:{itemStyle:{areaColor:'transparent'}}},
+      visualMap:{type:'continuous',min:1,max:4,show:false,seriesIndex:0,
+        inRange:{color:['#041228','#082040','#0a3050','#153840','#406018','#904810','#701010']},
+        outOfRange:{color:'#040e1e'}},
+      series:[{type:'map',map:'china',geoIndex:0,
+        itemStyle:{borderColor:'rgba(0,200,255,0.2)',borderWidth:0.5},
+        label:{show:false},emphasis:{disabled:true},data:cdata}]
+    });
+    const onResize=()=>chart.resize();
+    window.addEventListener('resize',onResize);
+    return()=>{window.removeEventListener('resize',onResize);chart.dispose();};
+  },[tab]);
+
+  const counts=Object.values(CHINA_RISK).reduce((a,d)=>{a[d.lv]=(a[d.lv]||0)+1;return a;},{});
+  const info=hovered?CHINA_RISK[hovered]:null;
+  const lc=info?rlc(info.lv):null;
+  const lvLabel={high:'HIGH \u00b7 \u9ad8\u98ce\u9669',medium:'MED \u00b7 \u4e2d\u98ce\u9669',low:'LOW \u00b7 \u4f4e\u98ce\u9669',safe:'SAFE \u00b7 \u5b89\u5168'};
+  const mapBg='#040e1e';
+  const panelBg='rgba(4,18,38,0.96)';
+  const panelBd='rgba(0,200,255,0.22)';
+  const neonBlue='#00c8ff';
+  return(
+    <section id="chinamap" className="py-24" style={{background:'linear-gradient(180deg,transparent,rgba(4,14,30,0.06),transparent)'}}>
+      <div className="max-w-7xl mx-auto px-6">
+        <div style={{textAlign:'center',marginBottom:'2rem'}}>
+          <span className="section-label">NATIONAL RISK MAP &middot; &#x5168;&#x56FD;&#x98CE;&#x9669;&#x5730;&#x56FE;</span>
+          <h2 style={{fontSize:'clamp(1.8rem,3.5vw,2.6rem)',fontWeight:700,marginTop:'1rem',color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}}>
+            &#x5168;&#x56FD; 31 &#x4E2A;&#x7701;&#x533A;&#x4F5C;&#x7269;&#x98CE;&#x9669;&#xFF0C;<span className="text-g">&#x5B9E;&#x65F6;&#x5728;&#x7EBF;</span>
+          </h2>
+          <svg style={{display:'block',margin:'16px auto 8px',width:88,height:14}} viewBox="0 0 88 14" aria-hidden="true">
+            <path d="M3 7 Q 25 2 44 8 Q 63 14 85 5" fill="none" stroke="var(--seal)" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+          <p style={{color:'var(--ink-mid)',marginTop:'.5rem',fontSize:'.9rem'}}>&#x6C14;&#x8C61; &middot; &#x9065;&#x611F; &middot; &#x591A; Agent &#x878D;&#x5408; &mdash; &#x9F20;&#x6807;&#x60AC;&#x505C;&#x7701;&#x4EFD;&#x67E5;&#x770B;&#x5B9E;&#x65F6;&#x9884;&#x8B66;&#x8BE6;&#x60C5;</p>
+        </div>
+        <div style={{display:'flex',justifyContent:'center',gap:8,marginBottom:'1.8rem'}}>
+          {[['demo','&#x6F14;&#x793A;&#x6A21;&#x5F0F;'],['sim','&#x6A21;&#x62DF;&#x63A8;&#x6F14;']].map(([k,l])=>(
+            <button key={k} onClick={()=>{setTab(k);setPipeStep(-1);setPipeRunning(false);setSimMarkers([]);setHovered(null);}}
+              style={{padding:'7px 22px',borderRadius:6,fontSize:'.78rem',fontFamily:'var(--mono)',letterSpacing:'.1em',cursor:'pointer',
+                background:tab===k?'rgba(0,229,204,0.12)':'transparent',
+                border:`1.5px solid ${tab===k?'#00e5cc':'rgba(0,200,255,0.25)'}`,
+                color:tab===k?'#00e5cc':'#5090a8',
+                boxShadow:tab===k?'0 0 14px rgba(0,229,204,0.22)':'none'}}
+              dangerouslySetInnerHTML={{__html:l}}/>
+          ))}
+        </div>
+        {tab==='demo'&&<div style={{display:'grid',gridTemplateColumns:'1fr 295px',gap:'1rem',alignItems:'start'}}>
+          <div style={{borderRadius:16,overflow:'hidden',border:'1px solid rgba(0,200,255,0.25)',boxShadow:'0 0 48px rgba(0,200,255,0.10),inset 0 0 60px rgba(0,20,60,0.25)',background:mapBg}}>
+            <div style={{padding:'9px 14px',borderBottom:'1px solid rgba(0,200,255,0.18)',display:'flex',alignItems:'center',justifyContent:'space-between',background:'rgba(0,20,50,0.75)'}}>
+              <div style={{display:'flex',alignItems:'center',gap:8}}>
+                <span className="blink" style={{width:7,height:7,borderRadius:'50%',background:'#ff3333',display:'inline-block',boxShadow:'0 0 6px #ff3333'}}/>
+                <span style={{fontSize:'.64rem',fontFamily:'var(--mono)',color:'#7ab8d0',letterSpacing:'.1em'}}>NATIONAL AGRICULTURAL RISK MONITOR &middot; 2026-05-25 11:00 CST</span>
+              </div>
+              <span style={{fontSize:'.64rem',fontFamily:'var(--mono)',color:neonBlue,letterSpacing:'.12em'}}>MULTI-AGENT FUSION</span>
+            </div>
+            <div style={{position:'relative'}}>
+              <div ref={mapRef} style={{width:'100%',height:500}}/>
+              <div style={{position:'absolute',inset:0,pointerEvents:'none',backgroundImage:'repeating-linear-gradient(0deg,transparent 0,transparent 24px,rgba(0,200,255,0.025) 24px,rgba(0,200,255,0.025) 25px),repeating-linear-gradient(90deg,transparent 0,transparent 24px,rgba(0,200,255,0.015) 24px,rgba(0,200,255,0.015) 25px)'}}/>
+            </div>
+            <div style={{padding:'8px 16px',borderTop:'1px solid rgba(0,200,255,0.18)',display:'flex',alignItems:'center',gap:'1.4rem',flexWrap:'wrap',background:'rgba(0,20,50,0.65)'}}>
+              {[{hv:'#ff3333',l:'&#x9AD8;&#x98CE;&#x9669;',n:counts.high||0},{hv:'#ff8c00',l:'&#x4E2D;&#x98CE;&#x9669;',n:counts.medium||0},{hv:'#aadd00',l:'&#x4F4E;&#x98CE;&#x9669;',n:counts.low||0},{hv:'#00e5cc',l:'&#x5B89;&#x5168;',n:counts.safe||0}].map((x,i)=>(
+                <div key={i} style={{display:'flex',alignItems:'center',gap:5}}>
+                  <div style={{width:10,height:10,borderRadius:2,background:x.hv,boxShadow:`0 0 6px ${x.hv}88`}}/>
+                  <span style={{fontSize:'.68rem',color:'#7ab8d0',fontFamily:'var(--mono)'}} dangerouslySetInnerHTML={{__html:x.l+' ('+x.n+')'}}/>
+                </div>
+              ))}
+              <div style={{marginLeft:'auto',fontSize:'.62rem',color:'#3a7a8a',fontFamily:'var(--mono)'}}>&#x9F20;&#x6807;&#x60AC;&#x505C;&#x770B;&#x8BE6;&#x60C5; &rarr;</div>
+            </div>
+          </div>
+          <div style={{position:'sticky',top:90,display:'flex',flexDirection:'column',gap:'.85rem'}}>
+            {info?(
+              <div style={{borderRadius:12,padding:'1.4rem',background:panelBg,border:`1px solid ${lc.bd}`,boxShadow:`0 0 24px ${lc.gw}`,transition:'all .25s'}}>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'1rem'}}>
+                  <div>
+                    <div style={{fontWeight:700,fontSize:'1.5rem',color:'#e8f4ff',fontFamily:'var(--mono)',letterSpacing:'.04em'}}>{hovered}</div>
+                    <div style={{fontSize:'.68rem',color:'#5090a8',marginTop:3,fontFamily:'var(--mono)'}}>&#x6D89;&#x53CA;&#x9762;&#x79EF; {info.ar}</div>
+                  </div>
+                  <span style={{fontSize:'.6rem',fontFamily:'var(--mono)',padding:'3px 9px',borderRadius:4,background:lc.bg,border:`1px solid ${lc.bd}`,color:lc.tx,fontWeight:700,whiteSpace:'nowrap',boxShadow:`0 0 10px ${lc.gw}`}}>{lvLabel[info.lv]}</span>
+                </div>
+                {[['RISK TYPE',info.rk,lc.tx],['AFFECTED CROP',info.cr,'#b8daf0'],['CONFIDENCE',info.cf+'%',neonBlue],['TIME WINDOW',info.wi,'#ffaa44']].map(([lb,val,clr],i)=>(
+                  <div key={i} style={{marginBottom:'.6rem',paddingBottom:'.6rem',borderBottom:i<3?'1px solid rgba(0,200,255,0.10)':'none'}}>
+                    <div style={{fontSize:'.57rem',fontFamily:'var(--mono)',color:'#3a6a7a',marginBottom:3,letterSpacing:'.14em'}}>{lb}</div>
+                    <div style={{fontSize:'.9rem',fontWeight:600,color:clr,textShadow:`0 0 8px ${clr}88`}}>{val}</div>
+                  </div>
+                ))}
+                <div style={{marginTop:'.4rem',padding:'10px 12px',borderRadius:6,background:'rgba(0,200,255,0.05)',border:'1px solid rgba(0,200,255,0.14)'}}>
+                  <div style={{fontSize:'.57rem',fontFamily:'var(--mono)',color:'#3a6a7a',marginBottom:4,letterSpacing:'.14em'}}>RECOMMENDED ACTION</div>
+                  <div style={{fontSize:'.82rem',color:'#a0c8d8',lineHeight:1.65}}>{info.ac}</div>
+                </div>
+              </div>
+            ):(
+              <div style={{borderRadius:12,padding:'1.4rem',background:panelBg,border:panelBd,boxShadow:'0 0 24px rgba(0,200,255,0.08)'}}>
+                <div style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:neonBlue,letterSpacing:'.16em',marginBottom:'1rem'}}>OVERVIEW &middot; &#x5168;&#x56FD;&#x6982;&#x89C8;</div>
+                {[{l:'&#x9AD8;&#x98CE;&#x9669;',n:counts.high||0,c:'#ff6b6b'},{l:'&#x4E2D;&#x98CE;&#x9669;',n:counts.medium||0,c:'#ffaa44'},{l:'&#x4F4E;&#x98CE;&#x9669;',n:counts.low||0,c:'#bbff33'},{l:'&#x5B89;&#x5168;',n:counts.safe||0,c:'#33ffee'}].map((x,i)=>(
+                  <div key={i} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'9px 0',borderBottom:i<3?'1px solid rgba(0,200,255,0.09)':'none'}}>
+                    <div style={{display:'flex',alignItems:'center',gap:8}}>
+                      <div style={{width:8,height:8,borderRadius:2,background:x.c,boxShadow:`0 0 6px ${x.c}88`}}/>
+                      <span style={{fontSize:'.84rem',color:'#9ac8d8',fontFamily:'var(--mono)'}} dangerouslySetInnerHTML={{__html:x.l}}/>
+                    </div>
+                    <div style={{display:'flex',alignItems:'baseline',gap:4}}>
+                      <span style={{fontSize:'1.1rem',fontWeight:600,color:x.c,fontFamily:'var(--mono)',textShadow:`0 0 8px ${x.c}88`}}>{x.n}</span>
+                      <span style={{fontSize:'.68rem',color:'#3a6a7a'}}>&#x4E2A;&#x7701;</span>
+                    </div>
+                  </div>
+                ))}
+                <div style={{marginTop:'1.1rem',padding:'10px',borderRadius:6,background:'rgba(0,200,255,0.05)',border:'1px solid rgba(0,200,255,0.14)',textAlign:'center',color:'#5a9ab0',fontSize:'.78rem',lineHeight:1.65}}>
+                  &#x5C06;&#x9F20;&#x6807;&#x60AC;&#x505C;&#x5230;<br/>&#x5730;&#x56FE;&#x4E2D;&#x7684;&#x7701;&#x4EFD;&#x67E5;&#x770B;&#x8BE6;&#x60C5;
+                </div>
+              </div>
+            )}
+            <div style={{borderRadius:10,padding:'1rem',background:panelBg,border:panelBd}}>
+              <div style={{fontSize:'.6rem',fontFamily:'var(--mono)',color:neonBlue,letterSpacing:'.16em',marginBottom:'.65rem'}}>DATA SOURCE</div>
+              {['&#x6C14;&#x8C61;&#x5B9E;&#x65F6;&#x9884;&#x62A5;&#x878D;&#x5408;','&#x9065;&#x611F;&#x5F02;&#x5E38;&#x68C0;&#x6D4B;&#x5206;&#x6790;','&#x591A; Agent &#x5F15;&#x64CE;&#x6A21;&#x62DF;&#x878D;&#x5408;','&#x5386;&#x53F2;&#x519C;&#x6237;&#x5C5E;&#x5730;&#x753B;&#x50CF;'].map((s,i)=>(
+                <div key={i} style={{display:'flex',alignItems:'center',gap:6,padding:'3px 0'}}>
+                  <svg width="7" height="7"><circle cx="3.5" cy="3.5" r="3" fill="#00c8ff" opacity=".7"/></svg>
+                  <span style={{fontSize:'.72rem',color:'#5a9ab0'}} dangerouslySetInnerHTML={{__html:s}}/>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>}
+        {tab==='sim'&&(
+          <div>
+            <div style={{display:'flex',gap:6,marginBottom:'1.2rem',flexWrap:'wrap',alignItems:'center',padding:'10px 14px',borderRadius:10,background:'rgba(4,18,38,0.85)',border:'1px solid rgba(0,200,255,0.18)'}}>
+              <span style={{fontSize:'.6rem',fontFamily:'var(--mono)',color:'#5090a8',letterSpacing:'.12em',marginRight:6}}>拖拽天气事件到地图：</span>
+              {Object.entries(WT).map(([k,w])=>(
+                <div key={k} draggable onDragStart={()=>setDraggingType(k)}
+                  style={{display:'flex',alignItems:'center',gap:5,padding:'5px 10px',borderRadius:6,background:`${w.c}14`,border:`1.5px solid ${w.c}55`,cursor:'grab',userSelect:'none',boxShadow:`0 0 8px ${w.g}`}}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={w.c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d={w.p}/></svg>
+                  <span style={{fontSize:'.72rem',fontFamily:'var(--mono)',color:w.c,whiteSpace:'nowrap'}}>{w.t}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{borderRadius:16,overflow:'hidden',border:'1px solid rgba(0,200,255,0.25)',boxShadow:'0 0 48px rgba(0,200,255,0.10)',background:mapBg}}>
+              <div style={{padding:'9px 14px',borderBottom:'1px solid rgba(0,200,255,0.18)',display:'flex',alignItems:'center',justifyContent:'space-between',background:'rgba(0,20,50,0.75)'}}>
+                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                  <span style={{width:7,height:7,borderRadius:'50%',background:'#ffaa44',display:'inline-block',boxShadow:'0 0 6px #ffaa44'}}/>
+                  <span style={{fontSize:'.64rem',fontFamily:'var(--mono)',color:'#7ab8d0',letterSpacing:'.1em'}}>SIMULATION MODE &middot; 将天气事件拖拽到地图，然后点击运行推演</span>
+                </div>
+                <span style={{fontSize:'.64rem',fontFamily:'var(--mono)',color:'#ffaa44',letterSpacing:'.12em'}}>已放置 {simMarkers.length} 个事件</span>
+              </div>
+              <div style={{position:'relative'}}
+                onDragOver={e=>e.preventDefault()}
+                onDrop={e=>{e.preventDefault();const rect=e.currentTarget.getBoundingClientRect();const x=parseFloat(((e.clientX-rect.left)/rect.width*100).toFixed(1));const y=parseFloat(((e.clientY-rect.top)/rect.height*100).toFixed(1));if(draggingType)setSimMarkers(prev=>[...prev,{x,y,k:draggingType,id:Date.now()}]);}}>
+                <div ref={simMapRef} style={{width:'100%',height:460}}/>
+                <div style={{position:'absolute',inset:0,pointerEvents:'none',backgroundImage:'repeating-linear-gradient(0deg,transparent 0,transparent 24px,rgba(0,200,255,0.02) 24px,rgba(0,200,255,0.02) 25px),repeating-linear-gradient(90deg,transparent 0,transparent 24px,rgba(0,200,255,0.015) 24px,rgba(0,200,255,0.015) 25px)'}}/>
+                {simMarkers.length===0&&(
+                  <div style={{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'none'}}>
+                    <div style={{textAlign:'center',color:'rgba(0,200,255,0.22)',fontFamily:'var(--mono)',fontSize:'.85rem',lineHeight:2}}>
+                      <div style={{fontSize:'2.4rem'}}>☁</div>将上方天气图标拖拽到此处
+                    </div>
+                  </div>
+                )}
+                <div style={{position:'absolute',inset:0,pointerEvents:'none'}}>
+                  {simMarkers.map((m)=>{const w=WT[m.k];return(
+                    <div key={m.id} style={{position:'absolute',left:`${m.x}%`,top:`${m.y}%`,display:'flex',flexDirection:'column',alignItems:'center',gap:2,transform:'translate(-50%,-50%)'}}>
+                      <div style={{width:24,height:24,borderRadius:'50%',background:`${w.c}1a`,border:`1.5px solid ${w.c}`,display:'flex',alignItems:'center',justifyContent:'center',boxShadow:`0 0 12px ${w.g}`}}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={w.c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d={w.p}/></svg>
+                      </div>
+                      <span style={{fontSize:8,fontFamily:'var(--mono)',color:w.c,whiteSpace:'nowrap',textShadow:'0 1px 5px rgba(0,0,0,0.95)',lineHeight:1}}>{w.t}</span>
+                    </div>
+                  );})}
+                </div>
+              </div>
+              <div style={{padding:'10px 16px',borderTop:'1px solid rgba(0,200,255,0.18)',display:'flex',alignItems:'center',justifyContent:'space-between',background:'rgba(0,20,50,0.65)'}}>
+                <span style={{fontSize:'.7rem',fontFamily:'var(--mono)',color:'#5090a8'}}>已放置 {simMarkers.length} 个气象事件</span>
+                <div style={{display:'flex',gap:8}}>
+                  <button onClick={()=>{setSimMarkers([]);setPipeStep(-1);setPipeRunning(false);}}
+                    style={{padding:'5px 14px',borderRadius:5,fontSize:'.72rem',fontFamily:'var(--mono)',background:'rgba(255,50,50,0.1)',border:'1px solid rgba(255,50,50,0.3)',color:'#ff8888',cursor:'pointer'}}>
+                    清除
+                  </button>
+                  <button onClick={runPipeline} disabled={simMarkers.length===0||pipeRunning}
+                    style={{padding:'5px 18px',borderRadius:5,fontSize:'.72rem',fontFamily:'var(--mono)',
+                      background:simMarkers.length>0&&!pipeRunning?'rgba(0,229,204,0.15)':'rgba(0,200,255,0.05)',
+                      border:`1px solid ${simMarkers.length>0&&!pipeRunning?'#00e5cc':'rgba(0,200,255,0.2)'}`,
+                      color:simMarkers.length>0&&!pipeRunning?'#00e5cc':'#3a7a8a',
+                      cursor:simMarkers.length>0&&!pipeRunning?'pointer':'not-allowed',
+                      boxShadow:simMarkers.length>0&&!pipeRunning?'0 0 12px rgba(0,229,204,0.25)':'none'}}>
+                    {pipeRunning?'推演中 ...':'▶ 运行推演'}
+                  </button>
+                </div>
+              </div>
+            </div>
+            {pipeStep>=0&&(
+              <div style={{marginTop:'1.5rem',display:'flex',flexDirection:'column',gap:8}}>
+                <div style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'#00e5cc',letterSpacing:'.18em',marginBottom:4}}>PIPELINE EXECUTION &middot; 推演流水线</div>
+                {PIPE.map((step,i)=>i<=pipeStep&&(
+                  <div key={i} style={{borderRadius:10,padding:'14px 18px',background:'rgba(4,18,38,0.95)',border:`1px solid ${step.c}33`,boxShadow:`0 0 16px ${step.c}18`,display:'flex',gap:16,alignItems:'flex-start',animation:'fade-in-up .4s ease-out both'}}>
+                    <div style={{flexShrink:0,width:36,height:36,borderRadius:8,background:`${step.c}14`,border:`1.5px solid ${step.c}55`,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--mono)',fontSize:'.65rem',fontWeight:700,color:step.c}}>{step.n}</div>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{fontSize:'.72rem',fontFamily:'var(--mono)',color:step.c,fontWeight:700,marginBottom:6,letterSpacing:'.08em'}}>{step.label}</div>
+                      <pre style={{fontSize:'.7rem',fontFamily:'var(--mono)',color:'#7ab8d0',lineHeight:1.75,margin:0,whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{pipeOutputs[i]||'推演中...'}</pre>
+                    </div>
+                    {i===pipeStep&&pipeRunning
+                      ?<div style={{flexShrink:0,width:8,height:8,borderRadius:'50%',background:step.c,animation:'blink-dot 0.8s ease-in-out infinite',alignSelf:'center'}}/>
+                      :<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={step.c} strokeWidth="2.5" style={{flexShrink:0,alignSelf:'center'}}><polyline points="20 6 9 17 4 12"/></svg>
+                    }
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function App() {
+  useEffect(()=>{
+    const prog=document.getElementById('scroll-prog');
+    if(!prog)return;
+    const h=()=>{const max=document.documentElement.scrollHeight-window.innerHeight;prog.style.transform=`scaleX(${max>0?window.scrollY/max:0})`;}
+    window.addEventListener('scroll',h,{passive:true});
+    return()=>window.removeEventListener('scroll',h);
+  },[]);
+  return (
+    <div>
+      <NavBar/>
+      <Hero/>
+      <ChinaRiskMapSection/>
+      <PainPoints/>
+      <RiskMapSection/>
+      <SystemCapabilities/>
+      <MultiAgents/>
+      <PipelineSection/>
+      <ScenarioDemo/>
+      <DataFlywheel/>
+      <Footer/>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

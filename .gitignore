@@ -1,0 +1,30 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors / IDE
+.vscode/
+.idea/
+.windsurf/
+*.swp
+*~
+
+# Temp / diagnostics
+_diag.txt
+*.log
+
+# Node (if you ever add tooling)
+node_modules/
+dist/
+build/
+.cache/
+
+# Python (the local http.server isn't tracked)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Local-only assets you don't want pushed (uncomment if needed)
+# assets/audio/
