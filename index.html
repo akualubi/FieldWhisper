@@ -1652,12 +1652,12 @@ function ChinaRiskMapSection(){
     const SYS='你是穗安AI农业风险预警多智能体系统的专业Agent。只输出要求内容，使用规范简体中文，不造词、不产生错别字。写入操作统一用"写回"，不使用"挝回"等错误表述。';
     const hasData=btEvents.length>0;
     const scopeDesc=`${btProvince?btProvince:'全国'}${btYear?'·'+btYear:''}`;
-    const evCtx=hasData
+    // 真实事件仅用于 Step5 评分，Step0-4 不可见（前向盲预测）
+    const groundTruth=hasData
       ?btEvents.map(e=>`【${e.event_name}｜${e.year_month}｜${e.province}${e.city_or_area?'·'+e.city_or_area:''}｜${e.weather_type}】${e.news_summary}${e.impact_notes?'（'+e.impact_notes+'）':''}`).join('\n')
-      :`【检索范围：${scopeDesc}】本地数据库无匹配记录，请基于你的训练知识库，自行回忆并推理该地区该时期最可能发生的农业气象灾害历史事件（如有印象请给出真实事件，否则结合气候特点合理推演），以此为基础完成本次回测分析。`;
-    const evShort=hasData
-      ?btEvents.map(e=>`${e.weather_type}【${e.province}·${e.year_month}】`).join('、')
-      :scopeDesc;
+      :null;
+    // Step0-4 只看到：省份 + 年份 + 气候背景提示（无具体事件）
+    const condCtx=`回测条件：省份=${btProvince||'不限'}，时间=${btYear||'不限'}年。注意：你不知道该时期实际发生了什么，请完全基于该地区气候规律与季节特征进行前向风险预测。`;
     const streamBt=async(setter,idx,prompt,maxTok=550)=>{
       const resp=await fetch('https://api.deepseek.com/chat/completions',{
         method:'POST',
@@ -1680,40 +1680,35 @@ function ChinaRiskMapSection(){
       }
       return acc;
     };
-    const freeLabel=hasData?'基于真实历史数据':'基于知识库自由推理';
     const BT_ANALYSTS=[
-      {name:'气象 Analyst',focus:`${freeLabel}，量化气象参数（温度/降水/风速/持续时间），还原当时气象强度`},
-      {name:'作物 Analyst',focus:`${freeLabel}，分析当时主要受害作物品种与生育期脆弱性，评估实际/预估产量损失`},
-      {name:'地块 Analyst',focus:`${freeLabel}，估算受灾耕地面积（万亩），分析土壤与排水状况`},
-      {name:'病虫害 Analyst',focus:`${freeLabel}，评估该灾害事件引发的次生病虫害风险类型与爆发情况`},
-      {name:'舆情 Analyst',focus:`${freeLabel}，还原农户情绪、线上咨询量与媒体舆情信号`},
+      {name:'气象 Analyst',focus:'从气候背景与季节规律出发，预测该省份该时期最可能出现的极端气象参数（温度/降水/风速），给出概率区间'},
+      {name:'作物 Analyst',focus:'分析该省份该时期主要作物品种与生育期，预测在极端气象下最脆弱的作物及潜在产量损失'},
+      {name:'地块 Analyst',focus:'结合该省份地形与土壤特征，预测在高风险气象下最易受灾的耕地区域与面积（万亩）'},
+      {name:'病虫害 Analyst',focus:'预测在该省份该季节极端气象后最可能引发的次生病虫害类型与爆发时间窗口'},
+      {name:'舆情 Analyst',focus:'预测在潜在重大气象灾害下该省份农户情绪与线上舆情的演化路径'},
     ];
     for(let i=0;i<PIPE.length;i++){
       setBtPipeStep(i);
       if(i===0){
         try{await streamBt(setBtOutputs,0,
-          hasData
-            ?`你是穗安AI数据采集Agent，正在进行历史回测。以下是真实历史气象灾害事件记录（来源：中国气象局等权威机构）：\n${evCtx}\n\n请按采集Agent格式输出以下五个维度（每项1-2句）：\n① 事件概况：各事件核心要素（时间/地点/类型/强度）\n② 数据来源：信息来源机构与可信度评估\n③ 覆盖范围：受影响地区与面积估算\n④ 数据质量：信息完整性与置信度评分\n⑤ 下游传递：哪些字段将被各 Analyst 优先使用`
-            :`你是穗安AI数据采集Agent，正在对【${scopeDesc}】进行历史回测。本地数据库无该地区该时期的精确记录，请基于你的知识库自由检索：该省份该时期最可能或已知发生过的主要农业气象灾害类型是什么？请输出以下五个维度（每项1-2句）：\n① 推断的历史事件：最可能的灾害类型/时间/地点/强度（注明是推断还是已知）\n② 信息来源评估：该判断的知识可信度与来源类型\n③ 覆盖范围：估算受影响地区与农业种植区分布\n④ 数据质量说明：本次为自由推理模式，置信度相对较低，请说明不确定性\n⑤ 下游传递：将向各 Analyst 传递哪些推断字段`,550);}
+          `你是穗安AI数据采集Agent，正在执行前向历史回测。\n${condCtx}\n\n请基于该地区气候档案与历史同期信号，输出以下五个采集维度（每项1-2句，不要假设已知灾害结果）：\n① 气候背景：该省该时期典型气候特征与历史同期异常信号\n② 数据渠道：气象预报/卫星遥感/土壤墒情等数据获取渠道与质量\n③ 风险区域：农业种植密集区分布与历史高脆弱地带\n④ 前兆信号：哪些早期气象指标（气压/风向/降水距平等）此时值得关注\n⑤ 下游传递：将向各 Analyst 传递哪些预警字段`,550);}
         catch(err){setBtOutputs(prev=>{const n=[...prev];n[0]='[错误] '+err.message;return n;});}
       }else if(i===1){
         try{await Promise.all(BT_ANALYSTS.map((a,j)=>streamBt(setBtAnalystOutputs,j,
-          `你是${a.name}，正在对【${scopeDesc}】进行历史回测分析。\n背景信息：${evCtx}\n\n${a.focus}，结合当地农业实际给出量化结论，80字以内。`,180)));}
+          `你是${a.name}，正在对【${scopeDesc}】执行前向历史回测。\n${condCtx}\n\n${a.focus}，结合当地农业实际给出量化预测结论，80字以内。`,180)));}
         catch(err){setBtAnalystOutputs(prev=>prev.map((v)=>v||'[错误] '+err.message));}
       }else{
         const prompts={
-          2:hasData
-            ?`你是穗安AI推演Agent，对以下真实历史灾害事件进行回测推演：\n${evCtx}\n\n请输出：①不干预路径（灾害演化概率）②及时干预路径（损失降低幅度）③最优干预窗口（实际时间节点）④置信度说明（与真实结果对比）`
-            :`你是穗安AI推演Agent，对【${scopeDesc}】进行自由推理回测。背景：${evCtx}\n\n请基于你对该地区气候与农业的认知，输出：①该时期最可能的灾害演化路径（不干预）②合理干预后损失降低幅度估算③建议干预窗口时间节点④此次为自由推理——置信度说明与不确定范围`,
-          3:hasData
-            ?`你是穗安AI决策Agent，基于以下真实历史灾害事件：\n${evCtx}\n\n只输出如下回测决策JSON：{"risk_level":"high/medium/low","affected_provinces":[],"affected_crops":[],"estimated_area_wan_mu":数字,"confidence":数字,"actions":[],"window":"干预窗口","economic_risk_yi_yuan":数字,"backtest_note":"与真实结果对比说明"}`
-            :`你是穗安AI决策Agent，对【${scopeDesc}】进行自由推理决策。背景：${evCtx}\n\n只输出如下回测决策JSON（confidence字段反映推理可信度，backtest_note注明为自由推理）：{"risk_level":"high/medium/low","affected_provinces":[],"affected_crops":[],"estimated_area_wan_mu":数字,"confidence":数字,"actions":[],"window":"干预窗口","economic_risk_yi_yuan":数字,"backtest_note":"自由推理·不确定性说明"}`,
-          4:`你是穗安AI推送Agent，对【${scopeDesc}】历史回测（${hasData?'真实事件':'自由推理'}）输出推送效果评估：①保险API推送摘要②合作社短信内容③政府简报标题④粮企月报要点${hasData?'⑤实际触达效果评估':'⑤推理可信度与建议验证方式'}`,
-          5:`你是穗安AI Harness进化Agent，本次${hasData?'真实数据':'自由推理'}回测针对【${scopeDesc}】，处理了${btEvents.length||'推断的'}历史事件（${evShort}）。输出：①归档：本次回测经验写回向量库②Evaluator：${hasData?'与真实历史结果对比评分':'推理质量自评与置信度评估'}③Evolver：哪些规则需要依据本次结果调整④精度提升：下一轮针对同类事件/区域的预测精度改进预期`,
+          2:`你是穗安AI推演Agent，对【${scopeDesc}】进行前向回测推演（不知道真实结果）。\n${condCtx}\n\n基于各 Analyst 预测输出，推演最可能的灾害演化路径：\n① 高概率事件路径：最可能发生的灾害类型与演化时序\n② 不干预后果：损失规模与扩散路径预测\n③ 最优干预窗口：建议响应时间节点\n④ 预测置信度：本次前向推测的不确定性说明`,
+          3:`你是穗安AI决策Agent，对【${scopeDesc}】进行前向回测决策（不知道真实结果）。\n${condCtx}\n\n基于推演结果，只输出预测决策JSON：{"risk_level":"high/medium/low","affected_provinces":[],"affected_crops":[],"estimated_area_wan_mu":数字,"confidence":数字,"actions":[],"window":"建议干预窗口","economic_risk_yi_yuan":数字,"prediction_note":"本次为前向盲预测"}`,
+          4:`你是穗安AI推送Agent，对【${scopeDesc}】前向回测预测结果，模拟提前发布预警：\n① 保险API预警推送（提前触发）\n② 合作社短信预警内容\n③ 政府应急简报标题\n④ 粮企风控月报要点\n⑤ 预计触达农户数与响应率`,
+          5:hasData
+            ?`你是穗安AI Harness进化Agent。本次前向回测针对【${scopeDesc}】，各Agent已完成盲预测。现在揭晓真实历史结果：\n${groundTruth}\n\n请对比预测与真实结果，输出：\n① 命中评分：预测的灾害类型/地区/强度与真实事件的吻合度（百分制）\n② 误差分析：哪些维度预测偏差最大，根本原因是什么\n③ 归档：本次回测经验（预测路径+真实结果）写回向量知识库\n④ Evolver：依据真实结果，哪些预测规则需要优化调整\n⑤ 精度展望：下一轮同类场景预测精度预计提升空间`
+            :`你是穗安AI Harness进化Agent。本次前向回测针对【${scopeDesc}】，无本地历史校验数据，基于知识库评估预测质量。输出：\n① 自评评分：各Agent预测的内部一致性与逻辑严密性（百分制）\n② 不确定性说明：本次预测的主要不确定因素\n③ 归档：本次推理路径写回向量库\n④ Evolver：哪些推理规则可优化\n⑤ 精度展望：增补该地区历史数据后预测精度预计提升空间`,
         };
         try{
           const out=await streamBt(setBtOutputs,i,prompts[i]||'',550);
-          if(i===3&&isHighRisk(out)){sendWarningEmail('【穗安】历史回测高风险预警',`穗安AI历史回测（${scopeDesc}）检测到高风险事件。\n\n决策摘要：\n${out.slice(0,400)}`);}
+          if(i===3&&isHighRisk(out)){sendWarningEmail('【穗安】历史回测高风险预警',`穗安AI历史回测（${scopeDesc}）预测到高风险事件。\n\n决策摘要：\n${out.slice(0,400)}`);}
         }catch(err){setBtOutputs(prev=>{const n=[...prev];n[i]='[错误] '+err.message;return n;});}
       }
     }
