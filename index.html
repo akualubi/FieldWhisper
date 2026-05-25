@@ -854,41 +854,83 @@ function SystemCapabilities() {
 /* ─── MULTI-AGENTS ────────────────────────────────────────── */
 function MultiAgents() {
   const agents = [
-    {en:'Weather Hazard Agent',zh:'&#x6C14;&#x8C61;&#x707E;&#x5BB3; Agent',desc:'&#x8BC6;&#x522B;&#x5927;&#x98CE;&#x3001;&#x66B4;&#x96E8;&#x3001;&#x51B0;&#x96F9;&#x3001;&#x9AD8;&#x6E29;&#x3001;&#x5E72;&#x65F1;&#x7B49;&#x6781;&#x7AEF;&#x6C14;&#x8C61;&#x98CE;&#x9669;&#xFF0C;&#x7ED3;&#x5408;&#x6C14;&#x8C61;&#x6A21;&#x5F0F;&#x4E0E;&#x5730;&#x5F62;&#x5BF9;&#x5C40;&#x90E8;&#x5C0F;&#x6C14;&#x5019;&#x5F71;&#x54CD;&#x8FDB;&#x884C;&#x4FEE;&#x6B63;&#x3002;',icon:ICONS.weather,c:'#2a6e96',tag:'METEOROLOGY'},
-    {en:'Crop Vulnerability Agent',zh:'&#x4F5C;&#x7269;&#x811A;&#x5F31;&#x6027; Agent',desc:'&#x7ED3;&#x5408;&#x751F;&#x80B2;&#x671F;&#x3001;&#x54C1;&#x79CD;&#x3001;&#x957F;&#x52BF;&#x5224;&#x65AD;&#x4F5C;&#x7269;&#x627F;&#x707E;&#x80FD;&#x529B;&#xFF0C;&#x8BC4;&#x4F30;&#x4E0D;&#x540C;&#x751F;&#x80B2;&#x9636;&#x6BB5;&#x7684;&#x98CE;&#x9669;&#x654F;&#x611F;&#x6027;&#x7CFB;&#x6570;&#x3002;',icon:ICONS.crop,c:'#5e8466',tag:'AGRONOMY'},
-    {en:'Pest & Disease Agent',zh:'&#x75C5;&#x866B;&#x5BB3;&#x6269;&#x6563; Agent',desc:'&#x6A21;&#x62DF;&#x9AD8;&#x6E7F;&#x3001;&#x53F0;&#x98CE;&#x3001;&#x75C5;&#x6E90;&#x4F20;&#x64AD;&#x540E;&#x7684;&#x75C5;&#x866B;&#x5BB3;&#x6269;&#x6563;&#x8DEF;&#x5F84;&#x548C;&#x5230;&#x8FBE;&#x65F6;&#x95F4;&#xFF0C;&#x8F93;&#x51FA;&#x9632;&#x6CBB;&#x65F6;&#x95F4;&#x7A97;&#x53E3;&#x5EFA;&#x8BAE;&#x3002;',icon:ICONS.bug,c:'#b88f4e',tag:'PHYTOPATHOLOGY'},
-    {en:'Farmer Behavior Agent',zh:'&#x519C;&#x6237;&#x884C;&#x4E3A; Agent',desc:'&#x5224;&#x65AD;&#x519C;&#x6237;&#x80FD;&#x5426;&#x6536;&#x5230;&#x3001;&#x770B;&#x61C2;&#x5E76;&#x6267;&#x884C;&#x5EFA;&#x8BAE;&#xFF0C;&#x7ED3;&#x5408;&#x5386;&#x53F2;&#x54CD;&#x5E94;&#x6A21;&#x5F0F;&#x548C;&#x5F53;&#x524D;&#x8D44;&#x6E90;&#x72B6;&#x6001;&#x8F93;&#x51FA;&#x53EF;&#x6267;&#x884C;&#x5EA6;&#x5F97;&#x5206;&#x3002;',icon:ICONS.farmer,c:'#b8302a',tag:'BEHAVIORAL MODEL'},
-    {en:'Resource Dispatch Agent',zh:'&#x8D44;&#x6E90;&#x8C03;&#x5EA6; Agent',desc:'&#x5339;&#x914D;&#x9644;&#x8FD1;&#x98DE;&#x9632;&#x961F;&#x3001;&#x519C;&#x8D44;&#x3001;&#x519C;&#x673A;&#x548C;&#x6700;&#x4F73;&#x4F5C;&#x4E1A;&#x7A97;&#x53E3;&#xFF0C;&#x8BF4;&#x660E;&#x5230;&#x8FBE;&#x65F6;&#x95F4;&#x3001;&#x8D39;&#x7528;&#x4F30;&#x7B97;&#x548C;&#x8054;&#x7CFB;&#x65B9;&#x5F0F;&#x3002;',icon:ICONS.resource,c:'#86a78a',tag:'LOGISTICS'},
-    {en:'Economic Loss Agent',zh:'&#x7ECF;&#x6D4E;&#x635F;&#x5931; Agent',desc:'&#x4F30;&#x7B97;&#x4E0D;&#x884C;&#x52A8;&#x635F;&#x5931;&#x4E0E;&#x91C7;&#x53D6;&#x884C;&#x52A8;&#x540E;&#x53EF;&#x631D;&#x56DE;&#x6536;&#x76CA;&#xFF0C;&#x4E3A;&#x519C;&#x6237;&#x548C;&#x4FDD;&#x9669;&#x516C;&#x53F8;&#x63D0;&#x4F9B;&#x6C7D;&#x6E05;&#x7684;&#x51B3;&#x7B56;&#x4F9D;&#x636E;&#x3002;',icon:ICONS.loss,c:'#b88f4e',tag:'ECONOMICS'},
+    {
+      n:'01',en:'Collector Agent',zh:'采集 Agent',tag:'DATA LAYER · 只搬不判',c:'#00b8a0',
+      inout:'输入：气象API / 遥感 / 通报 / 舆情 / 影像 · 输出：DataItem[]',
+      constraint:'⚠ 绝对不下判断。"明天38℃"原样入库——高温是否预警是 Analyst 的事。',
+      desc:'多个 Source Adapter 并行拉取，清洗标准化写入 DataPool。支持 🎤 Manual Injection 通道：演讲者一键注入预设场景，全系统当场亮起，与真实采集走完全相同的下游 pipeline。',
+      icon:'M4 7h16M4 12h16M4 17h7',
+    },
+    {
+      n:'02',en:'Analyst Agents ×5',zh:'分析 Agent（并行）',tag:'ANALYSIS LAYER · 领域专家',c:'#4488ff',
+      inout:'输入：DataPool 按领域过滤的 DataItem · 输出：RiskJudgment { level, type, evidence, confidence }',
+      constraint:'✓ 五个 Analyst 互不依赖，并发执行。气象 Analyst 看完气象就出判断，不等作物 Analyst。',
+      desc:'气象 / 作物 / 地块 / 病虫害 / 舆情——每个 Analyst 只看一个领域，输出带置信度和可追溯证据的领域结论 RiskJudgment。跨领域综合只在 Simulator 和 Decision 发生。',
+      icon:'M9 19v-6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2zm0 0V9a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v10m-6 0a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2m0 0V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z',
+    },
+    {
+      n:'03',en:'Simulator Agent',zh:'推演 Agent',tag:'SIMULATION LAYER · 时序推演',c:'#ffaa44',
+      inout:'输入：全部 RiskJudgment[] · 输出：Trajectory { baseline, mitigated, key_drivers }',
+      constraint:'✓ 综合所有领域结论，推演 24 / 48 / 72h 灾害演化轨迹，给出干预前后的概率对比。',
+      desc:'不干预路径 vs 采纳建议路径——两条演化曲线清晰呈现干预价值。key_drivers 指出本轮推演中最关键的 RiskJudgment，为 Harness 归因提供锚点。',
+      icon:'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0M3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18',
+    },
+    {
+      n:'04',en:'Decision Agent',zh:'决策 Agent',tag:'DECISION LAYER · 整合决策',c:'#e08030',
+      inout:'输入：RiskJudgment[] + Trajectory · 输出：结构化预警 JSON',
+      constraint:'✓ 把判断转成"农户能执行的话"——含 plot_id / crop / stage / actions / best_window / confidence / evidence。',
+      desc:'整合所有领域结论与推演轨迹，输出一份地块级、可追溯、可执行的结构化预警。Decision 是唯一有权输出面向 B 端的预警结论的 Agent。',
+      icon:'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01',
+    },
+    {
+      n:'05',en:'Delivery Agent',zh:'推送 Agent',tag:'DELIVERY LAYER · 模板化',c:'#3ab8ff',
+      inout:'输入：Warning JSON + B 端客户 Profile · 输出：API payload / SMS / PDF / 大屏图表',
+      constraint:'❌ 不推理，只适配。Delivery 不修改预警内容，只把 JSON 转换为客户所需格式。',
+      desc:'保险公司 API / 合作社控制台+短信 / 政府 PDF 简报 / 粮企月报 / 农资建议 / 应急广播——按 B 端客户类型模板化输出，同一份预警一次生成多种形态。',
+      icon:'M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z',
+    },
+    {
+      n:'06',en:'Harness Agent',zh:'进化 Agent',tag:'EVOLUTION LAYER · 元推理',c:'#88aaff',
+      inout:'输入：Warning + B端真实反馈 · 输出：Evaluation + RootCause + AssetPatch[]',
+      constraint:'✓ Evolver 写回 experience.md / rules.yaml / weights.json / prompt.md，下一轮 Agent 加载立刻生效。',
+      desc:'Evaluator 打分 → Root Cause 归因到具体 Agent + 具体资产 → Evolver 写回资产文件。这是穗安真正的壁垒：每次预警后回收真实反馈，把失败案例写进每个 Agent 的经验文档，下一轮更准。',
+      icon:'M4 4v5h.582m15.356 2A8.001 8.001 0 0 0 4.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 0 1-15.357-2m15.357 2H15',
+    },
   ];
   return (
     <section id="agents" className="py-24 field-grid">
       <div className="max-w-7xl mx-auto px-6">
-        <div style={{textAlign:'center',marginBottom:'4rem'}}>
-          <span className="section-label">AGENT ARCHITECTURE</span>
+        <div style={{textAlign:'center',marginBottom:'3.5rem'}}>
+          <span className="section-label">AGENT ARCHITECTURE · 智能体架构</span>
           <h2 style={{fontSize:'clamp(1.8rem,3.5vw,2.6rem)',fontWeight:700,marginTop:'1rem',color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}}>
-            &#x6BCF;&#x4E00;&#x4E2A; Agent&#xFF0C;&#x6A21;&#x62DF;&#x98CE;&#x9669;&#x94FE;&#x6761;&#x4E2D;&#x7684;<span className="text-g">&#x4E00;&#x4E2A;&#x5173;&#x952E;&#x73AF;&#x8282;</span>&#x3002;
+            按职能切分，每个 Agent 只做<span className="text-g">一件事</span>。
           </h2>
-          <svg style={{display:'block',margin:'16px auto 0',width:88,height:14}} viewBox="0 0 88 14" aria-hidden="true">
+          <svg style={{display:'block',margin:'16px auto 8px',width:88,height:14}} viewBox="0 0 88 14" aria-hidden="true">
             <path d="M3 7 Q 25 2 44 8 Q 63 14 85 5" fill="none" stroke="var(--seal)" strokeWidth="2" strokeLinecap="round"/>
           </svg>
+          <p style={{color:'var(--ink-mid)',fontSize:'.88rem',maxWidth:560,margin:'0 auto'}}>Collector 只搬运·Analyst 只推理·Decision 只整合·Harness 只进化——职能清晰，可独立进化，互不干扰。</p>
         </div>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))',gap:'1.25rem'}}>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(320px,1fr))',gap:'1.25rem'}}>
           {agents.map((a,i)=>(
-            <div key={i} className="card-hover" style={{borderRadius:12,padding:'1.75rem',cursor:'default',background:'rgba(250,246,236,0.82)',border:'1px solid rgba(20,17,15,0.10)',boxShadow:'0 2px 12px rgba(20,17,15,0.05)'}}>
-              <div style={{display:'flex',alignItems:'flex-start',gap:14,marginBottom:'1rem'}}>
-                <div style={{width:46,height:46,borderRadius:10,background:'rgba(20,17,15,0.05)',border:`1px solid ${a.c}44`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={a.c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                    <path d={a.icon}/>
-                  </svg>
+            <div key={i} className="card-hover" style={{borderRadius:12,padding:'1.6rem',cursor:'default',background:'rgba(250,246,236,0.82)',border:'1px solid rgba(20,17,15,0.10)',boxShadow:'0 2px 12px rgba(20,17,15,0.05)',display:'flex',flexDirection:'column',gap:'0.9rem'}}>
+              <div style={{display:'flex',alignItems:'flex-start',gap:13}}>
+                <div style={{width:44,height:44,borderRadius:10,background:`${a.c}12`,border:`1px solid ${a.c}44`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={a.c} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d={a.icon}/></svg>
                 </div>
-                <div>
-                  <div style={{fontSize:'.62rem',fontFamily:'var(--sans)',color:'var(--ink-mid)',letterSpacing:'.1em',marginBottom:3,textTransform:'uppercase'}}>{a.tag}</div>
-                  <div style={{fontSize:'.82rem',fontWeight:600,color:a.c,fontFamily:'var(--mono)'}}>{a.en}</div>
-                  <div style={{fontSize:'.88rem',fontWeight:600,marginTop:2,color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}} dangerouslySetInnerHTML={{__html:a.zh}}/>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:2}}>
+                    <span style={{fontSize:'.6rem',fontFamily:'var(--mono)',color:a.c,fontWeight:700,background:`${a.c}14`,padding:'1px 7px',borderRadius:3}}>{a.n}</span>
+                    <span style={{fontSize:'.58rem',fontFamily:'var(--sans)',color:'var(--ink-mid)',letterSpacing:'.08em',textTransform:'uppercase'}}>{a.tag}</span>
+                  </div>
+                  <div style={{fontSize:'.82rem',fontWeight:700,color:a.c,fontFamily:'var(--mono)'}}>{a.en}</div>
+                  <div style={{fontSize:'.88rem',fontWeight:600,color:'var(--ink-dark)',fontFamily:'var(--serif-cjk)'}}>{a.zh}</div>
                 </div>
               </div>
-              <p style={{color:'var(--ink-mid)',fontSize:'.85rem',lineHeight:1.75}} dangerouslySetInnerHTML={{__html:a.desc}}/>
+              <p style={{color:'var(--ink-mid)',fontSize:'.83rem',lineHeight:1.75,margin:0}}>{a.desc}</p>
+              <div style={{borderTop:'1px solid rgba(20,17,15,0.07)',paddingTop:'0.7rem',display:'flex',flexDirection:'column',gap:4}}>
+                <div style={{fontSize:'.72rem',color:'var(--ink-mid)',lineHeight:1.6,fontFamily:'var(--mono)'}}>{a.inout}</div>
+                <div style={{fontSize:'.72rem',color:a.c,lineHeight:1.6,fontFamily:'var(--mono)',opacity:0.85}}>{a.constraint}</div>
+              </div>
             </div>
           ))}
         </div>
@@ -1291,29 +1333,54 @@ function approxRegion(x,y){
   if(x<78){if(y<28)return '黑龙江/内蒙古东部';if(y<55)return '辽宁/山东/江苏/上海';return '浙江/福建/粤东';}
   return y<40?'黑龙江/吉林':y<65?'江苏/上海/浙江':'福建/广东';
 }
+function markerCtx(m){
+  const prov=m.province;
+  const r=prov?CHINA_RISK[prov]:null;
+  if(r) return `${WT[m.k].t}【${prov}·主要作物:${r.cr}·现有风险:${r.rk}·耕地面积:${r.ar}·风险等级:${r.lv}】`;
+  return `${WT[m.k].t}（${approxRegion(m.x,m.y)}）`;
+}
+const DISASTER_EVENTS=[
+  {id:'HD001',year_month:'2023-07',province:'\u798f\u5efa',city_or_area:'\u664b\u6c5f\u53ca\u798f\u5efa\u4e1c\u5357\u90e8',weather_type:'\u53f0\u98ce',event_name:'\u53f0\u98ce\u201c\u675c\u82cf\u8299\u201d\u767b\u9646\u798f\u5efa\u664b\u6c5f',report_date:'2023-07-28',source_org:'\u4e2d\u56fd\u6c14\u8c61\u5c40',news_summary:'2023\u5e747\u670828\u65e5\u53f0\u98ce\u201c\u675c\u82cf\u8299\u201d\u5728\u798f\u5efa\u664b\u6c5f\u6cbf\u6d77\u767b\u9646\uff0c\u767b\u9646\u65f6\u4e2d\u5fc3\u9644\u8fd1\u6700\u5927\u98ce\u529b15\u7ea7\u3001\u4e2d\u5fc3\u6700\u4f4e\u6c14\u538b945\u767e\u5e15\uff0c\u798f\u5efa\u5927\u90e8\u51fa\u73b0\u5927\u66b4\u96e8\uff0c\u5c40\u5730\u7279\u5927\u66b4\u96e8\u3002',impact_notes:'\u9002\u5408\u4f5c\u4e3a\u53f0\u98ce\u6837\u672c\uff0c\u5c02\u5177\u5f3a\u98ce\u548c\u5f3a\u964d\u96e8\u7279\u5f81\u3002'},
+  {id:'HD002',year_month:'2024-02',province:'\u6e56\u5317',city_or_area:'\u6b66\u6c49\u53ca\u6e56\u5317\u4e2d\u897f\u90e8',weather_type:'\u66b4\u96ea',event_name:'\u6e56\u5317\u4f4e\u6e29\u96e8\u96ea\u51b0\u51bb\u4e0e\u66b4\u96ea\u8fc7\u7a0b',report_date:'2024-02-06',source_org:'\u4e2d\u56fd\u6c14\u8c61\u5c40',news_summary:'2024\u5e742\u67081\u65e5\u81f36\u65e5\u6e56\u5317\u51fa\u73b0\u6301\u7eed\u6027\u4f4e\u6e29\u96e8\u96ea\u51b0\u51bb\u5929\u6c14\uff0c\u4e2d\u897f\u90e8\u79ef\u96ea\u8f83\u6df1\uff0c\u6b66\u6c49\u5e02\u6c14\u8c61\u53f0\u4e8e2\u67084\u65e5\u53d1\u5e03\u66b4\u96ea\u9ec4\u8272\u9884\u8b66\u3002',impact_notes:'\u53ef\u4f5c\u4e3a\u66b4\u96ea\u548c\u6625\u8fd0\u5f71\u54cd\u573a\u666f\u6837\u672c\u3002'},
+  {id:'HD003',year_month:'2021-07',province:'\u6cb3\u5357',city_or_area:'\u90d1\u5dde\u53ca\u5168\u7701\u4e2d\u5317\u90e8',weather_type:'\u66b4\u96e8',event_name:'\u6cb3\u5357\u6781\u7aef\u66b4\u96e8\u8fc7\u7a0b',report_date:'2021-07-21',source_org:'\u4e2d\u56fd\u6c14\u8c61\u5c40',news_summary:'\u6cb3\u5357\u7701\u6c14\u8c61\u90e8\u95e8\u5728\u7015\u5e747\u670815\u65e5\u5373\u63d0\u793a17\u65e5\u81f319\u65e5\u5317\u90e8\u548c\u4e2d\u4e1c\u90e8\u6709\u66b4\u96e8\u5927\u66b4\u96e8\u5c40\u5730\u7279\u5927\u66b4\u96e8\uff0c\u90d1\u5dde\u81ea19\u65e5\u591c\u95f4\u8fde\u7eed\u53d1\u5e03\u66b4\u96e8\u6a59\u8272\u548c\u7ea2\u8272\u9884\u8b66\u3002',impact_notes:'\u9002\u5408\u4f5c\u4e3a\u6781\u7aef\u66b4\u96e8\u9884\u8b66\u548c\u57ce\u5e02\u5185\u6d9d\u7814\u7a76\u6837\u672c\u3002'},
+  {id:'HD004',year_month:'2022-08',province:'\u91cd\u5e86',city_or_area:'\u91cd\u5e86\u897f\u5357\u90e8\u548c\u5317\u90e8',weather_type:'\u9ad8\u6e29',event_name:'2022\u5e74\u9996\u4e2a\u9ad8\u6e29\u7ea2\u8272\u9884\u8b66\u4e0b\u7684\u91cd\u5e86\u9ad8\u6e29',report_date:'2022-08-12',source_org:'\u4e2d\u56fd\u6c14\u8c61\u5c40',news_summary:'2022\u5e748\u670812\u65e5\u4e2d\u592e\u6c14\u8c61\u53f0\u53d1\u5e03\u5f53\u5e74\u9996\u4e2a\u9ad8\u6e29\u7ea2\u8272\u9884\u8b66\uff0c\u91cd\u5e86\u7b49\u5730\u51fa\u73b040\u81f342\u6444\u6c0f\u5ea6\u9ad8\u6e29\uff0c\u5c40\u5730\u8d85\u8fc742\u6444\u6c0f\u5ea6\u3002',impact_notes:'\u9002\u5408\u4f5c\u4e3a\u6301\u7eed\u6027\u9ad8\u6e29\u70ed\u5bb3\u6837\u672c\u3002'},
+  {id:'HD005',year_month:'2023-04',province:'\u5317\u4eac',city_or_area:'\u5ef6\u5e86\u53ca\u5317\u4eac\u5e02',weather_type:'\u6c99\u5c18\u66b4',event_name:'2023\u5e744\u6708\u5317\u4eac\u6c99\u5c18\u5929\u6c14\u8fc7\u7a0b',report_date:'2023-04-11',source_org:'\u4e2d\u56fd\u6c14\u8c61\u5c40',news_summary:'2023\u5e744\u670810\u65e5\u5317\u4eac\u51fa\u73b0\u660e\u663e\u6c99\u5c18\u5929\u6c14\uff0c\u5317\u4eac\u5e02\u6c14\u8c61\u53f0\u5c06\u6c99\u5c18\u84dd\u8272\u9884\u8b66\u5347\u7ea7\u4e3a\u9ec4\u8272\u9884\u8b66\uff0c\u5317\u4eac\u5ef6\u5e86\u7b49\u5730\u51fa\u73b0\u6c99\u5c18\u66b4\u3002',impact_notes:'\u9002\u5408\u4f5c\u4e3a\u5317\u65b9\u6625\u5b63\u6c99\u5c18\u66b4\u6837\u672c\u3002'},
+  {id:'HD006',year_month:'2023-08',province:'\u6cb3\u5317',city_or_area:'\u4fdd\u5b9a\u3001\u96c4\u5b89\u3001\u90a2\u53f0\u7b49\u5730',weather_type:'\u6d2a\u6d9d',event_name:'\u675c\u82cf\u8299\u5f71\u54cd\u4e0b\u6cb3\u5317\u6d2a\u6d9d\u8fc7\u7a0b',report_date:'2023-08-01',source_org:'\u4e2d\u56fd\u6c14\u8c61\u5c40',news_summary:'\u53d7\u53f0\u98ce\u201c\u675c\u82cf\u8299\u201d\u5f71\u54cd\uff0c2023\u5e747\u670829\u65e5\u81f38\u67081\u65e5\u6cb3\u5317\u51fa\u73b0\u6301\u7eed\u6027\u5f3a\u964d\u6c34\uff0c\u90e8\u5206\u5730\u533a\u5927\u66b4\u96e8\u3001\u5c40\u5730\u7279\u5927\u66b4\u96e8\uff0c\u5e76\u5f15\u53d1\u6d2a\u6d9d\u548c\u57ce\u5e02\u5185\u6d9d\u98ce\u9669\u3002',impact_notes:'\u9002\u5408\u4f5c\u4e3a\u6d2a\u6d9d\u707e\u5bb3\u6837\u672c\uff0c\u5305\u542b\u66b4\u96e8\u5230\u6d2a\u6d9d\u7684\u6f14\u5316\u5173\u7cfb\u3002'},
+  {id:'HD007',year_month:'2022-08',province:'\u91cd\u5e86',city_or_area:'\u91cd\u5e86\u5e02\u591a\u4e2a\u533a\u53bf',weather_type:'\u5e72\u65f1',event_name:'\u91cd\u5e86\u542f\u52a8\u6297\u65f1\u2162\u7ea7\u5e94\u6025\u54cd\u5e94',report_date:'2022-08-15',source_org:'\u65b0\u534e\u7f51',news_summary:'2022\u5e748\u6708\u91cd\u5e86\u906d\u9047\u8fde\u6674\u9ad8\u6e29\u5c11\u96e8\u5929\u6c14\uff0c8\u670815\u65e5\u542f\u52a8\u5e72\u65f1\u707e\u5bb3\u6a59\u8272\u9884\u8b66\u548c\u6297\u65f1\u2162\u7ea7\u5e94\u6025\u54cd\u5e94\uff0c\u5df260\u4f59\u4e07\u4eba\u56e0\u65f1\u53d7\u707e\u3002',impact_notes:'\u9002\u5408\u4f5c\u4e3a\u9ad8\u6e29\u5c11\u96e8\u8bf1\u53d1\u5e72\u65f1\u7684\u6837\u672c\u3002'},
+  {id:'HD008',year_month:'2024-04',province:'\u6c5f\u897f',city_or_area:'\u629a\u5dde\u4e1c\u4e61\u53ca\u5168\u7701\u591a\u5730',weather_type:'\u5927\u98ce',event_name:'\u6c5f\u897f\u5f3a\u5bf9\u6d41\u5927\u98ce\u8fc7\u7a0b',report_date:'2024-04-17',source_org:'\u4e2d\u56fd\u6c14\u8c61\u5c40',news_summary:'2024\u5e744\u670815\u65e5\u591c\u8d77\u6c5f\u897f\u51fa\u73b0\u66b4\u96e8\u548c\u5f3a\u5bf9\u6d41\u5929\u6c14\uff0c51\u4e2a\u53bf\u533a250\u7ad9\u51fa\u73b08\u7ea7\u53ca\u4ee5\u4e0a\u5927\u98ce\uff0c\u5176\u4e2d18\u4e2a\u53bf\u533a52\u7ad9\u51fa\u73b010\u81f312\u7ea7\u5927\u98ce\u3002',impact_notes:'\u9002\u5408\u4f5c\u4e3a\u96f7\u66b4\u5927\u98ce\u6216\u5f3a\u5bf9\u6d41\u5927\u98ce\u6837\u672c\u3002'},
+  {id:'HD009',year_month:'2024-02',province:'\u6e56\u5357',city_or_area:'\u6e58\u897f\u6e58\u5317\u7b49\u5730',weather_type:'\u66b4\u96ea',event_name:'\u6e56\u5357\u6625\u8282\u524d\u4f4e\u6e29\u96e8\u96ea\u51b0\u51bb\u8fc7\u7a0b',report_date:'2024-02-05',source_org:'\u4e2d\u56fd\u6c14\u8c61\u5c40',news_summary:'2024\u5e742\u67081\u65e5\u665a\u8d77\u6e56\u5357\u51fa\u73b0\u5927\u8303\u56f4\u4f4e\u6e29\u96e8\u96ea\u51b0\u51bb\u5929\u6c14\uff0c\u5b98\u65b9\u79f0\u4e3a2019\u5e74\u4ee5\u6765\u6700\u5f3a\u51b0\u51bb\u8fc7\u7a0b\uff0c\u6e58\u897f\u6e58\u5317\u91cd\u70b9\u9632\u8303\u66b4\u96ea\u548c\u51b0\u51bb\u5f71\u54cd\u3002',impact_notes:'\u53ef\u4f5c\u4e3a\u5357\u65b9\u4f4e\u6e29\u96e8\u96ea\u51b0\u51bb\u548c\u66b4\u96ea\u590d\u5408\u6837\u672c\u3002'},
+  {id:'HD010',year_month:'2022-08',province:'\u6c5f\u897f',city_or_area:'\u6c5f\u897f\u5168\u7701',weather_type:'\u5e72\u65f1',event_name:'\u4e2d\u592e\u6c14\u8c61\u53f0\u9996\u4e2a\u6c14\u8c61\u5e72\u65f1\u9884\u8b66\u4e2d\u7684\u6c5f\u897f\u65f1\u60c5',report_date:'2022-08-18',source_org:'\u65b0\u534e\u7f51',news_summary:'2022\u5e748\u670818\u65e5\u4e2d\u592e\u6c14\u8c61\u53f0\u53d1\u5e03\u5f53\u5e74\u9996\u4e2a\u6c14\u8c61\u5e72\u65f1\u9884\u8b66\uff0c\u76d1\u6d4b\u663e\u793a\u6c5f\u897f\u5b58\u5728\u4e2d\u5ea6\u53ca\u4ee5\u4e0a\u6c14\u8c61\u5e72\u65f1\uff0c\u5c40\u5730\u7279\u65f1\u3002',impact_notes:'\u9002\u5408\u4f5c\u4e3a\u533a\u57df\u6027\u6c14\u8c61\u5e72\u65f1\u6837\u672c\u3002'},
+  {id:'HD011',year_month:'2022-08',province:'\u56db\u5ddd',city_or_area:'\u56db\u5ddd\u4e1c\u90e8\u53ca\u76c6\u5730\u5730\u533a',weather_type:'\u9ad8\u6e29',event_name:'\u56db\u5ddd\u6301\u7eed\u6781\u7aef\u9ad8\u6e29\u70ed\u6d6a',report_date:'2022-08-12',source_org:'\u4e2d\u56fd\u6c14\u8c61\u5c40',news_summary:'2022\u5e748\u6708\u56db\u5ddd\u4e1c\u90e8\u53ca\u76c6\u5730\u5730\u533a\u5904\u4e8e\u6301\u7eed\u6027\u9ad8\u6e29\u8fc7\u7a0b\u4e4b\u4e2d\uff0c\u90e8\u5206\u5730\u533a40\u6444\u6c0f\u5ea6\u4ee5\u4e0a\uff0c\u6210\u4e3a\u5168\u56fd\u9ad8\u6e29\u6838\u5fc3\u5f71\u54cd\u533a\u57df\u4e4b\u4e00\u3002',impact_notes:'\u9002\u5408\u4f5c\u4e3a\u9ad8\u6e29\u70ed\u6d6a\u548c\u519c\u4e1a\u70ed\u5bb3\u6837\u672c\u3002'},
+  {id:'HD012',year_month:'2023-04',province:'\u5185\u8499\u53e4',city_or_area:'\u547c\u548c\u6d69\u7279\u3001\u5df4\u5f66\u6de1\u5c14\u3001\u963f\u62c9\u5584\u7b49\u5730',weather_type:'\u6c99\u5c18\u66b4',event_name:'2023\u5e744\u6708\u5185\u8499\u53e4\u6c99\u5c18\u66b4\u8fc7\u7a0b',report_date:'2023-04-11',source_org:'\u4e2d\u56fd\u6c14\u8c61\u5c40',news_summary:'2023\u5e744\u670810\u65e5\u81f311\u65e5\u5185\u8499\u53e4\u547c\u548c\u6d69\u7279\u3001\u5df4\u5f66\u6de1\u5c14\u3001\u963f\u62c9\u5584\u7b49\u5730\u51fa\u73b0\u6c99\u5c18\u66b4\uff0c\u5c40\u5730\u6700\u4f4e\u80fd\u89c1\u5ea6\u4e0d\u8db350\u7c73\u3002',impact_notes:'\u9002\u5408\u4f5c\u4e3a\u6c99\u5c18\u6e90\u533a\u6837\u672c\uff0c\u53ef\u4e0e\u5317\u4eac\u53d7\u4f20\u8f93\u5f71\u54cd\u6837\u672c\u914d\u5bf9\u5206\u6790\u3002'},
+];
+function rlcSim(c,st){
+  if(st==='wait')return{bg:'rgba(2,10,22,0.65)',bd:'rgba(0,200,255,0.08)',tx:'#1e5060'};
+  if(st==='active')return{bg:`${c}0d`,bd:`${c}66`,tx:c};
+  return{bg:`${c}08`,bd:`${c}30`,tx:`${c}bb`};
+}
 const PIPE=[
   {n:'01',label:'采集 Collector Agent',c:'#00e5cc',
-    prompt:(m)=>`你是穗安AI数据采集Agent。当前检测到气象灾害事件：${m.map(x=>`【${WT[x.k].t}】约位于${approxRegion(x.x,x.y)}`).join('；')}。请详细输出以下五个维度（每项1-2句）：
+    prompt:(m)=>`你是穗安AI数据采集Agent。当前检测到气象灾害事件：${m.map(x=>markerCtx(x)).join('；')}。请详细输出以下五个维度（每项1-2句）：
 ① 采集状态：各事件数据覆盖率与延迟
 ② 气象API：实时数据精度与更新频次
 ③ 遥感影像：卫星过境时间、云遮挡情况
 ④ 舆情流：社交媒体与农户上报数量及噪声比
 ⑤ 数据融合质量：综合可信度评分与异常标记数`},
   {n:'02',label:'分析 Analyst ×5',c:'#4488ff',
-    prompt:(m)=>`你是穗安AI五个并行分析Agent。气象事件：${m.map(x=>`${WT[x.k].t}(${approxRegion(x.x,x.y)})`).join('、')}。请按如下格式输出，每个Agent 2-3句，结合当地农业特点具体分析：
+    prompt:(m)=>`你是穗安AI五个并行分析Agent。气象事件：${m.map(x=>markerCtx(x)).join('、')}。请按如下格式输出，每个Agent 2-3句，结合当地农业特点具体分析：
 气象Agent: （气象强度、持续时间、影响范围）
 作物Agent: （主要受害作物、关键生育期影响）
 地块Agent: （受灾面积估算、土壤/水分状况）
 病虫害Agent: （次生病虫害风险类型与概率）
 舆情Agent: （农户情绪指数、线上咨询量、媒体关注度）`},
   {n:'03',label:'推演 Simulator',c:'#ffaa44',
-    prompt:(m)=>`你是穗安AI推演Agent。气象事件：${m.map(x=>`${WT[x.k].t}(${approxRegion(x.x,x.y)})`).join('、')}。请结合当地主要农作物，输出以下四项：
+    prompt:(m)=>`你是穗安AI推演Agent。气象事件：${m.map(x=>markerCtx(x)).join('、')}。请结合各省份具体主要农作物，输出以下四项：
 ① 不干预路径：各主要作物损失概率（具体%）及经济损失估算
 ② 及时干预路径：干预后损失概率对比与挽回比例
 ③ 最优干预窗口：具体时间节点与优先行动
 ④ 置信度说明：本次推演的数据支撑与不确定因素`},
   {n:'04',label:'决策 Decision Agent',c:'#cc8833',
-    prompt:(m)=>`你是穗安AI决策Agent。基于气象事件：${m.map(x=>`${WT[x.k].t}(${approxRegion(x.x,x.y)})`).join('、')}，结合当地主要农作物，只输出如下JSON，不要任何其他文字：
+    prompt:(m)=>`你是穗安AI决策Agent。基于气象事件：${m.map(x=>markerCtx(x)).join('、')}，结合各省份具体主要农作物，只输出如下JSON，不要任何其他文字：
 {
   "risk_level": "high/medium/low之一",
   "affected_provinces": ["省份1","省份2"],
@@ -1326,14 +1393,14 @@ const PIPE=[
   "secondary_risk": "次生风险描述"
 }`},
   {n:'05',label:'推送 Delivery Agent',c:'#3ab8ff',
-    prompt:(m)=>`你是穗安AI推送Agent。对${m.length}个气象灾害预警（${m.map(x=>WT[x.k].t).join('、')}），请详细输出以下推送情况：
+    prompt:(m)=>`你是穗安AI推送Agent。对${m.length}个气象灾害预警（${m.map(x=>markerCtx(x)).join('、')}），请详细输出以下推送情况：
 ① 保险API：推送内容摘要与条数
 ② 农村合作社短信：发送条数、覆盖农户数、核心预警语
 ③ 地方政府简报：报告标题与主要建议
 ④ 粮食企业月报：影响评估摘要
 ⑤ 应急广播/小程序：推送渠道与触达人数估算`},
   {n:'06',label:'Harness 进化 Agent',c:'#88aaff',
-    prompt:(m)=>`你是穗安AI Harness进化Agent。本轮推演处理了${m.length}个气象事件（${m.map(x=>WT[x.k].t).join('、')}）。请输出以下四项：
+    prompt:(m)=>`你是穗安AI Harness进化Agent。本轮推演处理了${m.length}个气象事件（${m.map(x=>markerCtx(x)).join('、')}）。请输出以下四项：
 ① 归档：推演路径与关键决策节点已归档至向量知识库，新增向量数
 ② Evaluator：Root Cause分析结论，各Agent表现评分（满分10分）
 ③ Evolver：将哪些优化规则写回Agent资产文件，更新了哪些模型权重
@@ -1341,10 +1408,10 @@ const PIPE=[
 ];
 function rlc(lv){
   const m={
-    high:  {ar:'#2a0808',hv:'#ff3333',tx:'#ff6b6b',gw:'rgba(255,50,50,.70)', bg:'rgba(255,50,50,.13)', bd:'rgba(255,50,50,.42)'},
-    medium:{ar:'#2a1408',hv:'#ff8c00',tx:'#ffaa44',gw:'rgba(255,140,0,.62)',bg:'rgba(255,140,0,.11)',bd:'rgba(255,140,0,.36)'},
-    low:   {ar:'#1a2208',hv:'#aadd00',tx:'#ccff33',gw:'rgba(170,221,0,.58)', bg:'rgba(170,221,0,.09)', bd:'rgba(170,221,0,.32)'},
-    safe:  {ar:'#062230',hv:'#00e5cc',tx:'#33ffee',gw:'rgba(0,229,204,.58)',bg:'rgba(0,229,204,.11)',bd:'rgba(0,229,204,.32)'},
+    high:  {ar:'#221018',hv:'#d86870',tx:'#e89098',gw:'rgba(216,104,112,.62)',bg:'rgba(216,104,112,.10)',bd:'rgba(216,104,112,.34)'},
+    medium:{ar:'#221808',hv:'#c89840',tx:'#dcb460',gw:'rgba(200,152,64,.58)', bg:'rgba(200,152,64,.09)', bd:'rgba(200,152,64,.32)'},
+    low:   {ar:'#102214',hv:'#70b848',tx:'#90cc68',gw:'rgba(112,184,72,.55)', bg:'rgba(112,184,72,.08)', bd:'rgba(112,184,72,.28)'},
+    safe:  {ar:'#061e24',hv:'#38c4b0',tx:'#5cdacc',gw:'rgba(56,196,176,.54)', bg:'rgba(56,196,176,.09)', bd:'rgba(56,196,176,.30)'},
   };
   return m[lv]||m.safe;
 }
@@ -1352,47 +1419,98 @@ function ChinaRiskMapSection(){
   const [tab,setTab]=useState('demo');
   const mapRef=useRef(null);
   const simMapRef=useRef(null);
+  const simChartRef=useRef(null);
+  const simHovProv=useRef(null);
+  const btMapRef=useRef(null);
+  const btChartRef=useRef(null);
   const [hovered,setHovered]=useState(null);
   const [draggingType,setDraggingType]=useState(null);
   const [simMarkers,setSimMarkers]=useState([]);
   const [pipeStep,setPipeStep]=useState(-1);
   const [pipeRunning,setPipeRunning]=useState(false);
   const [pipeOutputs,setPipeOutputs]=useState(['','','','','','']);
+  const [analystOutputs,setAnalystOutputs]=useState(['','','','','']);
+  const [csvData,setCsvData]=useState([]);
+  const [btYear,setBtYear]=useState('2023');
+  const [btProvince,setBtProvince]=useState(null);
+  const [btEvents,setBtEvents]=useState([]);
+  const [btOutputs,setBtOutputs]=useState(['','','','','','']);
+  const [btAnalystOutputs,setBtAnalystOutputs]=useState(['','','','','']);
+  const [btRunning,setBtRunning]=useState(false);
+  const [btPipeStep,setBtPipeStep]=useState(-1);
+  const [nowStr,setNowStr]=useState('');
+  const [emailAlert,setEmailAlert]=useState(null);
+
+  useEffect(()=>{
+    const fmt=()=>{const d=new Date();const p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())} CST`;};
+    setNowStr(fmt());
+    const t=setInterval(()=>setNowStr(fmt()),1000);
+    return()=>clearInterval(t);
+  },[]);
+
+  const isHighRisk=(text)=>/\"risk_level\"\s*:\s*\"high\"|risk_level.*high|极端|红色预警|台风|暴洪|特大暴雨|龙卷风/i.test(text);
+  const sendWarningEmail=async(subject,body)=>{
+    try{
+      await fetch('http://127.0.0.1:5001/send-email',{method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({to:'1773040108@qq.com',subject,body})});
+      setEmailAlert({t:Date.now(),subject});
+      setTimeout(()=>setEmailAlert(null),8000);
+    }catch(e){console.warn('Email send failed:',e);}
+  };
 
   const runPipeline=async()=>{
     if(!simMarkers.length||pipeRunning)return;
-    setPipeStep(-1);setPipeRunning(true);setPipeOutputs(['','','','','','']);
+    setPipeStep(-1);setPipeRunning(true);setPipeOutputs(['','','','','','']);setAnalystOutputs(['','','','','']);
+    const SYS='你是穗安AI农业风险预警多智能体系统的专业Agent。只输出要求内容，使用规范简体中文，不造词、不产生错别字。写入操作统一用"写回"，不使用"挝回"等错误表述。';
+    const streamTo=async(setter,idx,prompt,maxTok=550)=>{
+      const resp=await fetch('https://api.deepseek.com/chat/completions',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':`Bearer ${DEEPSEEK_KEY}`},
+        body:JSON.stringify({model:'deepseek-chat',stream:true,max_tokens:maxTok,temperature:0.75,
+          messages:[{role:'system',content:SYS},{role:'user',content:prompt}]})
+      });
+      const reader=resp.body.getReader();const dec=new TextDecoder();let buf='';let acc='';
+      while(true){
+        const{done,value}=await reader.read();if(done)break;
+        buf+=dec.decode(value,{stream:true});
+        const lines=buf.split('\n');buf=lines.pop();
+        for(const line of lines){
+          if(!line.startsWith('data: '))continue;
+          const d=line.slice(6).trim();if(d==='[DONE]')continue;
+          try{const tok=JSON.parse(d).choices?.[0]?.delta?.content;
+            if(tok){acc+=tok;setter(prev=>{const n=[...prev];n[idx]=(n[idx]||'')+tok;return n;});}
+          }catch(e){}
+        }
+      }
+      return acc;
+    };
+    const ANALYSTS=[
+      {name:'气象 Analyst',focus:'重点分析气象强度、极端参数（温度/降水/风速）、覆盖范围与持续时间，给出量化数据'},
+      {name:'作物 Analyst',focus:'重点分析主要受害作物品种与当前生育期脆弱性，评估产量影响幅度'},
+      {name:'地块 Analyst',focus:'重点估算受灾耕地面积（万亩），分析土壤水分状况与地块排水条件'},
+      {name:'病虫害 Analyst',focus:'重点评估次生病虫害风险类型、爆发概率与防控紧迫性'},
+      {name:'舆情 Analyst',focus:'重点分析农户情绪指数、线上咨询量与早期异常舆情信号'},
+    ];
     for(let i=0;i<PIPE.length;i++){
       setPipeStep(i);
-      try{
-        const resp=await fetch('https://api.deepseek.com/chat/completions',{
-          method:'POST',
-          headers:{'Content-Type':'application/json','Authorization':`Bearer ${DEEPSEEK_KEY}`},
-          body:JSON.stringify({model:'deepseek-chat',stream:true,max_tokens:550,temperature:0.75,
-            messages:[
-              {role:'system',content:'你是穗安AI农业风险预警多智能体系统的专业Agent。只输出要求内容，使用规范简体中文，不造词、不产生错别字。写入操作统一用"写回"，不使用"挝回"等错误表述。'},
-              {role:'user',content:PIPE[i].prompt(simMarkers)}
-            ]})
-        });
-        const reader=resp.body.getReader();
-        const dec=new TextDecoder();
-        let buf='';
-        while(true){
-          const{done,value}=await reader.read();
-          if(done)break;
-          buf+=dec.decode(value,{stream:true});
-          const lines=buf.split('\n');buf=lines.pop();
-          for(const line of lines){
-            if(!line.startsWith('data: '))continue;
-            const d=line.slice(6).trim();
-            if(d==='[DONE]')continue;
-            try{const tok=JSON.parse(d).choices?.[0]?.delta?.content;
-              if(tok)setPipeOutputs(prev=>{const n=[...prev];n[i]=(n[i]||'')+tok;return n;});
-            }catch(e){}
-          }
+      if(i===1){
+        try{
+          await Promise.all(ANALYSTS.map((a,j)=>streamTo(
+            setAnalystOutputs,j,
+            `你是${a.name}。气象事件：${simMarkers.map(x=>markerCtx(x)).join('、')}。${a.focus}，针对具体省份的主要作物给出量化结论，80字以内。`,
+            180
+          )));
+        }catch(err){
+          setAnalystOutputs(prev=>prev.map((v,j)=>v||'[错误] '+err.message));
         }
-      }catch(err){
-        setPipeOutputs(prev=>{const n=[...prev];n[i]='[错误] '+err.message;return n;});
+      }else{
+        try{
+          const out=await streamTo(setPipeOutputs,i,PIPE[i].prompt(simMarkers),550);
+          if(i===3&&isHighRisk(out)){const loc=simMarkers.map(x=>markerCtx(x)).join('、');sendWarningEmail('【穗安】高风险预警',`穗安AI推演检测到高风险事件。\n事件：${loc}\n\n决策摘要：\n${out.slice(0,400)}`);}
+        }catch(err){
+          setPipeOutputs(prev=>{const n=[...prev];n[i]='[错误] '+err.message;return n;});
+        }
       }
     }
     setPipeRunning(false);
@@ -1465,24 +1583,142 @@ function ChinaRiskMapSection(){
   useEffect(()=>{
     if(tab!=='sim'||!simMapRef.current||!window.echarts)return;
     const chart=window.echarts.init(simMapRef.current,null,{renderer:'canvas'});
+    simChartRef.current=chart;
     const lvVal={safe:1,low:2,medium:3,high:4};
     const cdata=Object.entries(CHINA_RISK).map(([name,d])=>({name,value:lvVal[d.lv]||1}));
     chart.setOption({
       backgroundColor:'transparent',
-      geo:{map:'china',aspectScale:0.75,left:'2%',right:'2%',top:'3%',bottom:'4%',roam:false,silent:true,
-        itemStyle:{areaColor:'transparent',borderColor:'transparent',borderWidth:0},
-        emphasis:{itemStyle:{areaColor:'transparent'}}},
+      geo:{map:'china',aspectScale:0.75,left:'2%',right:'2%',top:'3%',bottom:'4%',roam:false,
+        itemStyle:{areaColor:'transparent',borderColor:'rgba(0,200,255,0.15)',borderWidth:0.6},
+        emphasis:{itemStyle:{areaColor:'rgba(0,200,255,0.08)',borderColor:'#00e5cc',borderWidth:1.2}}},
       visualMap:{type:'continuous',min:1,max:4,show:false,seriesIndex:0,
-        inRange:{color:['#041228','#082040','#0a3050','#153840','#406018','#904810','#701010']},
+        inRange:{color:['#041228','#083030','#0c3828','#1a3c18','#363c10','#4c3820','#5c2c2c']},
         outOfRange:{color:'#040e1e'}},
       series:[{type:'map',map:'china',geoIndex:0,
         itemStyle:{borderColor:'rgba(0,200,255,0.2)',borderWidth:0.5},
         label:{show:false},emphasis:{disabled:true},data:cdata}]
     });
+    chart.on('mouseover',(p)=>{if(p.name&&CHINA_RISK[p.name])simHovProv.current=p.name;});
+    chart.on('mouseout',()=>{simHovProv.current=null;});
     const onResize=()=>chart.resize();
     window.addEventListener('resize',onResize);
-    return()=>{window.removeEventListener('resize',onResize);chart.dispose();};
+    return()=>{window.removeEventListener('resize',onResize);simChartRef.current=null;chart.dispose();};
   },[tab]);
+
+  useEffect(()=>{ setCsvData(DISASTER_EVENTS); },[]);
+
+  useEffect(()=>{
+    if(tab!=='backtest'||!btMapRef.current||!window.echarts)return;
+    const chart=window.echarts.init(btMapRef.current,null,{renderer:'canvas'});
+    btChartRef.current=chart;
+    const lvVal={safe:1,low:2,medium:3,high:4};
+    const cdata=Object.entries(CHINA_RISK).map(([name,d])=>({name,value:lvVal[d.lv]||1}));
+    chart.setOption({
+      backgroundColor:'transparent',
+      geo:{map:'china',aspectScale:0.75,left:'2%',right:'2%',top:'3%',bottom:'4%',roam:false,
+        itemStyle:{areaColor:'transparent',borderColor:'rgba(0,200,255,0.18)',borderWidth:0.7},
+        emphasis:{itemStyle:{areaColor:'rgba(0,229,204,0.1)',borderColor:'#00e5cc',borderWidth:1.5}}},
+      visualMap:{type:'continuous',min:1,max:4,show:false,seriesIndex:0,
+        inRange:{color:['#041228','#083030','#0c3828','#1a3c18','#363c10','#4c3820','#5c2c2c']},
+        outOfRange:{color:'#040e1e'}},
+      series:[{type:'map',map:'china',geoIndex:0,
+        itemStyle:{borderColor:'rgba(0,200,255,0.2)',borderWidth:0.5},
+        label:{show:false},
+        select:{itemStyle:{areaColor:'rgba(0,229,204,0.18)',borderColor:'#00e5cc',borderWidth:1.8}},
+        selectedMode:'single',
+        data:cdata}]
+    });
+    chart.on('click',(p)=>{
+      if(p.name) setBtProvince(p.name);
+    });
+    const onResize=()=>chart.resize();
+    window.addEventListener('resize',onResize);
+    return()=>{window.removeEventListener('resize',onResize);btChartRef.current=null;chart.dispose();};
+  },[tab]);
+
+  useEffect(()=>{
+    if(!btYear&&!btProvince){setBtEvents([]);return;}
+    const filtered=csvData.filter(row=>{
+      const yearMatch=btYear?row.year_month.startsWith(btYear):true;
+      const provMatch=btProvince?row.province===btProvince:true;
+      return yearMatch&&provMatch;
+    });
+    setBtEvents(filtered);
+  },[btYear,btProvince,csvData]);
+
+  const runBacktest=async()=>{
+    if((!btYear&&!btProvince)||btRunning)return;
+    setBtPipeStep(-1);setBtRunning(true);setBtOutputs(['','','','','','']);setBtAnalystOutputs(['','','','','']);
+    const SYS='你是穗安AI农业风险预警多智能体系统的专业Agent。只输出要求内容，使用规范简体中文，不造词、不产生错别字。写入操作统一用"写回"，不使用"挝回"等错误表述。';
+    const hasData=btEvents.length>0;
+    const scopeDesc=`${btProvince?btProvince:'全国'}${btYear?'·'+btYear:''}`;
+    const evCtx=hasData
+      ?btEvents.map(e=>`【${e.event_name}｜${e.year_month}｜${e.province}${e.city_or_area?'·'+e.city_or_area:''}｜${e.weather_type}】${e.news_summary}${e.impact_notes?'（'+e.impact_notes+'）':''}`).join('\n')
+      :`【检索范围：${scopeDesc}】本地数据库无匹配记录，请基于你的训练知识库，自行回忆并推理该地区该时期最可能发生的农业气象灾害历史事件（如有印象请给出真实事件，否则结合气候特点合理推演），以此为基础完成本次回测分析。`;
+    const evShort=hasData
+      ?btEvents.map(e=>`${e.weather_type}【${e.province}·${e.year_month}】`).join('、')
+      :scopeDesc;
+    const streamBt=async(setter,idx,prompt,maxTok=550)=>{
+      const resp=await fetch('https://api.deepseek.com/chat/completions',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':`Bearer ${DEEPSEEK_KEY}`},
+        body:JSON.stringify({model:'deepseek-chat',stream:true,max_tokens:maxTok,temperature:0.75,
+          messages:[{role:'system',content:SYS},{role:'user',content:prompt}]})
+      });
+      const reader=resp.body.getReader();const dec=new TextDecoder();let buf='';let acc='';
+      while(true){
+        const{done,value}=await reader.read();if(done)break;
+        buf+=dec.decode(value,{stream:true});
+        const lines=buf.split('\n');buf=lines.pop();
+        for(const line of lines){
+          if(!line.startsWith('data: '))continue;
+          const d=line.slice(6).trim();if(d==='[DONE]')continue;
+          try{const tok=JSON.parse(d).choices?.[0]?.delta?.content;
+            if(tok){acc+=tok;setter(prev=>{const n=[...prev];n[idx]=(n[idx]||'')+tok;return n;});}
+          }catch(e){}
+        }
+      }
+      return acc;
+    };
+    const freeLabel=hasData?'基于真实历史数据':'基于知识库自由推理';
+    const BT_ANALYSTS=[
+      {name:'气象 Analyst',focus:`${freeLabel}，量化气象参数（温度/降水/风速/持续时间），还原当时气象强度`},
+      {name:'作物 Analyst',focus:`${freeLabel}，分析当时主要受害作物品种与生育期脆弱性，评估实际/预估产量损失`},
+      {name:'地块 Analyst',focus:`${freeLabel}，估算受灾耕地面积（万亩），分析土壤与排水状况`},
+      {name:'病虫害 Analyst',focus:`${freeLabel}，评估该灾害事件引发的次生病虫害风险类型与爆发情况`},
+      {name:'舆情 Analyst',focus:`${freeLabel}，还原农户情绪、线上咨询量与媒体舆情信号`},
+    ];
+    for(let i=0;i<PIPE.length;i++){
+      setBtPipeStep(i);
+      if(i===0){
+        try{await streamBt(setBtOutputs,0,
+          hasData
+            ?`你是穗安AI数据采集Agent，正在进行历史回测。以下是真实历史气象灾害事件记录（来源：中国气象局等权威机构）：\n${evCtx}\n\n请按采集Agent格式输出以下五个维度（每项1-2句）：\n① 事件概况：各事件核心要素（时间/地点/类型/强度）\n② 数据来源：信息来源机构与可信度评估\n③ 覆盖范围：受影响地区与面积估算\n④ 数据质量：信息完整性与置信度评分\n⑤ 下游传递：哪些字段将被各 Analyst 优先使用`
+            :`你是穗安AI数据采集Agent，正在对【${scopeDesc}】进行历史回测。本地数据库无该地区该时期的精确记录，请基于你的知识库自由检索：该省份该时期最可能或已知发生过的主要农业气象灾害类型是什么？请输出以下五个维度（每项1-2句）：\n① 推断的历史事件：最可能的灾害类型/时间/地点/强度（注明是推断还是已知）\n② 信息来源评估：该判断的知识可信度与来源类型\n③ 覆盖范围：估算受影响地区与农业种植区分布\n④ 数据质量说明：本次为自由推理模式，置信度相对较低，请说明不确定性\n⑤ 下游传递：将向各 Analyst 传递哪些推断字段`,550);}
+        catch(err){setBtOutputs(prev=>{const n=[...prev];n[0]='[错误] '+err.message;return n;});}
+      }else if(i===1){
+        try{await Promise.all(BT_ANALYSTS.map((a,j)=>streamBt(setBtAnalystOutputs,j,
+          `你是${a.name}，正在对【${scopeDesc}】进行历史回测分析。\n背景信息：${evCtx}\n\n${a.focus}，结合当地农业实际给出量化结论，80字以内。`,180)));}
+        catch(err){setBtAnalystOutputs(prev=>prev.map((v)=>v||'[错误] '+err.message));}
+      }else{
+        const prompts={
+          2:hasData
+            ?`你是穗安AI推演Agent，对以下真实历史灾害事件进行回测推演：\n${evCtx}\n\n请输出：①不干预路径（灾害演化概率）②及时干预路径（损失降低幅度）③最优干预窗口（实际时间节点）④置信度说明（与真实结果对比）`
+            :`你是穗安AI推演Agent，对【${scopeDesc}】进行自由推理回测。背景：${evCtx}\n\n请基于你对该地区气候与农业的认知，输出：①该时期最可能的灾害演化路径（不干预）②合理干预后损失降低幅度估算③建议干预窗口时间节点④此次为自由推理——置信度说明与不确定范围`,
+          3:hasData
+            ?`你是穗安AI决策Agent，基于以下真实历史灾害事件：\n${evCtx}\n\n只输出如下回测决策JSON：{"risk_level":"high/medium/low","affected_provinces":[],"affected_crops":[],"estimated_area_wan_mu":数字,"confidence":数字,"actions":[],"window":"干预窗口","economic_risk_yi_yuan":数字,"backtest_note":"与真实结果对比说明"}`
+            :`你是穗安AI决策Agent，对【${scopeDesc}】进行自由推理决策。背景：${evCtx}\n\n只输出如下回测决策JSON（confidence字段反映推理可信度，backtest_note注明为自由推理）：{"risk_level":"high/medium/low","affected_provinces":[],"affected_crops":[],"estimated_area_wan_mu":数字,"confidence":数字,"actions":[],"window":"干预窗口","economic_risk_yi_yuan":数字,"backtest_note":"自由推理·不确定性说明"}`,
+          4:`你是穗安AI推送Agent，对【${scopeDesc}】历史回测（${hasData?'真实事件':'自由推理'}）输出推送效果评估：①保险API推送摘要②合作社短信内容③政府简报标题④粮企月报要点${hasData?'⑤实际触达效果评估':'⑤推理可信度与建议验证方式'}`,
+          5:`你是穗安AI Harness进化Agent，本次${hasData?'真实数据':'自由推理'}回测针对【${scopeDesc}】，处理了${btEvents.length||'推断的'}历史事件（${evShort}）。输出：①归档：本次回测经验写回向量库②Evaluator：${hasData?'与真实历史结果对比评分':'推理质量自评与置信度评估'}③Evolver：哪些规则需要依据本次结果调整④精度提升：下一轮针对同类事件/区域的预测精度改进预期`,
+        };
+        try{
+          const out=await streamBt(setBtOutputs,i,prompts[i]||'',550);
+          if(i===3&&isHighRisk(out)){sendWarningEmail('【穗安】历史回测高风险预警',`穗安AI历史回测（${scopeDesc}）检测到高风险事件。\n\n决策摘要：\n${out.slice(0,400)}`);}
+        }catch(err){setBtOutputs(prev=>{const n=[...prev];n[i]='[错误] '+err.message;return n;});}
+      }
+    }
+    setBtRunning(false);
+  };
 
   const counts=Object.values(CHINA_RISK).reduce((a,d)=>{a[d.lv]=(a[d.lv]||0)+1;return a;},{});
   const info=hovered?CHINA_RISK[hovered]:null;
@@ -1506,22 +1742,28 @@ function ChinaRiskMapSection(){
           <p style={{color:'var(--ink-mid)',marginTop:'.5rem',fontSize:'.9rem'}}>&#x6C14;&#x8C61; &middot; &#x9065;&#x611F; &middot; &#x591A; Agent &#x878D;&#x5408; &mdash; &#x9F20;&#x6807;&#x60AC;&#x505C;&#x7701;&#x4EFD;&#x67E5;&#x770B;&#x5B9E;&#x65F6;&#x9884;&#x8B66;&#x8BE6;&#x60C5;</p>
         </div>
         <div style={{display:'flex',justifyContent:'center',gap:8,marginBottom:'1.8rem'}}>
-          {[['demo','&#x6F14;&#x793A;&#x6A21;&#x5F0F;'],['sim','&#x6A21;&#x62DF;&#x63A8;&#x6F14;']].map(([k,l])=>(
-            <button key={k} onClick={()=>{setTab(k);setPipeStep(-1);setPipeRunning(false);setSimMarkers([]);setHovered(null);}}
+          {[['demo','演示模式'],['sim','模拟推演'],['backtest','历史回测']].map(([k,l])=>(
+            <button key={k} onClick={()=>{setTab(k);setPipeStep(-1);setPipeRunning(false);setSimMarkers([]);setHovered(null);setAnalystOutputs(['','','','','']);setBtPipeStep(-1);setBtRunning(false);setBtProvince(null);}}
               style={{padding:'7px 22px',borderRadius:6,fontSize:'.78rem',fontFamily:'var(--mono)',letterSpacing:'.1em',cursor:'pointer',
                 background:tab===k?'rgba(0,229,204,0.12)':'transparent',
                 border:`1.5px solid ${tab===k?'#00e5cc':'rgba(0,200,255,0.25)'}`,
                 color:tab===k?'#00e5cc':'#5090a8',
-                boxShadow:tab===k?'0 0 14px rgba(0,229,204,0.22)':'none'}}
-              dangerouslySetInnerHTML={{__html:l}}/>
+                boxShadow:tab===k?'0 0 14px rgba(0,229,204,0.22)':'none'}}>{l}</button>
           ))}
         </div>
+        {emailAlert&&(
+          <div style={{marginBottom:'0.8rem',padding:'9px 16px',borderRadius:8,background:'rgba(0,229,150,0.1)',border:'1px solid rgba(0,229,150,0.4)',display:'flex',alignItems:'center',gap:10,animation:'fadeInDown .4s ease'}}>
+            <span style={{fontSize:'1rem'}}>✉️</span>
+            <span style={{fontFamily:'var(--mono)',fontSize:'.68rem',color:'#00e596',flex:1}}>预警邮件已发送 → 1773040108@qq.com &nbsp;<span style={{color:'rgba(0,229,150,0.6)'}}>{emailAlert.subject}</span></span>
+            <button onClick={()=>setEmailAlert(null)} style={{fontFamily:'var(--mono)',fontSize:'.6rem',color:'#00e596',background:'transparent',border:'none',cursor:'pointer',opacity:.6}}>✕</button>
+          </div>
+        )}
         {tab==='demo'&&<div style={{display:'grid',gridTemplateColumns:'1fr 295px',gap:'1rem',alignItems:'start'}}>
           <div style={{borderRadius:16,overflow:'hidden',border:'1px solid rgba(0,200,255,0.25)',boxShadow:'0 0 48px rgba(0,200,255,0.10),inset 0 0 60px rgba(0,20,60,0.25)',background:mapBg}}>
             <div style={{padding:'9px 14px',borderBottom:'1px solid rgba(0,200,255,0.18)',display:'flex',alignItems:'center',justifyContent:'space-between',background:'rgba(0,20,50,0.75)'}}>
               <div style={{display:'flex',alignItems:'center',gap:8}}>
                 <span className="blink" style={{width:7,height:7,borderRadius:'50%',background:'#ff3333',display:'inline-block',boxShadow:'0 0 6px #ff3333'}}/>
-                <span style={{fontSize:'.64rem',fontFamily:'var(--mono)',color:'#7ab8d0',letterSpacing:'.1em'}}>NATIONAL AGRICULTURAL RISK MONITOR &middot; 2026-05-25 11:00 CST</span>
+                <span style={{fontSize:'.64rem',fontFamily:'var(--mono)',color:'#7ab8d0',letterSpacing:'.1em'}}>NATIONAL AGRICULTURAL RISK MONITOR · {nowStr}</span>
               </div>
               <span style={{fontSize:'.64rem',fontFamily:'var(--mono)',color:neonBlue,letterSpacing:'.12em'}}>MULTI-AGENT FUSION</span>
             </div>
@@ -1530,7 +1772,7 @@ function ChinaRiskMapSection(){
               <div style={{position:'absolute',inset:0,pointerEvents:'none',backgroundImage:'repeating-linear-gradient(0deg,transparent 0,transparent 24px,rgba(0,200,255,0.025) 24px,rgba(0,200,255,0.025) 25px),repeating-linear-gradient(90deg,transparent 0,transparent 24px,rgba(0,200,255,0.015) 24px,rgba(0,200,255,0.015) 25px)'}}/>
             </div>
             <div style={{padding:'8px 16px',borderTop:'1px solid rgba(0,200,255,0.18)',display:'flex',alignItems:'center',gap:'1.4rem',flexWrap:'wrap',background:'rgba(0,20,50,0.65)'}}>
-              {[{hv:'#ff3333',l:'&#x9AD8;&#x98CE;&#x9669;',n:counts.high||0},{hv:'#ff8c00',l:'&#x4E2D;&#x98CE;&#x9669;',n:counts.medium||0},{hv:'#aadd00',l:'&#x4F4E;&#x98CE;&#x9669;',n:counts.low||0},{hv:'#00e5cc',l:'&#x5B89;&#x5168;',n:counts.safe||0}].map((x,i)=>(
+              {[{hv:'#d86870',l:'&#x9AD8;&#x98CE;&#x9669;',n:counts.high||0},{hv:'#c89840',l:'&#x4E2D;&#x98CE;&#x9669;',n:counts.medium||0},{hv:'#70b848',l:'&#x4F4E;&#x98CE;&#x9669;',n:counts.low||0},{hv:'#38c4b0',l:'&#x5B89;&#x5168;',n:counts.safe||0}].map((x,i)=>(
                 <div key={i} style={{display:'flex',alignItems:'center',gap:5}}>
                   <div style={{width:10,height:10,borderRadius:2,background:x.hv,boxShadow:`0 0 6px ${x.hv}88`}}/>
                   <span style={{fontSize:'.68rem',color:'#7ab8d0',fontFamily:'var(--mono)'}} dangerouslySetInnerHTML={{__html:x.l+' ('+x.n+')'}}/>
@@ -1612,8 +1854,8 @@ function ChinaRiskMapSection(){
                 <span style={{fontSize:'.64rem',fontFamily:'var(--mono)',color:'#ffaa44',letterSpacing:'.12em'}}>已放置 {simMarkers.length} 个事件</span>
               </div>
               <div style={{position:'relative'}}
-                onDragOver={e=>e.preventDefault()}
-                onDrop={e=>{e.preventDefault();const rect=e.currentTarget.getBoundingClientRect();const x=parseFloat(((e.clientX-rect.left)/rect.width*100).toFixed(1));const y=parseFloat(((e.clientY-rect.top)/rect.height*100).toFixed(1));if(draggingType)setSimMarkers(prev=>[...prev,{x,y,k:draggingType,id:Date.now()}]);}}>
+                onDragOver={e=>{e.preventDefault();if(simChartRef.current){const r=e.currentTarget.getBoundingClientRect();try{simChartRef.current.getZr().handler.dispatch('mousemove',{zrX:e.clientX-r.left,zrY:e.clientY-r.top});}catch(_){}}}}
+                onDrop={e=>{e.preventDefault();const rect=e.currentTarget.getBoundingClientRect();const x=parseFloat(((e.clientX-rect.left)/rect.width*100).toFixed(1));const y=parseFloat(((e.clientY-rect.top)/rect.height*100).toFixed(1));if(draggingType)setSimMarkers(prev=>[...prev,{x,y,k:draggingType,id:Date.now(),province:simHovProv.current||null}]);}}>
                 <div ref={simMapRef} style={{width:'100%',height:460}}/>
                 <div style={{position:'absolute',inset:0,pointerEvents:'none',backgroundImage:'repeating-linear-gradient(0deg,transparent 0,transparent 24px,rgba(0,200,255,0.02) 24px,rgba(0,200,255,0.02) 25px),repeating-linear-gradient(90deg,transparent 0,transparent 24px,rgba(0,200,255,0.015) 24px,rgba(0,200,255,0.015) 25px)'}}/>
                 {simMarkers.length===0&&(
@@ -1625,11 +1867,12 @@ function ChinaRiskMapSection(){
                 )}
                 <div style={{position:'absolute',inset:0,pointerEvents:'none'}}>
                   {simMarkers.map((m)=>{const w=WT[m.k];return(
-                    <div key={m.id} style={{position:'absolute',left:`${m.x}%`,top:`${m.y}%`,display:'flex',flexDirection:'column',alignItems:'center',gap:2,transform:'translate(-50%,-50%)'}}>
+                    <div key={m.id} style={{position:'absolute',left:`${m.x}%`,top:`${m.y}%`,display:'flex',flexDirection:'column',alignItems:'center',gap:2,transform:'translate(-50%,-50%)'}} title={m.province||''}>
                       <div style={{width:24,height:24,borderRadius:'50%',background:`${w.c}1a`,border:`1.5px solid ${w.c}`,display:'flex',alignItems:'center',justifyContent:'center',boxShadow:`0 0 12px ${w.g}`}}>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={w.c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d={w.p}/></svg>
                       </div>
                       <span style={{fontSize:8,fontFamily:'var(--mono)',color:w.c,whiteSpace:'nowrap',textShadow:'0 1px 5px rgba(0,0,0,0.95)',lineHeight:1}}>{w.t}</span>
+                      {m.province&&<span style={{fontSize:7,fontFamily:'var(--mono)',color:'rgba(255,255,255,0.7)',whiteSpace:'nowrap',textShadow:'0 1px 4px rgba(0,0,0,0.95)',lineHeight:1,background:'rgba(0,0,0,0.5)',padding:'1px 3px',borderRadius:2}}>{m.province}</span>}
                     </div>
                   );})}
                 </div>
@@ -1637,7 +1880,7 @@ function ChinaRiskMapSection(){
               <div style={{padding:'10px 16px',borderTop:'1px solid rgba(0,200,255,0.18)',display:'flex',alignItems:'center',justifyContent:'space-between',background:'rgba(0,20,50,0.65)'}}>
                 <span style={{fontSize:'.7rem',fontFamily:'var(--mono)',color:'#5090a8'}}>已放置 {simMarkers.length} 个气象事件</span>
                 <div style={{display:'flex',gap:8}}>
-                  <button onClick={()=>{setSimMarkers([]);setPipeStep(-1);setPipeRunning(false);}}
+                  <button onClick={()=>{setSimMarkers([]);setPipeStep(-1);setPipeRunning(false);setAnalystOutputs(['','','','','']);}}
                     style={{padding:'5px 14px',borderRadius:5,fontSize:'.72rem',fontFamily:'var(--mono)',background:'rgba(255,50,50,0.1)',border:'1px solid rgba(255,50,50,0.3)',color:'#ff8888',cursor:'pointer'}}>
                     清除
                   </button>
@@ -1654,21 +1897,243 @@ function ChinaRiskMapSection(){
               </div>
             </div>
             {pipeStep>=0&&(
-              <div style={{marginTop:'1.5rem',display:'flex',flexDirection:'column',gap:8}}>
-                <div style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'#00e5cc',letterSpacing:'.18em',marginBottom:4}}>PIPELINE EXECUTION &middot; 推演流水线</div>
-                {PIPE.map((step,i)=>i<=pipeStep&&(
-                  <div key={i} style={{borderRadius:10,padding:'14px 18px',background:'rgba(4,18,38,0.95)',border:`1px solid ${step.c}33`,boxShadow:`0 0 16px ${step.c}18`,display:'flex',gap:16,alignItems:'flex-start',animation:'fade-in-up .4s ease-out both'}}>
-                    <div style={{flexShrink:0,width:36,height:36,borderRadius:8,background:`${step.c}14`,border:`1.5px solid ${step.c}55`,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--mono)',fontSize:'.65rem',fontWeight:700,color:step.c}}>{step.n}</div>
-                    <div style={{flex:1,minWidth:0}}>
-                      <div style={{fontSize:'.72rem',fontFamily:'var(--mono)',color:step.c,fontWeight:700,marginBottom:6,letterSpacing:'.08em'}}>{step.label}</div>
-                      <pre style={{fontSize:'.7rem',fontFamily:'var(--mono)',color:'#7ab8d0',lineHeight:1.75,margin:0,whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{pipeOutputs[i]||'推演中...'}</pre>
-                    </div>
-                    {i===pipeStep&&pipeRunning
-                      ?<div style={{flexShrink:0,width:8,height:8,borderRadius:'50%',background:step.c,animation:'blink-dot 0.8s ease-in-out infinite',alignSelf:'center'}}/>
-                      :<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={step.c} strokeWidth="2.5" style={{flexShrink:0,alignSelf:'center'}}><polyline points="20 6 9 17 4 12"/></svg>
-                    }
+              <div style={{marginTop:'1.8rem'}}>
+                <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:'1rem'}}>
+                  <div style={{flex:1,height:'1px',background:'linear-gradient(to right,transparent,rgba(0,200,255,0.25))'}}/>
+                  <span style={{fontSize:'.58rem',fontFamily:'var(--mono)',color:'#00e5cc',letterSpacing:'.2em',whiteSpace:'nowrap'}}>MULTI-AGENT PIPELINE &middot; 多智能体推演流水线</span>
+                  <div style={{flex:1,height:'1px',background:'linear-gradient(to left,transparent,rgba(0,200,255,0.25))'}}/>
+                </div>
+                <div style={{borderRadius:10,border:'1px solid rgba(0,200,255,0.16)',background:'rgba(0,18,46,0.5)',padding:'10px 14px',textAlign:'center',marginBottom:0}}>
+                  <div style={{fontSize:'.52rem',fontFamily:'var(--mono)',color:'rgba(0,200,255,0.45)',letterSpacing:'.18em',marginBottom:7}}>外部数据源 EXTERNAL DATA SOURCES</div>
+                  <div style={{display:'flex',flexWrap:'wrap',gap:5,justifyContent:'center'}}>
+                    {['气象 API','遥感卫星','农业新闻','病虫害通报','政府通知','农户舆情','田间影像','历史样本'].map(s=>(
+                      <span key={s} style={{fontSize:'.6rem',fontFamily:'var(--mono)',color:'#4a8aa0',padding:'2px 8px',borderRadius:4,background:'rgba(0,200,255,0.05)',border:'1px solid rgba(0,200,255,0.1)'}}>{s}</span>
+                    ))}
                   </div>
-                ))}
+                </div>
+                {PIPE.map((step,i)=>{
+                  const st=i<pipeStep?'done':i===pipeStep?'active':'wait';
+                  const ROLES=['DATA LAYER','ANALYSIS LAYER','SIMULATION LAYER','DECISION LAYER','DELIVERY LAYER','EVOLUTION LAYER'];
+                  return(
+                    <div key={i}>
+                      <div style={{display:'flex',flexDirection:'column',alignItems:'center',height:20}}>
+                        <div style={{width:'1px',flex:1,background:st==='wait'?'rgba(0,200,255,0.1)':step.c+'44'}}/>
+                        <div style={{width:0,height:0,borderLeft:'4px solid transparent',borderRight:'4px solid transparent',borderTop:`6px solid ${st==='wait'?'rgba(0,200,255,0.12)':step.c+'55'}`}}/>
+                      </div>
+                      <div style={{borderRadius:12,overflow:'hidden',border:`1.5px solid ${st==='wait'?'rgba(0,200,255,0.1)':st==='active'?step.c:step.c+'55'}`,background:st==='wait'?'rgba(2,10,22,0.72)':'rgba(4,15,34,0.97)',boxShadow:st==='active'?`0 0 40px ${step.c}30`:st==='done'?`0 0 20px ${step.c}14`:'none',transition:'border .35s,box-shadow .35s'}}>
+                        <div style={{padding:'9px 14px',borderBottom:`1px solid ${st==='wait'?'rgba(0,200,255,0.07)':step.c+'25'}`,background:st==='wait'?'rgba(0,5,15,0.5)':`${step.c}0a`,display:'flex',alignItems:'center',gap:10}}>
+                          <div style={{width:32,height:32,borderRadius:8,background:st==='wait'?'rgba(0,25,45,0.5)':`${step.c}18`,border:`1.5px solid ${st==='wait'?'rgba(0,100,130,0.2)':step.c+'55'}`,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--mono)',fontSize:'.72rem',fontWeight:700,color:st==='wait'?'#1a4555':step.c,flexShrink:0}}>{step.n}</div>
+                          <div style={{flex:1}}>
+                            <div style={{fontFamily:'var(--mono)',fontSize:'.76rem',fontWeight:700,color:st==='wait'?'#1e5060':step.c,letterSpacing:'.04em'}}>{step.label}</div>
+                            <div style={{fontFamily:'var(--mono)',fontSize:'.5rem',color:st==='wait'?'#0e2535':step.c+'55',letterSpacing:'.14em',marginTop:1}}>{ROLES[i]}</div>
+                          </div>
+                          <div style={{display:'flex',alignItems:'center',gap:5}}>
+                            <div style={{width:7,height:7,borderRadius:'50%',background:st==='wait'?'#0e2535':st==='active'?step.c:'#33dd66',boxShadow:st==='active'?`0 0 8px ${step.c}`:st==='done'?'0 0 7px #33dd6655':'none',animation:st==='active'?'blink-dot .8s ease-in-out infinite':'none'}}/>
+                            <span style={{fontFamily:'var(--mono)',fontSize:'.55rem',padding:'2px 8px',borderRadius:3,background:st==='done'?'rgba(51,221,102,0.1)':st==='active'?`${step.c}18`:'rgba(0,40,60,0.35)',border:`1px solid ${st==='done'?'rgba(51,221,102,0.3)':st==='active'?step.c+'44':'rgba(0,70,90,0.18)'}`,color:st==='done'?'#33dd66':st==='active'?step.c:'#1a3a4a'}}>{st==='done'?'✓ DONE':st==='active'?'● ACTIVE':'○ WAIT'}</span>
+                          </div>
+                        </div>
+                        <div style={{padding:'12px 14px',display:'flex',flexDirection:'column',gap:9}}>
+                          {i===0&&<div style={{display:'flex',gap:5,flexWrap:'wrap',alignItems:'center'}}>
+                            {['气象源','遥感源','通报源','舆情源','影像源'].map(s=>(
+                              <div key={s} style={{padding:'3px 9px',borderRadius:4,background:`${step.c}0a`,border:`1px solid ${st==='wait'?'rgba(0,200,255,0.08)':step.c+'25'}`,fontSize:'.6rem',fontFamily:'var(--mono)',color:st==='wait'?'#1a4050':step.c+'bb'}}>{s}</div>
+                            ))}
+                            <div style={{padding:'3px 9px',borderRadius:4,background:st==='wait'?'rgba(0,20,40,0.3)':`${step.c}12`,border:`1px dashed ${st==='wait'?'rgba(0,150,180,0.12)':step.c+'44'}`,fontSize:'.6rem',fontFamily:'var(--mono)',color:st==='wait'?'#1a4050':step.c}}>🎤 Manual Injection</div>
+                            <div style={{width:'100%',fontSize:'.58rem',fontFamily:'var(--mono)',color:st==='wait'?'#0e2535':step.c+'66',marginTop:2}}>→ DataPool &#123; source, type, ts, geo, payload, injected_by? &#125;</div>
+                          </div>}
+                          {i===1&&<div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:6}}>
+                            {[['气象 Analyst','触发条件?'],['作物 Analyst','生育期脆弱?'],['地块 Analyst','地势/排水?'],['病虫害 Analyst','次生风险?'],['舆情 Analyst','早期异常?']].map(([n,q],j)=>{
+                              const hasOut=!!analystOutputs[j];
+                              const isStreaming=st==='active'&&!hasOut;
+                              return(
+                                <div key={n} style={{display:'flex',flexDirection:'column',gap:4,padding:'6px 8px',borderRadius:6,background:st==='wait'?'rgba(0,20,40,0.4)':hasOut?`${step.c}0e`:`${step.c}07`,border:`1px solid ${st==='wait'?'rgba(0,100,130,0.12)':hasOut?step.c+'44':step.c+'20'}`,boxShadow:hasOut?`0 0 10px ${step.c}18`:'none',transition:'all .3s'}}>
+                                  <div style={{display:'flex',alignItems:'center',gap:4}}>
+                                    <div style={{width:5,height:5,borderRadius:'50%',background:st==='wait'?'#0e2535':hasOut?'#33dd66':step.c,animation:isStreaming?'blink-dot .8s ease-in-out infinite':'none',flexShrink:0}}/>
+                                    <div style={{fontSize:'.58rem',fontFamily:'var(--mono)',color:st==='wait'?'#1a4555':step.c,fontWeight:700}}>{n}</div>
+                                  </div>
+                                  {st==='wait'
+                                    ?<div style={{fontSize:'.52rem',fontFamily:'var(--mono)',color:'#0e2535'}}>{q}</div>
+                                    :<pre style={{fontSize:'.6rem',fontFamily:'var(--mono)',color:hasOut?'#8abcd0':'#5090a8',lineHeight:1.65,margin:0,whiteSpace:'pre-wrap',wordBreak:'break-word',minHeight:32}}>{analystOutputs[j]||(isStreaming?'▋':'')}</pre>
+                                  }
+                                </div>
+                              );
+                            })}
+                            <div style={{gridColumn:'1/-1',fontSize:'.57rem',fontFamily:'var(--mono)',color:st==='wait'?'#0e2535':step.c+'55',marginTop:2}}>→ RiskJudgment[] &#123; agent, level, type, evidence, confidence, raw_refs &#125;</div>
+                          </div>}
+                          {i===2&&<div style={{display:'flex',gap:8}}>
+                            {['不干预路径 → 损失概率估算 + 经济损失','及时干预路径 → 挽回比例 + 最优窗口'].map((s,j)=>(
+                              <div key={j} style={{flex:1,padding:'6px 10px',borderRadius:5,background:st==='wait'?'rgba(0,20,40,0.4)':`${step.c}0a`,border:`1px solid ${st==='wait'?'rgba(0,100,130,0.12)':step.c+'28'}`,fontSize:'.6rem',fontFamily:'var(--mono)',color:st==='wait'?'#1a4555':step.c+'cc'}}>{s}</div>
+                            ))}
+                          </div>}
+                          {i===3&&<div style={{padding:'7px 10px',borderRadius:6,background:'rgba(0,0,0,0.28)',border:`1px solid ${st==='wait'?'rgba(0,100,130,0.1)':step.c+'22'}`,fontSize:'.6rem',fontFamily:'var(--mono)',color:st==='wait'?'#0e2535':step.c+'88',lineHeight:1.75}}>
+                            &#123; plot_id, crop, stage, risk_level, risk_type,<br/>&#160;&#160;actions[], best_window, confidence, evidence[], data_sources[] &#125;
+                          </div>}
+                          {i===4&&<div style={{display:'flex',gap:5,flexWrap:'wrap'}}>
+                            {['保险公司 API','合作社控制台 + 短信','政府 PDF 简报','粮企月报','农资建议','应急广播 / 小程序'].map(s=>(
+                              <div key={s} style={{padding:'3px 9px',borderRadius:4,background:`${step.c}0a`,border:`1px solid ${st==='wait'?'rgba(0,100,130,0.1)':step.c+'28'}`,fontSize:'.6rem',fontFamily:'var(--mono)',color:st==='wait'?'#1a4050':step.c+'bb'}}>{s}</div>
+                            ))}
+                          </div>}
+                          {i===5&&<div style={{display:'flex',flexDirection:'column',gap:6}}>
+                            <div style={{display:'flex',gap:6,alignItems:'center'}}>
+                              {[['Evaluator','打分误/漏/准'],['Root Cause','归因到具体 Agent'],['Evolver','写回 Agent 资产文件']].map(([n,d],j,arr)=>(
+                                <div key={j} style={{display:'flex',alignItems:'center',gap:6}}>
+                                  <div style={{padding:'5px 10px',borderRadius:5,background:st==='wait'?'rgba(0,20,40,0.4)':`${step.c}0a`,border:`1px solid ${st==='wait'?'rgba(0,100,130,0.12)':step.c+'28'}`}}>
+                                    <div style={{fontSize:'.6rem',fontFamily:'var(--mono)',color:st==='wait'?'#1a4555':step.c,fontWeight:700}}>{n}</div>
+                                    <div style={{fontSize:'.52rem',fontFamily:'var(--mono)',color:st==='wait'?'#0e2535':step.c+'77',marginTop:1}}>{d}</div>
+                                  </div>
+                                  {j<arr.length-1&&<span style={{color:step.c+(st==='wait'?'22':'55'),fontSize:'1rem',flexShrink:0}}>→</span>}
+                                </div>
+                              ))}
+                            </div>
+                            <div style={{fontSize:'.58rem',fontFamily:'var(--mono)',color:st==='wait'?'#0e2535':step.c+'66'}}>→ experience.md &middot; rules.yaml &middot; weights.json &middot; prompt.md</div>
+                          </div>}
+                          {i!==1&&<div style={{borderTop:`1px solid ${st==='wait'?'rgba(0,200,255,0.06)':step.c+'18'}`,paddingTop:8}}>
+                            <div style={{fontSize:'.5rem',fontFamily:'var(--mono)',color:st==='wait'?'#0e2535':step.c+'55',letterSpacing:'.14em',marginBottom:5}}>AGENT OUTPUT</div>
+                            {st==='wait'
+                              ?<div style={{display:'flex',alignItems:'center',gap:8,color:'#162530',fontFamily:'var(--mono)',fontSize:'.63rem'}}>
+                                <div style={{width:16,height:'1px',background:'repeating-linear-gradient(90deg,#1a3545 0,#1a3545 3px,transparent 3px,transparent 6px)'}}/>
+                                等待上游 Agent 完成…
+                              </div>
+                              :<pre style={{fontSize:'.68rem',fontFamily:'var(--mono)',color:st==='active'?'#c0dcea':'#7ab8d0',lineHeight:1.8,margin:0,whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{pipeOutputs[i]||(st==='active'?'▋':'')}</pre>
+                            }
+                          </div>}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+                {pipeStep>=5&&(
+                  <div>
+                    <div style={{display:'flex',flexDirection:'column',alignItems:'center',height:20}}>
+                      <div style={{width:'1px',flex:1,background:'rgba(136,170,255,0.25)'}}/>
+                      <div style={{width:0,height:0,borderLeft:'4px solid transparent',borderRight:'4px solid transparent',borderTop:'6px solid rgba(136,170,255,0.25)'}}/>
+                    </div>
+                    <div style={{borderRadius:8,padding:'9px 14px',background:'rgba(136,170,255,0.05)',border:'1px solid rgba(136,170,255,0.14)',textAlign:'center',fontSize:'.6rem',fontFamily:'var(--mono)',color:'#6688cc',lineHeight:1.85}}>
+                      B 端真实反馈 · 风险是否发生 / 预警是否准确 / 建议是否采纳 / 实际损失多少<br/>
+                      <span style={{color:'rgba(136,170,255,0.45)',fontSize:'.55rem'}}>下一轮 Agent 加载时直接读取更新后的资产文件 → 持续进化</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+        {tab==='backtest'&&(
+          <div>
+            <div style={{display:'flex',gap:10,marginBottom:'1.2rem',flexWrap:'wrap',alignItems:'center',padding:'10px 16px',borderRadius:10,background:'rgba(4,18,38,0.85)',border:'1px solid rgba(0,200,255,0.18)'}}>
+              <span style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'#5090a8',letterSpacing:'.1em'}}>HISTORICAL BACKTEST</span>
+              <div style={{display:'flex',alignItems:'center',gap:6,marginLeft:8}}>
+                <span style={{fontSize:'.65rem',fontFamily:'var(--mono)',color:'#7ab8d0'}}>年份：</span>
+                <input value={btYear} onChange={e=>setBtYear(e.target.value)} placeholder="如 2023 或 2023-07"
+                  style={{width:100,padding:'3px 8px',borderRadius:4,background:'rgba(0,30,60,0.7)',border:'1px solid rgba(0,200,255,0.28)',color:'#a0d4e8',fontFamily:'var(--mono)',fontSize:'.68rem',outline:'none'}}/>
+              </div>
+              <div style={{display:'flex',alignItems:'center',gap:6}}>
+                <span style={{fontSize:'.65rem',fontFamily:'var(--mono)',color:'#7ab8d0'}}>省份：</span>
+                {btProvince
+                  ?<div style={{display:'flex',alignItems:'center',gap:4}}>
+                    <span style={{fontSize:'.68rem',fontFamily:'var(--mono)',color:'#00e5cc',background:'rgba(0,229,204,0.12)',padding:'2px 9px',borderRadius:3,border:'1px solid rgba(0,229,204,0.3)'}}>{btProvince}</span>
+                    <button onClick={()=>setBtProvince(null)} style={{fontSize:'.6rem',fontFamily:'var(--mono)',color:'#ff8888',background:'transparent',border:'none',cursor:'pointer',padding:'0 2px'}}>✕</button>
+                  </div>
+                  :<span style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:'#3a6070'}}>点击地图选择</span>
+                }
+              </div>
+              <span style={{fontSize:'.62rem',fontFamily:'var(--mono)',color:btEvents.length?'#ffaa44':'#3a8070',marginLeft:'auto'}}>
+                {btEvents.length?`匹配 ${btEvents.length} 条真实事件`:'无匹配记录 · AI自由推理'}
+              </span>
+              <button onClick={()=>{setBtProvince(null);setBtYear('2023');setBtPipeStep(-1);setBtRunning(false);setBtOutputs(['','','','','','']);setBtAnalystOutputs(['','','','','']);}}
+                style={{padding:'4px 12px',borderRadius:4,fontSize:'.68rem',fontFamily:'var(--mono)',background:'rgba(255,50,50,0.08)',border:'1px solid rgba(255,50,50,0.25)',color:'#ff8888',cursor:'pointer'}}>重置</button>
+              {(()=>{const canRun=(btYear||btProvince)&&!btRunning;return(
+              <button onClick={runBacktest} disabled={!canRun}
+                style={{padding:'4px 16px',borderRadius:4,fontSize:'.68rem',fontFamily:'var(--mono)',
+                  background:canRun?'rgba(0,229,204,0.14)':'rgba(0,200,255,0.04)',
+                  border:`1px solid ${canRun?'#00e5cc':'rgba(0,200,255,0.18)'}`,
+                  color:canRun?'#00e5cc':'#2a5060',
+                  cursor:canRun?'pointer':'not-allowed',
+                  boxShadow:canRun?'0 0 10px rgba(0,229,204,0.2)':'none'}}>
+                {btRunning?'回测中 ...':'▶ 运行回测'}
+              </button>);})()}
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 300px',gap:'1rem',marginBottom:'1.5rem'}}>
+              <div style={{borderRadius:12,overflow:'hidden',border:'1px solid rgba(0,200,255,0.22)',background:'#040e1e',boxShadow:'0 0 32px rgba(0,200,255,0.08)'}}>
+                <div style={{padding:'7px 12px',borderBottom:'1px solid rgba(0,200,255,0.15)',background:'rgba(0,20,50,0.75)',fontSize:'.58rem',fontFamily:'var(--mono)',color:'#4a8098',letterSpacing:'.12em'}}>
+                  CLICK PROVINCE TO SELECT · 点击省份选择历史事件
+                </div>
+                <div ref={btMapRef} style={{width:'100%',height:380}}/>
+              </div>
+              <div style={{borderRadius:12,border:'1px solid rgba(0,200,255,0.18)',background:'rgba(4,18,38,0.92)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
+                <div style={{padding:'7px 12px',borderBottom:'1px solid rgba(0,200,255,0.15)',background:'rgba(0,20,50,0.75)',fontSize:'.58rem',fontFamily:'var(--mono)',color:'#4a8098',letterSpacing:'.12em',flexShrink:0}}>
+                  MATCHED EVENTS · 历史事件记录
+                </div>
+                <div style={{flex:1,overflowY:'auto',padding:'8px',display:'flex',flexDirection:'column',gap:6}}>
+                  {btEvents.length===0
+                    ?<div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100%',color:'rgba(0,200,255,0.2)',fontFamily:'var(--mono)',fontSize:'.75rem',textAlign:'center',gap:8,padding:20}}>
+                      <div style={{fontSize:'2rem'}}>🗂</div>
+                      <div>输入年份并点击省份<br/>查询历史灾害记录</div>
+                      <div style={{fontSize:'.6rem',color:'rgba(0,200,255,0.12)',marginTop:4}}>数据来源：中国气象局 / 新华网</div>
+                    </div>
+                    :btEvents.map(e=>(
+                      <div key={e.id} style={{borderRadius:6,padding:'7px 9px',background:'rgba(0,30,60,0.6)',border:'1px solid rgba(0,200,255,0.14)',display:'flex',flexDirection:'column',gap:3}}>
+                        <div style={{display:'flex',alignItems:'center',gap:5,flexWrap:'wrap'}}>
+                          <span style={{fontSize:'.55rem',fontFamily:'var(--mono)',color:'#00e5cc',background:'rgba(0,229,204,0.1)',padding:'1px 5px',borderRadius:2,flexShrink:0}}>{e.weather_type}</span>
+                          <span style={{fontSize:'.55rem',fontFamily:'var(--mono)',color:'#4a8098'}}>{e.year_month}</span>
+                          <span style={{fontSize:'.55rem',fontFamily:'var(--mono)',color:'#7ab8d0'}}>{e.province}·{e.city_or_area}</span>
+                        </div>
+                        <div style={{fontSize:'.6rem',fontWeight:600,color:'#a0c8d8',fontFamily:'var(--mono)',lineHeight:1.4}}>{e.event_name}</div>
+                        <div style={{fontSize:'.56rem',color:'#4a7080',lineHeight:1.55,fontFamily:'var(--mono)'}}>{e.news_summary}</div>
+                        {e.source_org&&<div style={{fontSize:'.52rem',color:'#2a5060',fontFamily:'var(--mono)'}}>来源：{e.source_org}</div>}
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+            </div>
+            {btPipeStep>=0&&(
+              <div style={{borderRadius:12,padding:'14px',background:'rgba(4,18,38,0.92)',border:'1px solid rgba(0,200,255,0.18)'}}>
+                <div style={{fontSize:'.58rem',fontFamily:'var(--mono)',color:'#00e5cc',letterSpacing:'.15em',marginBottom:12}}>BACKTEST PIPELINE · 历史回测推演链路</div>
+                <div style={{display:'flex',flexDirection:'column',gap:0}}>
+                  {PIPE.map((step,i)=>{
+                    const st=btPipeStep<i?'wait':btPipeStep===i?'active':'done';
+                    const sc=rlcSim(step.c,st);
+                    return(
+                      <div key={i}>
+                        {i>0&&<div style={{display:'flex',flexDirection:'column',alignItems:'center',height:16}}>
+                          <div style={{width:'1px',flex:1,background:st==='wait'?'rgba(0,200,255,0.06)':step.c+'33'}}/>
+                          <div style={{width:0,height:0,borderLeft:'3px solid transparent',borderRight:'3px solid transparent',borderTop:`5px solid ${st==='wait'?'rgba(0,200,255,0.08)':step.c+'44'}`}}/>
+                        </div>}
+                        <div style={{borderRadius:8,padding:'10px 14px',background:sc.bg,border:`1px solid ${sc.bd}`,boxShadow:st!=='wait'?`0 0 18px ${step.c}14`:'none',transition:'all .3s',display:'flex',flexDirection:'column',gap:8}}>
+                          <div style={{display:'flex',alignItems:'center',gap:8}}>
+                            <span style={{fontSize:'.6rem',fontFamily:'var(--mono)',color:step.c,fontWeight:700,background:`${step.c}18`,padding:'1px 7px',borderRadius:3}}>{step.n}</span>
+                            <span style={{fontSize:'.72rem',fontFamily:'var(--mono)',color:sc.tx,fontWeight:700}}>{step.label}</span>
+                            <span style={{marginLeft:'auto',fontSize:'.55rem',fontFamily:'var(--mono)',letterSpacing:'.1em',
+                              color:st==='wait'?'#0e2535':st==='active'?step.c:'#33dd66',
+                              background:st==='wait'?'rgba(0,20,40,0.5)':st==='active'?`${step.c}20`:'rgba(51,221,102,0.12)',
+                              padding:'1px 7px',borderRadius:3,border:`1px solid ${st==='wait'?'rgba(0,100,130,0.12)':st==='active'?step.c+'44':'rgba(51,221,102,0.3)'}`}}>
+                              {st==='wait'?'WAIT':st==='active'?'ACTIVE':'DONE'}
+                            </span>
+                          </div>
+                          {i===1&&st!=='wait'&&<div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:5}}>
+                            {[['气象','触发条件?'],['作物','生育期脆弱?'],['地块','地势/排水?'],['病虫害','次生风险?'],['舆情','早期异常?']].map(([n,q],j)=>{
+                              const hasOut=!!btAnalystOutputs[j];
+                              const isStr=st==='active'&&!hasOut;
+                              return(
+                                <div key={n} style={{padding:'5px 7px',borderRadius:5,background:hasOut?`${step.c}0e`:`${step.c}07`,border:`1px solid ${hasOut?step.c+'44':step.c+'18'}`,boxShadow:hasOut?`0 0 8px ${step.c}18`:'none',transition:'all .3s',display:'flex',flexDirection:'column',gap:3}}>
+                                  <div style={{display:'flex',alignItems:'center',gap:3}}>
+                                    <div style={{width:4,height:4,borderRadius:'50%',background:hasOut?'#33dd66':step.c,animation:isStr?'blink-dot .8s ease-in-out infinite':'none',flexShrink:0}}/>
+                                    <div style={{fontSize:'.55rem',fontFamily:'var(--mono)',color:step.c,fontWeight:700}}>{n}</div>
+                                  </div>
+                                  <pre style={{fontSize:'.58rem',fontFamily:'var(--mono)',color:hasOut?'#8abcd0':'#5090a8',lineHeight:1.6,margin:0,whiteSpace:'pre-wrap',wordBreak:'break-word',minHeight:28}}>{btAnalystOutputs[j]||(isStr?'▋':'')}</pre>
+                                </div>
+                              );
+                            })}
+                          </div>}
+                          {i!==1&&st!=='wait'&&<pre style={{fontSize:'.66rem',fontFamily:'var(--mono)',color:st==='active'?'#c0dcea':'#7ab8d0',lineHeight:1.8,margin:0,whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{btOutputs[i]||(st==='active'?'▋':'')}</pre>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {btPipeStep>=5&&<div style={{marginTop:10,borderRadius:7,padding:'8px 12px',background:'rgba(136,170,255,0.05)',border:'1px solid rgba(136,170,255,0.14)',textAlign:'center',fontSize:'.58rem',fontFamily:'var(--mono)',color:'#5570aa',lineHeight:1.85}}>
+                    回测完成 · 历史事件已归档 · Harness 已基于真实历史结果更新 Agent 资产文件
+                  </div>}
+                </div>
               </div>
             )}
           </div>
